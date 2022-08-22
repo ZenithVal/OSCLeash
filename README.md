@@ -1,8 +1,9 @@
 # OSCLeash
 
-A simple system to make a functional "Leash" in VRchat using OSC. 
-  Can be adapated for different sources like a tail.
-    If you're smarter and want to improve this code, by all means, PLEASE do so.
+A simple system to make a functional "Leash" in VRchat using OSC. Can be adapated for different sources like a tail. <br />
+If you're smarter and want to improve this code, by all means, PLEASE do so. 
+
+##
 
 ### Running the source:
 - Clone the github
@@ -17,14 +18,19 @@ A simple system to make a functional "Leash" in VRchat using OSC.
 - Extract wherever.
 - Run Executable
 
+##
+
 ### Setup
 1. Define IP and ports in config.json
-2. Drop the Prefab onto the root of your avatar (Found in releases)
-3. Set the source of the constraint on "Aim Target" to the end of your "leash"
-4. 
+3. Drop the Prefab onto the root of your avatar (Found in releases)
+4. Set the source of the constraint on "Aim Target" to the end of your "leash"
+5. Set "Paramater" on your leash's physbone to "Leash" 
+6. Your leash needs to be able to stretch, at least a tiny bit.
 
 uh....
 Requires VRC3 Avatar SDK.
+
+##
 
 ### Parameters
 
@@ -36,6 +42,28 @@ Requires VRC3 Avatar SDK.
 | Z- | Z Negative |
 | X+ | Z Positive |
 | X- | Z Negative |
+
+##
+
+### Default Config
+
+```
+{
+        "IP": "127.0.0.1",
+        "ListeningPort": 9001,
+        "SendingPort": 9000,
+        "Paramaters":
+        {
+                "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
+                "Z_Positive_Param": "/avatar/parameters/Z+",
+                "Z_Negative_Param": "/avatar/parameters/Z-",
+                "X_Positive_Param": "/avatar/parameters/X+",
+                "X_Negative_Param": "/avatar/parameters/Z-",
+                "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
+                "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
+        }
+}
+```
 
 ### Credits
 
