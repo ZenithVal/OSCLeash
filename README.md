@@ -1,7 +1,7 @@
 # OSCLeash
 
 Hi sorry, I swear I'm not a dissapointment to my parents. <br />
-A simple system to make a functional "Leash" in VRchat using OSC as an input controller. Can be adapated for different sources like a tail. <br />
+A simple system to make a functional "Leash" in VRchat using OSC as an input controller. Can be adapated for different sources like a tail.
 If you're smarter and want to improve this code, by all means, PLEASE do so. 
 
 ##
