@@ -20,7 +20,8 @@ If you're smarter and want to improve this code, by all means, PLEASE do so.
 ### Setup
 1. Define IP and ports in config.json
 2. Drop the Prefab onto the root of your avatar (Found in releases)
-3. Assign the stuff
+3. Set the source of the constraint on "Aim Target" to the end of your "leash"
+4. 
 
 uh....
 Requires VRC3 Avatar SDK.
