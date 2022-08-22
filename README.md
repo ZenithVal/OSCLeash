@@ -9,6 +9,7 @@ If you're smarter and want to improve this code, by all means, PLEASE do so.
 - Aquire Prereqs
   - Python 3.10
   - Python-osc 1.8.0 https://pypi.org/project/python-osc/
+  - That's PROBABLY it? I literally don't know.
 - Run the python script
 
 ### Running Executable
