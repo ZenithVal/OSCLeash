@@ -1,10 +1,8 @@
 # OSCLeash
 
 A simple system to make a functional "Leash" in VRchat using OSC. 
-
-Can be adapated for different sources like a tail.
-
-If you're smarter and want to improve this code, by all means, PLEASE do so.
+  Can be adapated for different sources like a tail.
+    If you're smarter and want to improve this code, by all means, PLEASE do so.
 
 ### Running the source:
 - Clone the github
