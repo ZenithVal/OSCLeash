@@ -30,5 +30,5 @@ uh....
 
 ### Credits
 
-@FrostbyteVR babied me through 90% of the process of making the python script.
-@I5UCC I stared at the code of his ThumbParamsOSC for a long time to learn a bit. The setup for the config reading is also from that.
+- @FrostbyteVR babied me through 90% of the process of making the python script.
+- @I5UCC I stared at the code of his ThumbParamsOSC for a long time to learn a bit. The setup for the config reading is also from that.
