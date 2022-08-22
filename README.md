@@ -71,4 +71,4 @@ Requires VRC3 Avatar SDK.
 
 - @FrostbyteVR babied me through 90% of the process of making the python script.
 - @I5UCC I stared at the code of his ThumbParamsOSC for a long time to learn a bit. Some lines are a carbon copy.
-- Someone else did this but it was a closed source executable... Too sus for me.
+- Someone else did this but it was a closed source executable.
