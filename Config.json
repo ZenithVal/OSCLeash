@@ -1,8 +1,8 @@
 
 {
         "IP": "127.0.0.1",
-        "ListeningPort": 9031,
-        "SendingPort": 9030,
+        "ListeningPort": 9001,
+        "SendingPort": 9000,
         "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
