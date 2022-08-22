@@ -5,7 +5,25 @@ A simple system to make a functional "Leash" in VRchat using OSC as an input con
 Could be adapted to any pullable physbone; EG: A tail. <br />
 If you're smarter and want to improve this code, by all means, PLEASE do so. 
 
-##
+## How TF this work??
+
+Here's the prefab from releases but with Arrow and cube for visual help.
+
+There's two systems at play; one to "aim" what direction to move in and the physbone intelf that determines move speed.
+
+On the Aim system, there's 4 Contact Recieverers, 2 position constraints, and 1 aim constraint.
+
+4 proximity Contacts (Z+,Z-,X+,X-) are placed around a center point which has an aim constraint with a sender on the end that triggers the proximity contacts.
+
+1 Position constraint is locked to the ground plane and is tracked to another position constriant that's free moving and tracked to the end of the leash physbone system. This allows it to be free moving wherever. In hindsight... I don't know why there's two position constraints but it's too late now AAAAA. As the leash physbone moves around the directional, aims and we can take those values into the program.
+
+![Function Example](https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif)
+
+(Z_Positive - Z_Negative) * Leash_Stretch = Vertical
+
+(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal
+
+Output Those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. Theres's a bit more to it than this but that's the simple rundown.
 
 ### Running the source:
 - Clone the github
