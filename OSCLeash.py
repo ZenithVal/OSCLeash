@@ -130,7 +130,7 @@ def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
     oscClient.send_message("/input/Vertical", VerticalOutput)
     oscClient.send_message("/input/Horizontal", HorizontalOutput)
     oscClient.send_message("/input/Run", RunOutput)
-    print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput)
+    # print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput) #Debug Outputs
 
 thread=Thread(target=StartServer)
 thread.start()
