@@ -1,6 +1,6 @@
 # OSCLeash
 
-Hi sorry, I swear I'm not a dissapointment to my parents. <br />
+Hi sorry, I swear I'm not a dissapointment to my parents. This is NOT user friendly yet. <br />
 A simple system to make a functional "Leash" in VRchat using OSC as an input controller. <br /> 
 Could be adapted to any pullable physbone; EG: A tail. <br />
 If you're smarter and want to improve this code, by all means, PLEASE do so. 
