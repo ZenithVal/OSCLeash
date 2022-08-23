@@ -60,8 +60,8 @@ Requires VRC3 Avatar SDK.
 |Leash_Stretch | Physbone Stretch Status
 | Z+ | Z Positive |
 | Z- | Z Negative |
-| X+ | Z Positive |
-| X- | Z Negative |
+| X+ | X Positive |
+| X- | X Negative |
 
 ##
 
