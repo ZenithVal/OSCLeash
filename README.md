@@ -23,7 +23,9 @@ On the Aim system, there's 4 Contact Recieverers, a position constraint, and an 
 
 Output those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. We use Leash_IsGrabbed as well to confirm it's actually being grabbed along with some other fancy stuff I don't really understand fully.
 
-## Known issue
+##
+
+### Known issue
 
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement still causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
@@ -58,41 +60,55 @@ Requires VRC3 Avatar SDK.
 
 I'll make a setup picture guide later.
 
-##
+#
 
-### Parameters
+### Config
 
-| Parameter | Description |
+| Config | Use |
 | --- | --- |
-|Leash_IsGrabbed | Physbone IsGrabbed Value
-|Leash_Stretch | Physbone Stretch Status
-| Z+ | Z Positive |
-| Z- | Z Negative |
-| X+ | X Positive |
-| X- | X Negative |
+| IP | Address to send OSC data to |
+| ListeningPort | Port to listen for OSC data on | 
+| Sending port | Port to send OSC data to |
+| RunDeadzone | Stretch value > this will cause running |
+| WalkDeadzone | Stretch value > this will cause walking |
+
+
+#### Custom paramaters 
+(Still WIP functionality, the config for them won't change them yet)
+
+| Paramater | ? |
+| --- | --- |
+|Leash_IsGrabbed | Physbone IsGrabbed value |
+|Leash_Stretch | Physbone Stretch percent | 
+| Leash_Z+ | Z Positive |
+| Leash_Z- | Z Negative |
+| Leash_X+ | X Positive |
+| Leash_X- | X Negative |
 
 ##
 
 ### Default Config
 
-```
+```json
 {
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
         "SendingPort": 9000,
+        "RunDeadzone": 0.75,
+        "WalkDeadzone": 0.15,   
         "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
-                "Z_Positive_Param": "/avatar/parameters/Z+",
-                "Z_Negative_Param": "/avatar/parameters/Z-",
-                "X_Positive_Param": "/avatar/parameters/X+",
-                "X_Negative_Param": "/avatar/parameters/Z-",
+                "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
+                "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
+                "X_Positive_Param": "/avatar/parameters/Leash_X+",
+                "X_Negative_Param": "/avatar/parameters/Leash_Z-",
                 "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
                 "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
         }
 }
 ```
-
+#
 ### Credits
 
 - @FrostbyteVR babied me through 90% of the process of making the python script.
