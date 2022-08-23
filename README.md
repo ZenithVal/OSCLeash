@@ -40,7 +40,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement s
 - Run the python script
 
 ### Running Executable
-- Download release zip
+- Download release zip from https://github.com/ZenithVal/OSCLeash/releases/tag/Main
 - Extract wherever.
 - Run Executable
 
