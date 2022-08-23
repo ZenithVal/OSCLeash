@@ -23,6 +23,12 @@ On the Aim system, there's 4 Contact Recieverers, a position constraint, and an 
 
 Output those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. We use Leash_IsGrabbed as well to confirm it's actually being grabbed along with some other fancy stuff I don't really understand fully.
 
+## Known issue
+
+As with RavenBuilds's take on the OSCLeash, it still locks your arms to your side due to a VRCHat bug, please slap some support onto this canny!
+https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
+
+
 ##
 
 ### Running the source:
