@@ -23,6 +23,8 @@ On the Aim system, there's 4 Contact Recieverers, 2 position constraints, and 1 
 
 Output those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. We use Leash_IsGrabbed as well to confirm it's actually being grabbed along with some other fancy stuff I don't really understand fully.
 
+##
+
 ### Running the source:
 - Clone the github
 - Aquire Prereqs
