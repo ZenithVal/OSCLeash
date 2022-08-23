@@ -11,10 +11,10 @@ Here's the prefab from releases but with some meshes for visual help.
 
 There's two systems at play; one to "aim" what direction to move in and the physbone intelf that determines move speed.
 
-On the Aim system, there's 4 Contact Recieverers, 2 position constraints, and 1 aim constraint.
+On the Aim system, there's 4 Contact Recieverers, a position constraint, and an aim constraint.
 
 4 proximity Contacts (Z+,Z-,X+,X-) are placed around a center point which has an aim constraint with a sender on the end that triggers the proximity contacts. 
-1 Position constraint is locked to the ground plane and is tracked to another position constriant that's free moving and tracked to the end of the leash physbone system. This allows it to be free moving wherever. In hindsight... I don't know why there's two position constraints but it's too late now AAAAA. As the leash physbone moves around the directional, the aim constraint move along contact sender, triggering all the proximity contacts. We read that for OSC.
+1 Position constraint is locked to the ground plane and is tracked to the end of the leash physbone system. This allows it to be free moving wherever the end of the leash is but stay on the correct axis for the aim constraint. As the leash physbone moves around the directional, the aim constraint move along contact sender, triggering all the proximity contacts. We read that for OSC.
 
 ![Function Example](https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif)
 
