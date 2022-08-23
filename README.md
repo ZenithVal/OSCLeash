@@ -43,6 +43,7 @@ Output those two values back to VRC and boom, you're moving in the direction of 
 ### Setup
 1. Define IP and ports in config.json
 3. Drop the Prefab onto the root of your avatar (Found in releases)
+  - You can scale the prefab down smaller, as long as it's done uniformially (and you don't go too small)
 4. Set the source of the constraint on "Aim Target" to the end of your "leash"
 5. Set "Paramater" on your leash's physbone to "Leash" 
 6. Your leash needs to be able to stretch, at least a tiny bit.
