@@ -25,9 +25,7 @@ Output those two values back to VRC and boom, you're moving in the direction of 
 
 ## Known issue
 
-As with RavenBuilds's take on the OSCLeash, it still locks your arms to your side due to a VRCHat bug, please slap some support onto this canny!
-https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
-
+As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement still causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
 ##
 
@@ -47,15 +45,18 @@ https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 ##
 
 ### Setup
-1. Define IP and ports in config.json
-3. Drop the Prefab onto the root of your avatar (Found in releases)
-  - You can scale the prefab down smaller, as long as it's done uniformially (and you don't go too small)
-4. Set the source of the constraint on "Aim Target" to the end of your "leash"
-5. Set "Paramater" on your leash's physbone to "Leash" 
-6. Your leash needs to be able to stretch, at least a tiny bit.
-
-uh....
 Requires VRC3 Avatar SDK.
+
+1. Downlaod & get the program running via one of the above methods.
+2. Define config.json setting; EG IP, Port, & paramaters (last bit coming soon)
+3. Grab the prefab from the releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
+4. Drop the Prefab onto the root of your avatar (You can scale the prefab down smaller, as long as it's done uniformially and you don't go too small)
+5. Set the source of the constraint on "Aim Target" to the end of your "leash"
+6. Set the source of the physbone leash to your leash, tail ect, or delete and make your own. 
+7. Set "Paramater" on your leash's physbone to "Leash" 
+8. Your leash needs to be able to stretch, at least a tiny bit. 
+
+I'll make a setup picture guide later.
 
 ##
 
