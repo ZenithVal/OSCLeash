@@ -6,7 +6,7 @@
         "WalkDeadzone": 0.15,
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,     
-        "Logging": false,   
+        "Logging": true,   
         "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
