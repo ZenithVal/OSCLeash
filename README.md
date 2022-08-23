@@ -7,7 +7,7 @@ If you're smarter and want to improve this code, by all means, PLEASE do so.
 
 ## How TF this work??
 
-Here's the prefab from releases but with Arrow and cube for visual help.
+Here's the prefab from releases but with some meshes for visual help.
 
 There's two systems at play; one to "aim" what direction to move in and the physbone intelf that determines move speed.
 
