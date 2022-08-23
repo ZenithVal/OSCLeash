@@ -25,6 +25,8 @@ config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))
 IP = config["IP"]
 ListeningPort = config["ListeningPort"]
 SendingPort = config["SendingPort"]
+RunDeadzone = config["WalkDeadzone"]
+WalkDeadzone = config["WalkDeadzone"]
 
 # Console Clear
 def cls():
@@ -110,11 +112,13 @@ def LeashRun():
     statelock.release()
 
     if LeashGrabbed == True: #GrabCheck
-        if -0.25 > HorizontalOutput < 0.25 and -0.25 > VerticalOutput <= 0.25: #Deadzone
-            LeashOutput(0.0,0.0,0)
-        else:
+        if leash.LeashStretch > RunDeadzone: #Running deadzone
             LeashOutput(VerticalOutput,HorizontalOutput,1)
-    elif LeashReleased == True: 
+        elif leash.LeashStretch > WalkDeadzone: #Walking deadzone
+            LeashOutput(VerticalOutput,HorizontalOutput,0)
+        else: #Not stretched enough to move.
+            LeashOutput(0.0,0.0,0)
+    elif LeashReleased == True: #Leash was Dropped, send stop movement.
         LeashReleased = False
         LeashOutput(0.0,0.0,0)
         time.sleep(0.3)
@@ -130,7 +134,7 @@ def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
     oscClient.send_message("/input/Vertical", VerticalOutput)
     oscClient.send_message("/input/Horizontal", HorizontalOutput)
     oscClient.send_message("/input/Run", RunOutput)
-    # print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput) #Debug Outputs
+    print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput)
 
 thread=Thread(target=StartServer)
 thread.start()
