@@ -14,31 +14,41 @@ import time
 if os.name == 'nt':
     ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
 
+# Console Clear
+def cls():
+    """Clears Console"""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 # Source Path
 def resource_path(relative_path):
     """Gets absolute path from relative path"""
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-# Load Config
-config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
-IP = config["IP"]
-ListeningPort = config["ListeningPort"]
-SendingPort = config["SendingPort"]
-RunDeadzone = config["WalkDeadzone"]
-WalkDeadzone = config["WalkDeadzone"]
+#Load Config
+try:
+    config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
+    IP = config["IP"]
+    ListeningPort = config["ListeningPort"]
+    SendingPort = config["SendingPort"]
+    RunDeadzone = config["WalkDeadzone"]
+    WalkDeadzone = config["WalkDeadzone"]
+    cls()
+    print("Successfully read config.")
+except: 
+    cls()
+    print("Missing or incorrect config file. Loading default values.")
+    IP = "127.0.0.1"
+    ListeningPort = 9001
+    SendingPort = 9000
+    RunDeadzone = 0.75
+    WalkDeadzone = 0.15
 
-# Console Clear
-def cls():
-    """Clears Console"""
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-cls() #Comment this out if stuff breaks lmao
-print("OSCLeash is Running! Good luck!")
+print("OSCLeash is Running!")
 if IP == "127.0.0.1":
     print("IP: Localhost")
 else:  
-    print("IP: Not Localhost, wtf?")
+    print("IP: Not Localhost? Wack.")
 print("Listening on...", ListeningPort)
 print("Sending on...", SendingPort)
 
