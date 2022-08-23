@@ -3,8 +3,11 @@
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
         "SendingPort": 9000,
-        "RunDeadzone": 0.75,
-        "WalkDeadzone": 0.15,   
+        "RunDeadzone": 0.70,
+        "WalkDeadzone": 0.15,
+        "ActiveDelay": 0.1,     
+        "InactiveDelay": 0.5,     
+        "Logging": false,   
         "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
