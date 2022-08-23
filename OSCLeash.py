@@ -31,26 +31,38 @@ try:
     IP = config["IP"]
     ListeningPort = config["ListeningPort"]
     SendingPort = config["SendingPort"]
-    RunDeadzone = config["WalkDeadzone"]
+    RunDeadzone = config["RunDeadzone"]
     WalkDeadzone = config["WalkDeadzone"]
+    ActiveDelay = config["ActiveDelay"]
+    InactiveDelay = config["InactiveDelay"]
+    Logging = config["Logging"]
     cls()
     print("Successfully read config.")
-except: 
+except Exception as e: 
     cls()
-    print("Missing or incorrect config file. Loading default values.")
+    print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
+    print(e,"was the exception")
     IP = "127.0.0.1"
     ListeningPort = 9001
     SendingPort = 9000
-    RunDeadzone = 0.75
+    RunDeadzone = 0.70
     WalkDeadzone = 0.15
+    ActiveDelay = .1
+    InactiveDelay = .5
+    Logging = True
 
-print("OSCLeash is Running!")
+# Settings confirmation
+print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
 if IP == "127.0.0.1":
     print("IP: Localhost")
 else:  
     print("IP: Not Localhost? Wack.")
-print("Listening on...", ListeningPort)
-print("Sending on...", SendingPort)
+print("Listening on port", ListeningPort)
+print("Sending on port",SendingPort)
+print("Run Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
+print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
+print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
+#print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 
 @dataclass
 class LeashParameters:
@@ -98,8 +110,13 @@ dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab St
 # Set up UDP OSC client   
 oscClient = SimpleUDPClient(IP, SendingPort) 
 def StartServer():
-    server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
-    server.serve_forever()
+    try:
+        server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
+        server.serve_forever()
+    except:
+        print('\x1b[1;31;41m' + '                                                            ' + '\x1b[0m')
+        print('\x1b[1;31;40m' + '  Warning: An application is already running on this port!  ' + '\x1b[0m')
+        print('\x1b[1;31;41m' + '                                                            ' + '\x1b[0m')
 
 # Run Leash
 def LeashRun():
@@ -108,6 +125,8 @@ def LeashRun():
     #Maths 
     VerticalOutput = (leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch
     HorizontalOutput = (leash.X_Positive-leash.X_Negative) * leash.LeashStretch
+
+    
 
     #Read Grab state
     LeashGrabbed = leash.LeashGrabbed
@@ -131,20 +150,26 @@ def LeashRun():
     elif LeashReleased == True: #Leash was Dropped, send stop movement.
         LeashReleased = False
         LeashOutput(0.0,0.0,0)
-        time.sleep(0.3)
+        time.sleep(InactiveDelay)
         LeashOutput(0.0,0.0,0) #Double output, just in case.
     else:
-        time.sleep(0.5) #Add 600ms when not grabbed; save on performance?
+        time.sleep(InactiveDelay) #Add 500ms when not grabbed; save on performance?
 
     #Wait 100ms, edge of human reaction time, probably?
-    Timer(0.1,LeashRun).start()
+    Timer(ActiveDelay,LeashRun).start()
 
 # Output OSC
 def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
     oscClient.send_message("/input/Vertical", VerticalOutput)
     oscClient.send_message("/input/Horizontal", HorizontalOutput)
     oscClient.send_message("/input/Run", RunOutput)
-    print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput)
+    
+    if Logging:
+        print(
+        "{:.2f}".format(VerticalOutput),"&",
+        "{:.2f}".format(HorizontalOutput),"&",
+        RunOutput)
+        #print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput) #Way too many decimale places debug
 
 thread=Thread(target=StartServer)
 thread.start()
