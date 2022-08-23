@@ -1,16 +1,13 @@
-
 {
-        "IP": "127.0.0.1",
-        "ListeningPort": 9001,
-        "SendingPort": 9000,
-        "Paramaters":
-        {
-                "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
-                "Z_Positive_Param": "/avatar/parameters/Z+",
-                "Z_Negative_Param": "/avatar/parameters/Z-",
-                "X_Positive_Param": "/avatar/parameters/X+",
-                "X_Negative_Param": "/avatar/parameters/Z-",
-                "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
-                "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
-        }
+    "IP": "127.0.0.1",
+    "ListeningPort": 9001,
+    "SendingPort": 9000,
+    "Parameters": {
+        "Z_Positive_Param": "Z+",
+        "Z_Negative_Param": "Z-",
+        "X_Positive_Param": "X+",
+        "X_Negative_Param": "X-",
+        "LeashGrab_Param": "Leash_IsGrabbed",
+        "LeashStretch_Param": "Leash_Stretch"
+    }
 }

@@ -10,6 +10,21 @@ import sys
 import ctypes
 import time
 
+# Default config
+DefaultConfig = {
+    "IP" : "127.0.0.1",
+    "ListeningPort" : 9001,
+    "SendingPort" : 9000,
+    "Parameters" : {
+        "Z_Positive_Param": "Z+",
+        "Z_Negative_Param": "Z-",
+        "X_Positive_Param": "X+",
+        "X_Negative_Param": "X-",
+        "LeashGrab_Param": "Leash_IsGrabbed",
+        "LeashStretch_Param": "Leash_Stretch"
+    }
+}
+
 # Set window name on the Window
 if os.name == 'nt':
     ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
@@ -21,10 +36,20 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Load Config
+if not os.path.isfile('config.json'):
+    with open('config.json', 'w') as outfile:
+        json.dump(DefaultConfig, outfile, indent = 4)
+
 config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
 IP = config["IP"]
 ListeningPort = config["ListeningPort"]
 SendingPort = config["SendingPort"]
+
+def get_parameter_path(name):
+    """Gets parameter address from parameters object"""
+    param = config["Parameters"][name]
+    prefix = "/avatar/parameters/"
+    return param if param.startswith(prefix) else prefix + param
 
 # Console Clear
 def cls():
@@ -74,13 +99,14 @@ def OnRecieve(address,value):
     #print(f"{parameter}: {value}") #This Prints every input
     statelock.release()
 
-# Paramaters to read
-dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
-dispatcher.map("/avatar/parameters/Leash_Z-",OnRecieve) #Z Negative
-dispatcher.map("/avatar/parameters/Leash_X+",OnRecieve) #X Positive
-dispatcher.map("/avatar/parameters/Leash_X-",OnRecieve) #X Negative
-dispatcher.map("/avatar/parameters/Leash_Stretch",OnRecieve) #Physbone Stretch Value
-dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab Status
+# Parameters to read
+parameters = config["Parameters"]
+dispatcher.map(get_parameter_path("Z_Positive_Param"), OnRecieve) #Z Positive
+dispatcher.map(get_parameter_path("Z_Negative_Param"), OnRecieve) #Z Negative
+dispatcher.map(get_parameter_path("X_Positive_Param"), OnRecieve) #X Positive
+dispatcher.map(get_parameter_path("X_Negative_Param"), OnRecieve) #X Negative
+dispatcher.map(get_parameter_path("LeashGrab_Param"), OnRecieve) #Physbone Grab Status
+dispatcher.map(get_parameter_path("LeashStretch_Param"), OnRecieve) #Physbone Stretch Value
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
 
 # Set up UDP OSC client   
