@@ -3,13 +3,15 @@
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
         "SendingPort": 9000,
-        "Parameters":
+        "RunDeadzone": 0.75,
+        "WalkDeadzone": 0.15,   
+        "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
-                "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
-                "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "X_Positive_Param": "/avatar/parameters/Leash_X+",
-                "X_Negative_Param": "/avatar/parameters/Leash_X-",
+                "Z_Positive_Param": "/avatar/parameters/Z+",
+                "Z_Negative_Param": "/avatar/parameters/Z-",
+                "X_Positive_Param": "/avatar/parameters/X+",
+                "X_Negative_Param": "/avatar/parameters/Z-",
                 "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
                 "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
         }
