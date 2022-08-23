@@ -71,7 +71,9 @@ I'll make a setup picture guide later.
 | Sending port | Port to send OSC data to |
 | RunDeadzone | Stretch value > this will cause running |
 | WalkDeadzone | Stretch value > this will cause walking |
-
+| ActiveDelay | Delay between OSC messages while leash is being grabbed |
+| InactiveDelay | Added delay between checks while Leash is not being grabbed. |
+| Logging | Logging for OSC messages being output
 
 #### Custom paramaters 
 (Still WIP functionality, the config for them won't change them yet)
@@ -94,8 +96,11 @@ I'll make a setup picture guide later.
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
         "SendingPort": 9000,
-        "RunDeadzone": 0.75,
-        "WalkDeadzone": 0.15,   
+        "RunDeadzone": 0.70,
+        "WalkDeadzone": 0.15,
+        "ActiveDelay": 0.1,     
+        "InactiveDelay": 0.5,     
+        "Logging": false,   
         "Paramaters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
@@ -107,6 +112,7 @@ I'll make a setup picture guide later.
                 "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
         }
 }
+
 ```
 #
 ### Credits
