@@ -30,17 +30,17 @@ if os.name == 'nt':
     ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
 
 # Source Path
-def resource_path(relative_path):
+def resource_path(relative_path): # What the heck is this all about?
     """Gets absolute path from relative path"""
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-# Load Config
+# Load Config. Create one if it's missing
 if not os.path.isfile('config.json'):
     with open('config.json', 'w') as outfile:
         json.dump(DefaultConfig, outfile, indent = 4)
 
-config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
+config = json.load(open('config.json'))
 IP = config["IP"]
 ListeningPort = config["ListeningPort"]
 SendingPort = config["SendingPort"]
