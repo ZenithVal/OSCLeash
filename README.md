@@ -1,7 +1,7 @@
 # OSCLeash
 
 Hi, sorry, I swear I'm not a dissapointment to my parents. This is NOT user friendly yet. <br />
-A simple system to make a functional "Leash" in VRchat using OSC as an input controller. <br /> 
+A "simple" system to make a functional "Leash" in VRchat using OSC as an input controller. <br /> 
 Could be adapted to any pullable physbone; EG: A tail. <br />
 If you're smarter and want to improve this code, by all means, PLEASE do so. 
 
@@ -21,7 +21,7 @@ On the Aim system, there's 4 Contact Recieverers, 2 position constraints, and 1 
 (Z_Positive - Z_Negative) * Leash_Stretch = Vertical  <br />
 (X_Positrive - Z_Negative) * Leash_Stretch = Horizontal
 
-Output Those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. Theres's a bit more to it than this but that's the simple rundown.
+Output those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. We use Leash_IsGrabbed as well to confirm it's actually being grabbed along with some other fancy stuff I don't really understand fully.
 
 ### Running the source:
 - Clone the github
