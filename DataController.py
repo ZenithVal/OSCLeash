@@ -16,7 +16,7 @@ class ConfigSettings:
             self.ActiveDelay = config["ActiveDelay"]
             self.InactiveDelay = config["InactiveDelay"]
             self.Logging = config["Logging"]
-        except:
+        except Exception as e:
             print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
             print(e,"was the exception")
 
