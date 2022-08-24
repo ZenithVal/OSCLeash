@@ -1,4 +1,5 @@
 from asyncore import dispatcher
+from inspect import Parameter
 from threading import Lock,Thread,Timer
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
@@ -20,14 +21,15 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 # Source Path
-def resource_path(relative_path):
-    """Gets absolute path from relative path"""
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
+# def resource_path(relative_path):
+#     """Gets absolute path from relative path"""
+#     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+#     return os.path.join(base_path, relative_path)
 
 #Load Config
 try:
-    config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
+    config = json.load(open('Config.json'))
+    
     IP = config["IP"]
     ListeningPort = config["ListeningPort"]
     SendingPort = config["SendingPort"]
@@ -89,6 +91,7 @@ def OnRecieve(address,value):
             leash.LeashStretch=value
         case "Leash_Z+":
             leash.Z_Positive=value
+            print("this worked")
         case "Leash_Z-":
             leash.Z_Negative=value
         case "Leash_X+":
@@ -98,13 +101,15 @@ def OnRecieve(address,value):
     #print(f"{parameter}: {value}") #This Prints every input
     statelock.release()
 
+ParaConfig = config["Parameters"]
+
 # Paramaters to read
-dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
-dispatcher.map("/avatar/parameters/Leash_Z-",OnRecieve) #Z Negative
-dispatcher.map("/avatar/parameters/Leash_X+",OnRecieve) #X Positive
-dispatcher.map("/avatar/parameters/Leash_X-",OnRecieve) #X Negative
-dispatcher.map("/avatar/parameters/Leash_Stretch",OnRecieve) #Physbone Stretch Value
-dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab Status
+dispatcher.map(ParaConfig["Z_Positive_Param"], OnRecieve) #Z Positive
+dispatcher.map(ParaConfig["Z_Negative_Param"], OnRecieve) #Z Negative
+dispatcher.map(ParaConfig["X_Positive_Param"], OnRecieve) #X Positive
+dispatcher.map(ParaConfig["X_Negative_Param"], OnRecieve) #X Negative
+dispatcher.map(ParaConfig["LeashStretch_Param"], OnRecieve) #Physbone Stretch Value
+dispatcher.map(ParaConfig["LeashGrab_Param"], OnRecieve) #Physbone Grab Status
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
 
 # Set up UDP OSC client   
