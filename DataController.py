@@ -10,7 +10,6 @@ class ConfigSettings:
             self.setSettings(config) #Set config values
 
         except Exception as e:
-
             print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
             print(e,"\n")
 
@@ -75,13 +74,3 @@ class Leash:
                 "Leash_IsGrabbed",
                 "Leash_Stretch"
             }
-
-
-
-    # LeashWasGrabbed: bool = False
-    # LeashGrabbed: bool = False
-    # LeashStretch: float = 0
-    # Z_Positive: float = 0
-    # Z_Negative: float = 0
-    # X_Positive: float = 0
-    # X_Negative: float = 0
