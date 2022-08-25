@@ -4,7 +4,6 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.udp_client import SimpleUDPClient
 from dataclasses import dataclass
-import vgamepad as vg
 import json
 import os
 import sys
@@ -69,8 +68,13 @@ print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
 print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
 #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 if XboxJoystickMovement:
-    gamepad = vg.VX360Gamepad()
-    print("Emulating Xbox 360 Controller for input instead of OSC")
+    try:
+        import vgamepad as vg
+        gamepad = vg.VX360Gamepad()
+        print("Emulating Xbox 360 Controller for input instead of OSC")
+    except Exception as e:
+        print(e)
+        print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
 
 @dataclass
 class LeashParameters:

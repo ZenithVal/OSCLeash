@@ -1,6 +1,6 @@
 # OSCLeash
 
-Hi, sorry, I swear I'm not a dissapointment to my parents. This is NOT user friendly yet. <br />
+Hi, sorry, I swear I'm not a disappointment to my parents. This is NOT user friendly yet. <br />
 A "simple" system to make a functional "Leash" in VRchat using OSC as an input controller. <br /> 
 Could be adapted to any pullable physbone; EG: A tail. <br />
 If you're smarter and want to improve this code, by all means, PLEASE do so. 
@@ -29,7 +29,8 @@ Output those two values back to VRC and boom, you're moving in the direction of 
 
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. Might break, dunno. This will probably be removed when VRC fixes the issue. You'll hear a little windows connect noise if you've done it right. Make sure to select the VRC window so the inputs are output correctly.
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. This will probably be removed when VRC fixes the issue. Check the extra steps in setup for this.
+
 
 ##
 
@@ -55,9 +56,14 @@ Requires VRC3 Avatar SDK.
 5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
 6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. The source should be the origin of your leash.
 7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
-8. Run program & enjoy. If using the temporary xbox input workaround, make sure to select the VRC window.
+8. Run program & enjoy. 
 
 There will be a setup guide later.
+
+**If using executable with temporary xbox input workaround**
+- You need this installed https://github.com/ViGEm/ViGEmBus/releases 
+- Make sure the VRC window is selected
+
 
 #
 
