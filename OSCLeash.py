@@ -4,6 +4,7 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.udp_client import SimpleUDPClient
 from dataclasses import dataclass
+import vgamepad as vg
 import json
 import os
 import sys
@@ -36,6 +37,7 @@ try:
     ActiveDelay = config["ActiveDelay"]
     InactiveDelay = config["InactiveDelay"]
     Logging = config["Logging"]
+    XboxJoystickMovement = config["XboxJoystickMovement"]
     cls()
     print("Successfully read config.")
 except Exception as e: 
@@ -50,6 +52,7 @@ except Exception as e:
     ActiveDelay = .1
     InactiveDelay = .5
     Logging = True
+    XboxJoystickMovement = False
 
 # Settings confirmation
 print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -63,6 +66,9 @@ print("Run Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
 print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
 print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
 #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
+if XboxJoystickMovement:
+    gamepad = vg.VX360Gamepad()
+    print("Emulating Xbox 360 Controller for input instead of OSC")
 
 @dataclass
 class LeashParameters:
@@ -126,8 +132,6 @@ def LeashRun():
     VerticalOutput = (leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch
     HorizontalOutput = (leash.X_Positive-leash.X_Negative) * leash.LeashStretch
 
-    
-
     #Read Grab state
     LeashGrabbed = leash.LeashGrabbed
 
@@ -160,10 +164,18 @@ def LeashRun():
 
 # Output OSC
 def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
-    oscClient.send_message("/input/Vertical", VerticalOutput)
-    oscClient.send_message("/input/Horizontal", HorizontalOutput)
-    oscClient.send_message("/input/Run", RunOutput)
-    
+    if XboxJoystickMovement: #Xbox Emulation REMOVE LATER WHEN OSC IS FIXED
+        gamepad.left_joystick_float(x_value_float=HorizontalOutput, y_value_float=VerticalOutput)
+        if RunOutput == 1:
+            gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)      
+        else:
+            gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+        gamepad.update()
+    else: #Normal function
+        oscClient.send_message("/input/Vertical", VerticalOutput)
+        oscClient.send_message("/input/Horizontal", HorizontalOutput)
+        oscClient.send_message("/input/Run", RunOutput)
+
     if Logging:
         print(
         "{:.2f}".format(VerticalOutput),"&",
