@@ -25,11 +25,11 @@ Output those two values back to VRC and boom, you're moving in the direction of 
 
 ##
 
-### Known issue
+### Known issue WITH WORKAROUND.
 
-As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement still causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
+As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. Might break, dunno. This will probably be removed when VRC fixes the issue.
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. Might break, dunno. This will probably be removed when VRC fixes the issue. You'll hear a little windows connect noise if you've done it right. Make sure to select the VRC window so the inputs are output correctly.
 
 ##
 
@@ -48,16 +48,16 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement s
 ### Setup
 Requires VRC3 Avatar SDK.
 
-1. Downlaod & get the program running via one of the above methods.
-2. Define config.json setting; EG IP, Port, & paramaters (last bit coming soon)
-3. Grab the prefab from the releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
-4. Drop the Prefab onto the root of your avatar (You can scale the prefab down smaller, as long as it's done uniformially and you don't go too small)
-5. Set the source of the constraint on "Aim Target" to the end of your "leash"
-6. Set the source of the physbone leash to your leash, tail ect, or delete and make your own. 
-7. Set "Paramater" on your leash's physbone to "Leash" 
-8. Your leash needs to be able to stretch, at least a tiny bit. 
+1. Download the program via one of the above methods.
+2. Define config.json settings if needed.
+3. Grab the prefab from releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
+4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed. 
+5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
+6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. The source should be the origin of your leash.
+7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
+8. Run program & enjoy. If using the temporary xbox input workaround, make sure to select the VRC window.
 
-I'll make a setup picture guide later.
+There will be a setup guide later.
 
 #
 
