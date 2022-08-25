@@ -4,6 +4,7 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.udp_client import SimpleUDPClient
 from dataclasses import dataclass
+import vgamepad as vg
 import json
 import os
 import sys
@@ -20,6 +21,7 @@ DefaultConfig = {
     "ActiveDelay" : 0.1,
     "InactiveDelay" : 0.5,
     "Logging" : False,
+    "XboxJoystickMovement" : False,
     "Parameters" : {
         "Z_Positive": "Leash_Z+",
         "Z_Negative": "Leash_Z-",
@@ -62,6 +64,7 @@ try:
     InactiveDelay = config["InactiveDelay"]
     Logging = config["Logging"]
     Parameters = config["Parameters"]
+    XboxJoystickMovement = config["XboxJoystickMovement"]
     cls()
     print("Successfully read config.")
 except Exception as e: 
@@ -77,6 +80,7 @@ except Exception as e:
     ActiveDelay = .1
     InactiveDelay = .5
     Logging = False
+    XboxJoystickMovement = False
     Parameters = {
         "Z_Positive": "Leash_Z+",
         "Z_Negative": "Leash_Z-",
@@ -97,6 +101,9 @@ print("Run Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
 print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
 print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
 #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
+if XboxJoystickMovement:
+    gamepad = vg.VX360Gamepad()
+    print("Emulating Xbox 360 Controller for input instead of OSC")
 
 @dataclass
 class LeashParameters:
@@ -117,22 +124,27 @@ def OnReceive_ZPositive(address, value):
     statelock.acquire()
     leash.Z_Positive = value
     statelock.release()
+    
 def OnReceiver_ZNegative(address, value):
     statelock.acquire()
     leash.Z_Negative = value
     statelock.release()
+    
 def OnReceive_XPositive(address, value):
     statelock.acquire()
     leash.X_Positive = value
     statelock.release()
+    
 def OnReceiver_XNegative(address, value):
     statelock.acquire()
     leash.X_Negative = value
     statelock.release()
+    
 def OnReceiver_IsGrabbed(address, value):
     statelock.acquire()
     leash.LeashGrabbed = value
     statelock.release()
+    
 def OnReceiver_Stretch(address, value):
     statelock.acquire()
     leash.LeashStretch = value
@@ -166,8 +178,6 @@ def LeashRun():
     VerticalOutput = (leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch
     HorizontalOutput = (leash.X_Positive-leash.X_Negative) * leash.LeashStretch
 
-    
-
     #Read Grab state
     LeashGrabbed = leash.LeashGrabbed
 
@@ -200,10 +210,18 @@ def LeashRun():
 
 # Output OSC
 def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
-    oscClient.send_message("/input/Vertical", VerticalOutput)
-    oscClient.send_message("/input/Horizontal", HorizontalOutput)
-    oscClient.send_message("/input/Run", RunOutput)
-    
+    if XboxJoystickMovement: #Xbox Emulation REMOVE LATER WHEN OSC IS FIXED
+        gamepad.left_joystick_float(x_value_float=HorizontalOutput, y_value_float=VerticalOutput)
+        if RunOutput == 1:
+            gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+        else:
+            gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+        gamepad.update()
+    else: #Normal function
+        oscClient.send_message("/input/Vertical", VerticalOutput)
+        oscClient.send_message("/input/Horizontal", HorizontalOutput)
+        oscClient.send_message("/input/Run", RunOutput)
+
     if Logging:
         print(
         "{:.2f}".format(VerticalOutput),"&",

@@ -1,1 +1,2 @@
-python-osc==1.8.0
+python_osc>=1.8.0
+vgamepad>=0.0.8
