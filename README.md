@@ -49,7 +49,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement s
 Requires VRC3 Avatar SDK.
 
 1. Download & get the program running via one of the above methods.
-2. Define config.json setting; EG IP, Port, & paramaters (last bit coming soon)
+2. Define config.json setting; EG IP, Port, & Paramaters
 3. Grab the prefab from the releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
 4. Drop the Prefab onto the root of your avatar (You can scale the prefab down smaller, as long as it's done uniformially and you don't go too small)
 5. Set the source of the constraint on "Aim Target" to the end of your "leash"
@@ -74,17 +74,20 @@ I'll make a setup picture guide later.
 | InactiveDelay        | Added delay between checks while Leash is not being grabbed. | 0.5 seconds   |
 | Logging              | Logging for OSC messages being output | True          
 | XboxJoystickMovement | Esoteric workaround for VRC breaking animations upon OSC input | false         
+
+
 ** You should only change these if you're running multiple OSC apps or are running this on a different computer than you run the game on. If you don't know what this means leave them default.
 
 #### Custom Paramaters 
 
 | Paramater        | Description                               |
 |------------------|-------------------------------------------| 
-| Z_Positive       | Forward contact parameter**               |
-| Z_Negative       | Back contact parameter**                  |
-| X_Positive       | Right contact parameter**                 |
-| X_Negative       | Left contact parameter**                  |
+| Z_Positive**       | Forward contact parameter               |
+| Z_Negative**       | Back contact parameter                  |
+| X_Positive**       | Right contact parameter                 |
+| X_Negative**       | Left contact parameter                  |
 | ContactParameter | The Parameter used on your leash Physbone |
+
 ** Leave these default if you haven't changed the prefab that comes with the leash, or you don't know what this means.
 ##
 
