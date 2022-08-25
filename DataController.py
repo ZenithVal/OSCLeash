@@ -75,13 +75,3 @@ class Leash:
                 "Leash_IsGrabbed",
                 "Leash_Stretch"
             }
-
-
-
-    # LeashWasGrabbed: bool = False
-    # LeashGrabbed: bool = False
-    # LeashStretch: float = 0
-    # Z_Positive: float = 0
-    # Z_Negative: float = 0
-    # X_Positive: float = 0
-    # X_Negative: float = 0
