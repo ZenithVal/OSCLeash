@@ -5,9 +5,10 @@
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
         "ActiveDelay": 0.1,     
-        "InactiveDelay": 0.5,     
-        "Logging": true,   
-        "Paramaters":
+        "InactiveDelay": 0.5,
+        "Logging": true,
+        "XboxJoystickMovement": false,   
+        "Parameters":
         {
                 "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
                 "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
