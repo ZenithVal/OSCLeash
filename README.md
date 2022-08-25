@@ -35,11 +35,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement s
 
 ### Running the source:
 - Clone the github
-- Aquire Prereqs
-  - Python 3.10
-  - Python-osc 1.8.0 https://pypi.org/project/python-osc/
-  - vgamepad 0.0.8 https://pypi.org/project/vgamepad/ (temp until VRC fixes OSC bug)
-  - That's PROBABLY it? I literally don't know.
+- Run `pip install -r requirements.txt` in the directory to install libraries
 - Run the python script
 
 ### Running Executable
