@@ -15,13 +15,17 @@ DefaultConfig = {
     "IP" : "127.0.0.1",
     "ListeningPort" : 9001,
     "SendingPort" : 9000,
+    "RunDeadzone" : 0.70,
+    "WalkDeadzone" : 0.15,
+    "ActiveDelay" : 0.1,
+    "InactiveDelay" : 0.5,
+    "Logging" : False,
     "Parameters" : {
-        "Z_Positive_Param": "Z+",
-        "Z_Negative_Param": "Z-",
-        "X_Positive_Param": "X+",
-        "X_Negative_Param": "X-",
-        "LeashGrab_Param": "Leash_IsGrabbed",
-        "LeashStretch_Param": "Leash_Stretch"
+        "Z_Positive": "Leash_Z+",
+        "Z_Negative": "Leash_Z-",
+        "X_Positive": "Leash_X+",
+        "X_Negative": "Leash_X-",
+        "ContactParameter" : "Leash"
     }
 }
 
@@ -29,41 +33,70 @@ DefaultConfig = {
 if os.name == 'nt':
     ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
 
-# Source Path
-def resource_path(relative_path): # What the heck is this all about?
-    """Gets absolute path from relative path"""
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
-
-# Load Config. Create one if it's missing
-if not os.path.isfile('config.json'):
-    with open('config.json', 'w') as outfile:
-        json.dump(DefaultConfig, outfile, indent = 4)
-
-config = json.load(open('config.json'))
-IP = config["IP"]
-ListeningPort = config["ListeningPort"]
-SendingPort = config["SendingPort"]
-
-def get_parameter_path(name):
-    """Gets parameter address from parameters object"""
-    param = config["Parameters"][name]
-    prefix = "/avatar/parameters/"
-    return param if param.startswith(prefix) else prefix + param
-
 # Console Clear
 def cls():
     """Clears Console"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-cls() #Comment this out if stuff breaks lmao
-print("OSCLeash is Running! Good luck!")
+# Source Path
+def resource_path(relative_path):
+    """Gets absolute path from relative path"""
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+#Load Config
+try:
+    configPath = os.path.join(os.path.join(resource_path('config.json')))
+    if not os.path.isfile('config.json'):
+        print('\x1b[1;31;40m' + 'Config missing. Creating...  ' + '\x1b[0m')
+        with open('config.json', 'w') as outfile:
+            json.dump(DefaultConfig, outfile, indent = 4)
+
+    config = json.load(open(configPath))
+    IP = config["IP"]
+    ListeningPort = config["ListeningPort"]
+    SendingPort = config["SendingPort"]
+    RunDeadzone = config["RunDeadzone"]
+    WalkDeadzone = config["WalkDeadzone"]
+    ActiveDelay = config["ActiveDelay"]
+    InactiveDelay = config["InactiveDelay"]
+    Logging = config["Logging"]
+    Parameters = config["Parameters"]
+    cls()
+    print("Successfully read config.")
+except Exception as e: 
+    cls()
+    print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
+    print('\x1b[1;31;40m' + 'Delete the config file for a new one to be generated.  ' + '\x1b[0m')
+    print(e,"was the exception")
+    IP = "127.0.0.1"
+    ListeningPort = 9001
+    SendingPort = 9000
+    RunDeadzone = 0.70
+    WalkDeadzone = 0.15
+    ActiveDelay = .1
+    InactiveDelay = .5
+    Logging = False
+    Parameters = {
+        "Z_Positive": "Leash_Z+",
+        "Z_Negative": "Leash_Z-",
+        "X_Positive": "Leash_X+",
+        "X_Negative": "Leash_X-",
+        "ContactParameter": "Leash"
+    }
+
+# Settings confirmation
+print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
 if IP == "127.0.0.1":
     print("IP: Localhost")
 else:  
-    print("IP: Not Localhost, wtf?")
-print("Listening on...", ListeningPort)
-print("Sending on...", SendingPort)
+    print("IP: Not Localhost? Wack.")
+print("Listening on port", ListeningPort)
+print("Sending on port",SendingPort)
+print("Run Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
+print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
+print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
+#print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 
 @dataclass
 class LeashParameters:
@@ -80,40 +113,50 @@ leash = LeashParameters()
 statelock = Lock()
 dispatcher = Dispatcher()
 
-def OnRecieve(address,value):
-    parameter = address.split("/")[3]
+def OnReceive_ZPositive(address, value):
     statelock.acquire()
-    match parameter:
-        case "Leash_IsGrabbed":
-            leash.LeashGrabbed=value
-        case "Leash_Stretch":
-            leash.LeashStretch=value
-        case "Leash_Z+":
-            leash.Z_Positive=value
-        case "Leash_Z-":
-            leash.Z_Negative=value
-        case "Leash_X+":
-            leash.X_Positive=value
-        case "Leash_X-":
-            leash.X_Negative=value          
-    #print(f"{parameter}: {value}") #This Prints every input
+    leash.Z_Positive = value
+    statelock.release()
+def OnReceiver_ZNegative(address, value):
+    statelock.acquire()
+    leash.Z_Negative = value
+    statelock.release()
+def OnReceive_XPositive(address, value):
+    statelock.acquire()
+    leash.X_Positive = value
+    statelock.release()
+def OnReceiver_XNegative(address, value):
+    statelock.acquire()
+    leash.X_Negative = value
+    statelock.release()
+def OnReceiver_IsGrabbed(address, value):
+    statelock.acquire()
+    leash.LeashGrabbed = value
+    statelock.release()
+def OnReceiver_Stretch(address, value):
+    statelock.acquire()
+    leash.LeashStretch = value
     statelock.release()
 
-# Parameters to read
-parameters = config["Parameters"]
-dispatcher.map(get_parameter_path("Z_Positive_Param"), OnRecieve) #Z Positive
-dispatcher.map(get_parameter_path("Z_Negative_Param"), OnRecieve) #Z Negative
-dispatcher.map(get_parameter_path("X_Positive_Param"), OnRecieve) #X Positive
-dispatcher.map(get_parameter_path("X_Negative_Param"), OnRecieve) #X Negative
-dispatcher.map(get_parameter_path("LeashGrab_Param"), OnRecieve) #Physbone Grab Status
-dispatcher.map(get_parameter_path("LeashStretch_Param"), OnRecieve) #Physbone Stretch Value
+# Paramaters to read
+dispatcher.map(f'/avatar/parameters/{Parameters["Z_Positive"]}',OnReceive_ZPositive) #Z Positive
+dispatcher.map(f'/avatar/parameters/{Parameters["Z_Negative"]}',OnReceiver_ZNegative) #Z Negative
+dispatcher.map(f'/avatar/parameters/{Parameters["X_Positive"]}',OnReceive_XPositive) #X Positive
+dispatcher.map(f'/avatar/parameters/{Parameters["X_Negative"]}',OnReceiver_XNegative) #X Negative
+dispatcher.map(f'/avatar/parameters/{Parameters["ContactParameter"]}_Stretch',OnReceiver_Stretch) #Physbone Stretch Value
+dispatcher.map(f'/avatar/parameters/{Parameters["ContactParameter"]}_IsGrabbed',OnReceiver_IsGrabbed) #Physbone Grab Status
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
 
 # Set up UDP OSC client   
 oscClient = SimpleUDPClient(IP, SendingPort) 
 def StartServer():
-    server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
-    server.serve_forever()
+    try:
+        server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
+        server.serve_forever()
+    except:
+        print('\x1b[1;31;41m' + '                                                            ' + '\x1b[0m')
+        print('\x1b[1;31;40m' + '  Warning: An application is already running on this port!  ' + '\x1b[0m')
+        print('\x1b[1;31;41m' + '                                                            ' + '\x1b[0m')
 
 # Run Leash
 def LeashRun():
@@ -122,6 +165,8 @@ def LeashRun():
     #Maths 
     VerticalOutput = (leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch
     HorizontalOutput = (leash.X_Positive-leash.X_Negative) * leash.LeashStretch
+
+    
 
     #Read Grab state
     LeashGrabbed = leash.LeashGrabbed
@@ -136,27 +181,35 @@ def LeashRun():
     statelock.release()
 
     if LeashGrabbed == True: #GrabCheck
-        if -0.25 > HorizontalOutput < 0.25 and -0.25 > VerticalOutput <= 0.25: #Deadzone
-            LeashOutput(0.0,0.0,0)
-        else:
+        if leash.LeashStretch > RunDeadzone: #Running deadzone
             LeashOutput(VerticalOutput,HorizontalOutput,1)
-    elif LeashReleased == True: 
+        elif leash.LeashStretch > WalkDeadzone: #Walking deadzone
+            LeashOutput(VerticalOutput,HorizontalOutput,0)
+        else: #Not stretched enough to move.
+            LeashOutput(0.0,0.0,0)
+    elif LeashReleased == True: #Leash was Dropped, send stop movement.
         LeashReleased = False
         LeashOutput(0.0,0.0,0)
-        time.sleep(0.3)
+        time.sleep(InactiveDelay)
         LeashOutput(0.0,0.0,0) #Double output, just in case.
     else:
-        time.sleep(0.5) #Add 600ms when not grabbed; save on performance?
+        time.sleep(InactiveDelay) #Add 500ms when not grabbed; save on performance?
 
     #Wait 100ms, edge of human reaction time, probably?
-    Timer(0.1,LeashRun).start()
+    Timer(ActiveDelay,LeashRun).start()
 
 # Output OSC
 def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
     oscClient.send_message("/input/Vertical", VerticalOutput)
     oscClient.send_message("/input/Horizontal", HorizontalOutput)
     oscClient.send_message("/input/Run", RunOutput)
-    # print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput) #Debug Outputs
+    
+    if Logging:
+        print(
+        "{:.2f}".format(VerticalOutput),"&",
+        "{:.2f}".format(HorizontalOutput),"&",
+        RunOutput)
+        #print("",VerticalOutput,"&",HorizontalOutput,"&",RunOutput) #Way too many decimale places debug
 
 thread=Thread(target=StartServer)
 thread.start()
