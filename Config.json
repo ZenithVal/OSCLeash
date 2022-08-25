@@ -8,12 +8,12 @@
         "InactiveDelay": 0.5,     
         "Logging": true,   
         "Parameters":
-        {
-                "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
-                "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "X_Positive_Param": "/avatar/parameters/Leash_X+",
-                "X_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
-                "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
-        }
+        [
+                "Leash_Z+",
+                "Leash_Z-",
+                "Leash_X+",
+                "Leash_Z-",
+                "Leash_IsGrabbed",
+                "Leash_Stretch"
+        ]
 }
