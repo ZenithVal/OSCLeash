@@ -4,11 +4,14 @@
         "SendingPort": 9000,
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
+        "StrengthMultiplier": 1.2,
         "ActiveDelay": 0.1,     
-        "InactiveDelay": 0.5,     
-        "Logging": true,   
+        "InactiveDelay": 0.5,
+        "Logging": true,
+        "XboxJoystickMovement": false,   
         "Parameters":
         {
+                "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
                 "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
                 "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
                 "X_Positive_Param": "/avatar/parameters/Leash_X+",

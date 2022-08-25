@@ -8,13 +8,16 @@ import os
 import ctypes
 
 #test objects
-from DataController import ConfigSettings
+from DataController import ConfigSettings, Leash
 from PackageManager import Package
 
-
 # Set window name on the Window
-if os.name == 'nt':
-    ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
+def setWindowTitle():
+    if os.name == 'nt':
+        os.system("OSCLeash")
+
+    # if os.name == 'nt':
+    #     ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
 
 # Console Clear
 def cls():
@@ -22,11 +25,19 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def main():
+    
+    setWindowTitle()
+    cls()
+
     print("\n-------------------Main function-------------------\n")
-    Settings = ConfigSettings("Config.json")
+    settings = ConfigSettings("Config.json")
 
     # Settings confirmation
-    Settings.printValues()
+    #settings.printInfo()
+
+    leash = Leash("Config.json")
+    print(leash.configParameters)
+    
     
 
 
