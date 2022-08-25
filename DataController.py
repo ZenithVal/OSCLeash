@@ -1,11 +1,10 @@
-from pythonosc.dispatcher import Dispatcher
 import json
 
 class ConfigSettings:
 
     def __init__(self, configFileName):
         try:
-            config = json.load(open('Config.json'))
+            config = json.load(open(configFileName))
             print("Successfully read config.")
 
             self.IP = config["IP"]
@@ -18,7 +17,7 @@ class ConfigSettings:
             self.Logging = config["Logging"]
         except Exception as e:
             print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
-            print(e,"was the exception")
+            print("\n", e,"was the exception")
 
             self.IP = "127.0.0.1"
             self.ListeningPort = 9001
@@ -43,32 +42,11 @@ class ConfigSettings:
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 
-
-
 class Leash:
-    
-    def __init__(self, configFileName):
-        try:
-            config = json.load(open('Config.json'))
-            print("Successfully read config.")
-
-            dispatcher = Dispatcher()
-
-            # Paramaters to read
-            dispatcher.map("/avatar/parameters/Leash_Z+",self.OnRecieve) #Z Positive
-            dispatcher.map("/avatar/parameters/Leash_Z-",self.OnRecieve) #Z Negative
-            dispatcher.map("/avatar/parameters/Leash_X+",self.OnRecieve) #X Positive
-            dispatcher.map("/avatar/parameters/Leash_X-",self.OnRecieve) #X Negative
-            dispatcher.map("/avatar/parameters/Leash_Stretch",self.OnRecieve) #Physbone Stretch Value
-            dispatcher.map("/avatar/parameters/Leash_IsGrabbed",self.OnRecieve) #Physbone Grab Status
-            #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
-
-        except:
-            print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
-            print(e,"was the exception")
-            exit()
-
-
-    def OnRecieve(self, address, value):
-        parameter = address.split("/")[3]
-        self.parameters[parameter] = value
+    LeashWasGrabbed: bool = False
+    LeashGrabbed: bool = False
+    LeashStretch: float = 0
+    Z_Positive: float = 0
+    Z_Negative: float = 0
+    X_Positive: float = 0
+    X_Negative: float = 0
