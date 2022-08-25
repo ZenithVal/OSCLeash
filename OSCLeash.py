@@ -35,9 +35,11 @@ try:
     SendingPort = config["SendingPort"]
     RunDeadzone = config["RunDeadzone"]
     WalkDeadzone = config["WalkDeadzone"]
+    StrengthMultiplier = config["StrengthMultiplier"]
     ActiveDelay = config["ActiveDelay"]
     InactiveDelay = config["InactiveDelay"]
     Logging = config["Logging"]
+    XboxJoystickMovement = config["XboxJoystickMovement"]
     cls()
     print("Successfully read config.")
 except Exception as e: 
@@ -49,9 +51,11 @@ except Exception as e:
     SendingPort = 9000
     RunDeadzone = 0.70
     WalkDeadzone = 0.15
+    StrengthMultiplier = 1.2    
     ActiveDelay = .1
     InactiveDelay = .5
     Logging = True
+    XboxJoystickMovement = False
 
 # Settings confirmation
 print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -61,10 +65,18 @@ else:
     print("IP: Not Localhost? Wack.")
 print("Listening on port", ListeningPort)
 print("Sending on port",SendingPort)
-print("Run Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
+print("Running Deadzone of {:.0f}".format(RunDeadzone*100)+"% stretch")
 print("Walking Deadzone of {:.0f}".format(WalkDeadzone*100)+"% stretch")
 print("Delays of {:.0f}".format(ActiveDelay*1000),"& {:.0f}".format(InactiveDelay*1000),"ms")
 #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
+if XboxJoystickMovement:
+    try:
+        import vgamepad as vg
+        gamepad = vg.VX360Gamepad()
+        print("Emulating Xbox 360 Controller for input instead of OSC")
+    except Exception as e:
+        print(e)
+        print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
 
 @dataclass
 class LeashParameters:
@@ -81,6 +93,7 @@ leash = LeashParameters()
 statelock = Lock()
 dispatcher = Dispatcher()
 
+#Recieve paramaters and adjust values
 def OnRecieve(address,value):
     parameter = address.split("/")[3]
     statelock.acquire()
@@ -99,7 +112,7 @@ def OnRecieve(address,value):
         case "Leash_X-":
             leash.X_Negative=value          
     #print(f"{parameter}: {value}") #This Prints every input
-    statelock.release()
+    statelock.release() 
 
 # # Paramaters to read
 # dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
@@ -139,15 +152,17 @@ def StartServer():
         print('\x1b[1;31;40m' + '  Warning: An application is already running on this port!  ' + '\x1b[0m')
         print('\x1b[1;31;41m' + '                                                            ' + '\x1b[0m')
 
+#clamp float values between -1 and 1
+def clamp (n):
+    return max(-1.0, min(n, 1.0))
+
 # Run Leash
 def LeashRun():
     statelock.acquire()
 
     #Maths 
-    VerticalOutput = (leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch
-    HorizontalOutput = (leash.X_Positive-leash.X_Negative) * leash.LeashStretch
-
-    
+    VerticalOutput = clamp((leash.Z_Positive-leash.Z_Negative) * leash.LeashStretch * StrengthMultiplier)
+    HorizontalOutput = clamp((leash.X_Positive-leash.X_Negative) * leash.LeashStretch * StrengthMultiplier)
 
     #Read Grab state
     LeashGrabbed = leash.LeashGrabbed
@@ -181,10 +196,18 @@ def LeashRun():
 
 # Output OSC
 def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
-    oscClient.send_message("/input/Vertical", VerticalOutput)
-    oscClient.send_message("/input/Horizontal", HorizontalOutput)
-    oscClient.send_message("/input/Run", RunOutput)
-    
+    if XboxJoystickMovement: #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
+        gamepad.left_joystick_float(x_value_float=HorizontalOutput, y_value_float=VerticalOutput)
+        if RunOutput == 1:
+            gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)      
+        else:
+            gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+        gamepad.update()
+    else: #Normal function
+        oscClient.send_message("/input/Vertical", VerticalOutput)
+        oscClient.send_message("/input/Horizontal", HorizontalOutput)
+        oscClient.send_message("/input/Run", RunOutput)
+
     if Logging:
         print(
         "{:.2f}".format(VerticalOutput),"&",
