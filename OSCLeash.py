@@ -101,16 +101,32 @@ def OnRecieve(address,value):
     #print(f"{parameter}: {value}") #This Prints every input
     statelock.release()
 
+# # Paramaters to read
+# dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
+# dispatcher.map("/avatar/parameters/Leash_Z-",OnRecieve) #Z Negative
+# dispatcher.map("/avatar/parameters/Leash_X+",OnRecieve) #X Positive
+# dispatcher.map("/avatar/parameters/Leash_X-",OnRecieve) #X Negative
+# dispatcher.map("/avatar/parameters/Leash_Stretch",OnRecieve) #Physbone Stretch Value
+# dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab Status
+# #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
+
+#------------------------Testing area------------------------#
+
+
 ParaConfig = config["Parameters"]
 
+dispatcher.map("/avatar/parameters", OnRecieve) #Testing to see if value returns the same based shortened address
+
 # Paramaters to read
-dispatcher.map(ParaConfig["Z_Positive_Param"], OnRecieve) #Z Positive
-dispatcher.map(ParaConfig["Z_Negative_Param"], OnRecieve) #Z Negative
-dispatcher.map(ParaConfig["X_Positive_Param"], OnRecieve) #X Positive
-dispatcher.map(ParaConfig["X_Negative_Param"], OnRecieve) #X Negative
-dispatcher.map(ParaConfig["LeashStretch_Param"], OnRecieve) #Physbone Stretch Value
-dispatcher.map(ParaConfig["LeashGrab_Param"], OnRecieve) #Physbone Grab Status
+# dispatcher.map(ParaConfig["Z_Positive_Param"], OnRecieve) #Z Positive
+# dispatcher.map(ParaConfig["Z_Negative_Param"], OnRecieve) #Z Negative
+# dispatcher.map(ParaConfig["X_Positive_Param"], OnRecieve) #X Positive
+# dispatcher.map(ParaConfig["X_Negative_Param"], OnRecieve) #X Negative
+# dispatcher.map(ParaConfig["LeashStretch_Param"], OnRecieve) #Physbone Stretch Value
+# dispatcher.map(ParaConfig["LeashGrab_Param"], OnRecieve) #Physbone Grab Status
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
+
+#------------------------Testing area------------------------#
 
 # Set up UDP OSC client   
 oscClient = SimpleUDPClient(IP, SendingPort) 

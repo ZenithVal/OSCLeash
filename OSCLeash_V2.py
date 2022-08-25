@@ -4,9 +4,13 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.udp_client import SimpleUDPClient
 from dataclasses import dataclass
-import DataController
 import os
 import ctypes
+
+#test objects
+from DataController import ConfigSettings
+from PackageManager import Package
+
 
 # Set window name on the Window
 if os.name == 'nt':
@@ -19,9 +23,12 @@ def cls():
 
 def main():
     print("\n-------------------Main function-------------------\n")
-    Settings = DataController.ConfigSettings("Config.json")
+    Settings = ConfigSettings("Config.json")
 
     # Settings confirmation
     Settings.printValues()
+    
+
+
 
 main()
