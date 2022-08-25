@@ -27,7 +27,7 @@ DefaultConfig = {
         "Z_Negative": "Leash_Z-",
         "X_Positive": "Leash_X+",
         "X_Negative": "Leash_X-",
-        "ContactParameter" : "Leash"
+        "PhysboneParameter" : "Leash"
     }
 }
 
@@ -86,7 +86,7 @@ except Exception as e:
         "Z_Negative": "Leash_Z-",
         "X_Positive": "Leash_X+",
         "X_Negative": "Leash_X-",
-        "ContactParameter": "Leash"
+        "PhysboneParameter": "Leash"
     }
 
 # Settings confirmation
@@ -155,8 +155,8 @@ dispatcher.map(f'/avatar/parameters/{Parameters["Z_Positive"]}',OnReceive_ZPosit
 dispatcher.map(f'/avatar/parameters/{Parameters["Z_Negative"]}',OnReceiver_ZNegative) #Z Negative
 dispatcher.map(f'/avatar/parameters/{Parameters["X_Positive"]}',OnReceive_XPositive) #X Positive
 dispatcher.map(f'/avatar/parameters/{Parameters["X_Negative"]}',OnReceiver_XNegative) #X Negative
-dispatcher.map(f'/avatar/parameters/{Parameters["ContactParameter"]}_Stretch',OnReceiver_Stretch) #Physbone Stretch Value
-dispatcher.map(f'/avatar/parameters/{Parameters["ContactParameter"]}_IsGrabbed',OnReceiver_IsGrabbed) #Physbone Grab Status
+dispatcher.map(f'/avatar/parameters/{Parameters["PhysboneParameter"]}_Stretch',OnReceiver_Stretch) #Physbone Stretch Value
+dispatcher.map(f'/avatar/parameters/{Parameters["PhysboneParameter"]}_IsGrabbed',OnReceiver_IsGrabbed) #Physbone Grab Status
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
 
 # Set up UDP OSC client   
