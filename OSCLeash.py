@@ -109,7 +109,7 @@ def OnRecieve(address,value):
         case "Leash_X-":
             leash.X_Negative=value          
     #print(f"{parameter}: {value}") #This Prints every input
-    statelock.release() 
+    statelock.release()
 
 # Paramaters to read
 dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
@@ -124,6 +124,7 @@ dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab St
 oscClient = SimpleUDPClient(IP, SendingPort) 
 def StartServer():
     try:
+        print("server")
         server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
         server.serve_forever()
     except:
@@ -196,5 +197,6 @@ def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
 
 thread=Thread(target=StartServer)
 thread.start()
+print("test")
 LeashRun()
 LeashOutput(0.0,0.0,0)
