@@ -1,5 +1,4 @@
 
-
 DefaultConfig = {
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
@@ -10,12 +9,20 @@ DefaultConfig = {
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": True,
-        "XboxJoystickMovement": False,   
+        "XboxJoystickMovement": False,
         
         "PhysboneParameters":
         [
                 "Leash"
-        ]
+        ],
+
+        "DirectionalParamaters":
+        {
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
+        }
 }
 
 class ConfigSettings:
@@ -54,7 +61,7 @@ class ConfigSettings:
 
 class Leash:
 
-    def __init__(self, paraName, contacts, settings):
+    def __init__(self, paraName, contacts, settings: ConfigSettings):
         
         self.Name: str = paraName
         self.settings = settings
@@ -78,3 +85,9 @@ class Leash:
         self.Z_Negative: float = 0
         self.X_Positive: float = 0
         self.X_Negative: float = 0
+
+    def printDirections(self):
+        print("{}: {}".format(self.Z_Positive_ParamName, self.Z_Positive))
+        print("{}: {}".format(self.Z_Negative_ParamName, self.Z_Negative))
+        print("{}: {}".format(self.X_Positive_ParamName, self.X_Positive))
+        print("{}: {}".format(self.X_Negative_ParamName, self.X_Negative))

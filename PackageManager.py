@@ -4,7 +4,7 @@ from threading import Lock, Thread
 from DataController import Leash
 
 
-#TODO: Find a way to trigger a thread when grabbed is true
+#TODO: Find a way to trigger the run thread when grabbed is true
 class Package:
     
     def __init__(self):

@@ -1,4 +1,3 @@
-from cProfile import run
 from DataController import DefaultConfig, ConfigSettings, Leash
 from PackageManager import Package
 from pythonosc.udp_client import SimpleUDPClient
@@ -27,10 +26,14 @@ def createDefaultConfigFile(configPath): # Creates a default config
         print(e)
         exit()
 
+def clamp (n):
+    return max(-1.0, min(n, 1.0))
+
 def leashRun(leash: Leash): # TODO: make work for one leash
 
     cls()
     leash.settings.printInfo()
+    leash.printDirections()
     print("\nCurrent Status:\n")
 
     statelock = Lock()
@@ -38,8 +41,8 @@ def leashRun(leash: Leash): # TODO: make work for one leash
     statelock.acquire()
 
     #Movement
-    VerticalOutput = (leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier
-    HorizontalOutput = (leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier
+    VerticalOutput = clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
+    HorizontalOutput = clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
 
     #Grab state
     LeashGrabbed = leash.Grabbed
@@ -66,7 +69,7 @@ def leashRun(leash: Leash): # TODO: make work for one leash
     elif leash.Grabbed != leash.wasGrabbed:
         print("Leash has been released")
         leash.wasGrabbed = False
-        leash.resetMovement()
+        #leash.resetMovement()
         leashOutput(0.0, 0.0, 0, leash.settings)
         time.sleep(leash.settings.InactiveDelay)
         Thread(target=leashRun, args=(leash,)).start() #temp test
@@ -110,7 +113,7 @@ def leashOutput(vert: float, hori: float, runType: int, settings: ConfigSettings
         oscClient.send_message("/input/Run", runType) # recommend using bool instead of int if possible
 
     print("\tVertical: {}\n\tHorizontal: {}\n\tRun: {}".format(vert,hori,runType))
-    
+
 if __name__ == "__main__":
 
     #*************Setup*************#
