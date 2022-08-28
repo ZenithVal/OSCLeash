@@ -1,5 +1,4 @@
 from asyncore import dispatcher
-from inspect import Parameter
 from threading import Lock,Thread,Timer
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
@@ -21,15 +20,14 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 # Source Path
-# def resource_path(relative_path):
-#     """Gets absolute path from relative path"""
-#     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-#     return os.path.join(base_path, relative_path)
+def resource_path(relative_path):
+    """Gets absolute path from relative path"""
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 #Load Config
 try:
-    config = json.load(open('Config.json'))
-    
+    config = json.load(open(os.path.join(os.path.join(resource_path('config.json')))))
     IP = config["IP"]
     ListeningPort = config["ListeningPort"]
     SendingPort = config["SendingPort"]
@@ -104,7 +102,6 @@ def OnRecieve(address,value):
             leash.LeashStretch=value
         case "Leash_Z+":
             leash.Z_Positive=value
-            print("this worked")
         case "Leash_Z-":
             leash.Z_Negative=value
         case "Leash_X+":
@@ -112,39 +109,22 @@ def OnRecieve(address,value):
         case "Leash_X-":
             leash.X_Negative=value          
     #print(f"{parameter}: {value}") #This Prints every input
-    statelock.release() 
-
-# # Paramaters to read
-# dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
-# dispatcher.map("/avatar/parameters/Leash_Z-",OnRecieve) #Z Negative
-# dispatcher.map("/avatar/parameters/Leash_X+",OnRecieve) #X Positive
-# dispatcher.map("/avatar/parameters/Leash_X-",OnRecieve) #X Negative
-# dispatcher.map("/avatar/parameters/Leash_Stretch",OnRecieve) #Physbone Stretch Value
-# dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab Status
-# #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
-
-#------------------------Testing area------------------------#
-
-
-ParaConfig = config["Parameters"]
-
-dispatcher.map("/avatar/parameters", OnRecieve) #Testing to see if value returns the same based shortened address
+    statelock.release()
 
 # Paramaters to read
-# dispatcher.map(ParaConfig["Z_Positive_Param"], OnRecieve) #Z Positive
-# dispatcher.map(ParaConfig["Z_Negative_Param"], OnRecieve) #Z Negative
-# dispatcher.map(ParaConfig["X_Positive_Param"], OnRecieve) #X Positive
-# dispatcher.map(ParaConfig["X_Negative_Param"], OnRecieve) #X Negative
-# dispatcher.map(ParaConfig["LeashStretch_Param"], OnRecieve) #Physbone Stretch Value
-# dispatcher.map(ParaConfig["LeashGrab_Param"], OnRecieve) #Physbone Grab Status
+dispatcher.map("/avatar/parameters/Leash_Z+",OnRecieve) #Z Positive
+dispatcher.map("/avatar/parameters/Leash_Z-",OnRecieve) #Z Negative
+dispatcher.map("/avatar/parameters/Leash_X+",OnRecieve) #X Positive
+dispatcher.map("/avatar/parameters/Leash_X-",OnRecieve) #X Negative
+dispatcher.map("/avatar/parameters/Leash_Stretch",OnRecieve) #Physbone Stretch Value
+dispatcher.map("/avatar/parameters/Leash_IsGrabbed",OnRecieve) #Physbone Grab Status
 #dispatcher.set_default_handler(OnRecieve) #This recieves everything, I think?
-
-#------------------------Testing area------------------------#
 
 # Set up UDP OSC client   
 oscClient = SimpleUDPClient(IP, SendingPort) 
 def StartServer():
     try:
+        print("server")
         server = BlockingOSCUDPServer((IP,ListeningPort),dispatcher)
         server.serve_forever()
     except:
@@ -217,5 +197,6 @@ def LeashOutput(VerticalOutput:float,HorizontalOutput:float,RunOutput):
 
 thread=Thread(target=StartServer)
 thread.start()
+print("test")
 LeashRun()
 LeashOutput(0.0,0.0,0)

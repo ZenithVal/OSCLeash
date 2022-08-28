@@ -1,30 +1,46 @@
-import json
+
+DefaultConfig = {
+        "IP": "127.0.0.1",
+        "ListeningPort": 9001,
+        "SendingPort": 9000,
+        "RunDeadzone": 0.70,
+        "WalkDeadzone": 0.15,
+        "StrengthMultiplier": 1.2,
+        "ActiveDelay": 0.1,     
+        "InactiveDelay": 0.5,
+        "Logging": True,
+        "XboxJoystickMovement": False,
+        
+        "PhysboneParameters":
+        [
+                "Leash"
+        ],
+
+        "DirectionalParamaters":
+        {
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
+        }
+}
 
 class ConfigSettings:
 
-    def __init__(self, configFileName = None):
-        try:
-            config = json.load(open(configFileName))
-
-            print("Successfully read config.\n")
-            self.setSettings(config) #Set config values
-
-        except Exception as e:
-            print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
-            print(e,"\n")
-
-            self.setSettings() #set default values
-
+    def __init__(self, configData):
+            self.setSettings(configData) #Set config values
         
-    def setSettings(self, configJson = None):
-        self.IP = "127.0.0.1" if configJson is None else configJson["IP"]
-        self.ListeningPort = 9001 if configJson is None else configJson["ListeningPort"]
-        self.SendingPort = 9000 if configJson is None else configJson["SendingPort"]
-        self.RunDeadzone = 0.70 if configJson is None else configJson["RunDeadzone"]
-        self.WalkDeadzone = 0.15 if configJson is None else configJson["WalkDeadzone"]
-        self.ActiveDelay = .1 if configJson is None else configJson["ActiveDelay"]
-        self.InactiveDelay = .5 if configJson is None else configJson["InactiveDelay"]
-        self.Logging = True if configJson is None else configJson["Logging"]
+    def setSettings(self, configJson):
+        self.IP = configJson["IP"]
+        self.ListeningPort = configJson["ListeningPort"]
+        self.SendingPort = configJson["SendingPort"]
+        self.RunDeadzone = configJson["RunDeadzone"]
+        self.WalkDeadzone = configJson["WalkDeadzone"]
+        self.StrengthMultiplier = configJson["StrengthMultiplier"]
+        self.ActiveDelay = configJson["ActiveDelay"]
+        self.InactiveDelay = configJson["InactiveDelay"]
+        self.Logging = configJson["Logging"]
+        self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
 
     def printInfo(self):        
         print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -45,32 +61,33 @@ class ConfigSettings:
 
 class Leash:
 
-    def __init__(self, configFileName = None):
-
-        try:
-            config = json.load(open(configFileName))
-
-            print("Successfully read config.\n")
-            self.getConfigParameters(config) #Set config values
-
-        except Exception as e:
-
-            print('\x1b[1;31;40m' + 'Missing or incorrect config file. Loading default values.  ' + '\x1b[0m')
-            print(e,"\n")
-
-            self.getConfigParameters() #set default values
+    def __init__(self, paraName, contacts, settings: ConfigSettings):
         
-    def getConfigParameters(self, configJson = None):
+        self.Name: str = paraName
+        self.settings = settings
 
-        if configJson is not None:
-            self.configParameters = configJson["Parameters"]
+        self.Stretch: float = 0
+        self.Z_Positive: float = 0
+        self.Z_Negative: float = 0
+        self.X_Positive: float = 0
+        self.X_Negative: float = 0
 
-        else: #Load default values
-            self.configParameters = {
-                "Leash_Z+",
-                "Leash_Z-",
-                "Leash_X+",
-                "Leash_Z-",
-                "Leash_IsGrabbed",
-                "Leash_Stretch"
-            }
+        self.Grabbed: bool = False
+        self.wasGrabbed: bool = False
+
+        self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"]
+        self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]
+        self.X_Positive_ParamName: str = contacts["X_Positive_Param"]
+        self.X_Negative_ParamName: str = contacts["X_Negative_Param"]
+    
+    def resetMovement(self):
+        self.Z_Positive: float = 0
+        self.Z_Negative: float = 0
+        self.X_Positive: float = 0
+        self.X_Negative: float = 0
+
+    def printDirections(self):
+        print("{}: {}".format(self.Z_Positive_ParamName, self.Z_Positive))
+        print("{}: {}".format(self.Z_Negative_ParamName, self.Z_Negative))
+        print("{}: {}".format(self.X_Positive_ParamName, self.X_Positive))
+        print("{}: {}".format(self.X_Negative_ParamName, self.X_Negative))

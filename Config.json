@@ -8,15 +8,18 @@
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": true,
-        "XboxJoystickMovement": false,   
-        "Parameters":
+        "XboxJoystickMovement": false,
+        
+        "PhysboneParameters":
+        [
+                "Leash"
+        ],
+
+        "DirectionalParamaters":
         {
-                "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
-                "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
-                "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "X_Positive_Param": "/avatar/parameters/Leash_X+",
-                "X_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
-                "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
         }
 }
