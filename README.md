@@ -10,31 +10,34 @@ Here's a breakdown of the system in 4 steps.
 This one is simple. We receive the Leash_Stretch and Leash_Grabbed parameters. <br/> If Leash_Grabbed becomes true, we begin reading Leash_Stretch 
 
 We'll use these values in this example: <br/> 
-Leash_IsGrabbed = True <br/> 
-Leash_Stretch = 0.95 <br/> 
+>Leash_IsGrabbed = True <br/> 
+>Leash_Stretch = 0.95 <br/> 
 
 **Step 2: Gather Directional Contact values** <br/> 
 ![Function Example](https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif) <br/> 
 4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>  Based on where the constraint is aimed, it will give us 4 Values. 
 
 If it was pointing South-South-East we would get...  <br/> 
-Leash_Z+ = 0.0 <br/> 
-Leash_Z- = 0.75 <br/> 
-Leash_X+ = 0.0 <br/> 
-Leash_X- = 0.25 <br/> 
+>Leash_Z+ = 0.0 <br/> 
+>Leash_Z- = 0.75 <br/> 
+>Leash_X+ = 0.0 <br/> 
+>Leash_X- = 0.25 <br/> 
 
 **Step 3: MAAAATH!** <br/> 
-(Z_Positive - Z_Negative) * Leash_Stretch = Vertical <br/> 
-(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal <br/> 
+Math is fun. Add the negative and positive contacts & multiply by the stretch value.
+>(Z_Positive - Z_Negative) * Leash_Stretch = Vertical <br/> 
+>(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal <br/> 
 
 So our calculation for speed output would look like: <br/>
-(0.0 - 0.75) * 0.95 = -0.7125 = Veritcal <br/>
-(0.25 - 0) * 0.95 = 0.2375 = Horizontal <br/>
+>(0.0 - 0.75) * 0.95 = -0.7125 = Veritcal <br/>
+>(0.25 - 0) * 0.95 = 0.2375 = Horizontal <br/>
 
 **Step 4: Outputs** <br/> 
 If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0 <br/> If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
 
-All movement values are relative to the VRC world's movement speed limits. <br/> So we'd be moving at 142.5% speed south and 47.5% speed to the east.
+All movement values are relative to the VRC world's movement speed limits. <br/> So we'd be moving at 142.5% speed south and 47.5% speed to the east. <br/>
+
+If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once.
 <br/>
 
 ## Known issue WITH WORKAROUND.
