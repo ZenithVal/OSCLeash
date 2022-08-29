@@ -2,6 +2,7 @@ from pythonosc.udp_client import SimpleUDPClient
 from threading import Lock, Thread
 import time
 import os
+import ctypes #Required for colored error messages.
 
 from Controllers.DataController import ConfigSettings, Leash
 
@@ -27,7 +28,7 @@ class Program:
         statelock = Lock()
         statelock.acquire()
         
-        self.cls()
+        # self.cls()
         leash.settings.printInfo()
         leash.printDirections()
         print("\nCurrent Status:\n")
@@ -86,7 +87,7 @@ class Program:
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
-        if settings.XboxJoystickMovement:
+        if settings.vgamepadImported:
             print("\nSending through Emulated controller input\n")
             try:
                 import vgamepad as vg
@@ -102,7 +103,7 @@ class Program:
 
             except Exception as e:
                 print(e)
-                print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Please check the documentation.' + '\x1b[0m') 
+                print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Please check the documentation.\n' + '\x1b[0m') 
                 exit()
 
         else:

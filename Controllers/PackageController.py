@@ -1,3 +1,6 @@
+import time
+import sys
+import ctypes #Required for colored error messages.
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import osc_server
 from threading import Lock, Thread
@@ -10,10 +13,6 @@ class Package:
     def __init__(self):
         self.__dispatcher = Dispatcher()
         self.__statelock = Lock()
-
-
-    def listenTest(self, leash: Leash):
-        print(leash.Name)
 
     def listen(self, leash: Leash):
         # Paramaters to read per leash
@@ -97,7 +96,10 @@ class Package:
             exit()
     
     def runServer(self, IP, Port):
-        server = osc_server.ThreadingOSCUDPServer(
-        (IP, Port), self.__dispatcher)
-        print("Serving on {}".format(server.server_address))
-        server.serve_forever()
+        try:
+            osc_server.ThreadingOSCUDPServer((IP, Port), self.__dispatcher).serve_forever()
+        except Exception as e:
+            print('\x1b[1;31;41m' + '                                                                    ' + '\x1b[0m')
+            print('\x1b[1;31;40m' + '   Warning: An application might already be running on this port!   ' + '\x1b[0m')
+            print('\x1b[1;31;41m' + '                                                                    \n' + '\x1b[0m')
+            print(e)

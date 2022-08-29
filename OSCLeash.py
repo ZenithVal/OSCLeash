@@ -2,6 +2,7 @@ from pythonosc.udp_client import SimpleUDPClient
 from threading import Thread
 import json
 import os
+import time
 
 from Controllers.DataController import DefaultConfig, ConfigSettings, Leash
 from Controllers.PackageController import Package
@@ -53,6 +54,11 @@ if __name__ == "__main__":
     for leash in leashes:
         package.listen(leash)
 
-    Thread(target=package.runServer, args=(settings.IP, settings.ListeningPort)).start()
-    Thread(target=program.leashRun, args=(leashes[0],)).start()
+    serverThread = Thread(target=package.runServer, args=(settings.IP, settings.ListeningPort))
+    serverThread.start()
+    time.sleep(.1)
+
+    if serverThread.is_alive():
+        Thread(target=program.leashRun, args=(leashes[0],)).start()
     
+    time.sleep(10)

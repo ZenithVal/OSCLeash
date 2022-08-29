@@ -1,3 +1,5 @@
+import sys
+import ctypes #Required for colored error messages.
 
 DefaultConfig = {
         "IP": "127.0.0.1",
@@ -25,22 +27,47 @@ DefaultConfig = {
         }
 }
 
+
 class ConfigSettings:
 
     def __init__(self, configData):
             self.setSettings(configData) #Set config values
         
     def setSettings(self, configJson):
-        self.IP = configJson["IP"]
-        self.ListeningPort = configJson["ListeningPort"]
-        self.SendingPort = configJson["SendingPort"]
-        self.RunDeadzone = configJson["RunDeadzone"]
-        self.WalkDeadzone = configJson["WalkDeadzone"]
-        self.StrengthMultiplier = configJson["StrengthMultiplier"]
-        self.ActiveDelay = configJson["ActiveDelay"]
-        self.InactiveDelay = configJson["InactiveDelay"]
-        self.Logging = configJson["Logging"]
-        self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
+        try:
+            self.IP = configJson["IP"]
+            self.ListeningPort = configJson["ListeningPort"]
+            self.SendingPort = configJson["SendingPort"]
+            self.RunDeadzone = configJson["RunDeadzone"]
+            self.WalkDeadzone = configJson["WalkDeadzone"]
+            self.StrengthMultiplier = configJson["StrengthMultiplier"]
+            self.ActiveDelay = configJson["ActiveDelay"]
+            self.InactiveDelay = configJson["InactiveDelay"]
+            self.Logging = configJson["Logging"]
+            self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
+        except Exception as e: 
+            print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
+            print(e,"was the exception\n")
+            self.IP = DefaultConfig["IP"]
+            self.ListeningPort = DefaultConfig["ListeningPort"]
+            self.SendingPort = DefaultConfig["SendingPort"]
+            self.RunDeadzone = DefaultConfig["RunDeadzone"]
+            self.WalkDeadzone = DefaultConfig["WalkDeadzone"]
+            self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
+            self.ActiveDelay = DefaultConfig["ActiveDelay"]
+            self.InactiveDelay = DefaultConfig["InactiveDelay"]
+            self.Logging = DefaultConfig["Logging"]
+            self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
+        if self.XboxJoystickMovement:
+            try:
+                import vgamepad as vg
+                gamepad = vg.VX360Gamepad()
+                self.vgamepadImported = True
+            except Exception as e:
+                self.vgamepadException = e
+                self.vgamepadImported = False
+        else:self.vgamepadImported = False
+
 
     def printInfo(self):        
         print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -57,7 +84,11 @@ class ConfigSettings:
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 
-
+        if self.XboxJoystickMovement and self.vgamepadImported:
+            print("Emulating Xbox 360 Controller for input instead of OSC")
+        elif self.XboxJoystickMovement and not self.vgamepadImported:
+            print(self.vgamepadException)
+            print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
 
 class Leash:
 
@@ -87,6 +118,8 @@ class Leash:
         self.X_Negative: float = 0
 
     def printDirections(self):
+        print("\nContact Directions:\n")
+
         print("{}: {}".format(self.Z_Positive_ParamName, self.Z_Positive))
         print("{}: {}".format(self.Z_Negative_ParamName, self.Z_Negative))
         print("{}: {}".format(self.X_Positive_ParamName, self.X_Positive))
