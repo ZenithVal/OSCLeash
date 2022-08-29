@@ -70,7 +70,7 @@ Requires VRC3 Avatar SDK.
 
 There will be a setup guide/wiki later.
 **If using executable with temporary xbox input workaround**
-You need this installed https://github.com/ViGEm/ViGEmBus/releases & the VRC window must be selected when the want the tool running.
+You need this installed https://github.com/ViGEm/ViGEmBus/releases & you must select the VRC window while running the tool.
 <br/>
 
 ## Config
