@@ -14,6 +14,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
             json.dump(DefaultConfig, cf)
 
         print("Default config file created")
+        time.sleep(3)
 
     except Exception as e:
         print(e)

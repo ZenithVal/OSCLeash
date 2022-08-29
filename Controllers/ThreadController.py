@@ -122,8 +122,7 @@ class Program:
         """Clears Console"""
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def setWindowTitle(self): # Set window name on the Window
+    def setWindowTitle(self): # Set window title
         if os.name == 'nt':
-            os.system("OSCLeash")
-
+            ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
     
