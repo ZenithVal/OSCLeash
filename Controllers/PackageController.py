@@ -1,10 +1,10 @@
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import osc_server
 from threading import Lock, Thread
-from DataController import Leash
 
+from Controllers.DataController import Leash
+from Controllers.ThreadController import Program
 
-#TODO: Find a way to trigger the run thread when grabbed is true
 class Package:
     
     def __init__(self):
@@ -83,9 +83,14 @@ class Package:
     def __updateGrabbed(self, addr, extraArgs, value):
         try:
             leash: Leash = extraArgs[0]
+            program = Program()
+            
             self.__statelock.acquire()
             leash.Grabbed = value
+            if leash.Grabbed:
+                Thread(target=program.leashRun, args=(leash,)).start()
             self.__statelock.release()
+
             #print("Grabbed: {}".format(leash.Grabbed))
         except Exception as e:
             print(e)
