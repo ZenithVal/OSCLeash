@@ -1,101 +1,121 @@
-# OSCLeash
 
-Hi, sorry, I swear I'm not a disappointment to my parents. This is NOT user friendly yet. <br />
-A "simple" system to make a functional "Leash" in VRchat using OSC as an input controller. <br /> 
-Could be adapted to any pullable physbone; EG: A tail. <br />
-If you're smarter and want to improve this code, by all means, PLEASE do so. 
+# OSCLeash
+A "simple" system to make a functional "Leash" in VRchat using OSC as an input controller.  <br/>  I swear I'm not a disappointment to my parents. This is **kinda** user friendly now. <br/> This can be adapted to any pullable physbone; EG: A tail. 
+<br/>
 
 ## How TF this work??
+Here's a breakdown of the system in 4 steps.
 
-Here's the prefab from releases but with some meshes for visual help.
+**Step 1: Gather Leash Physbone Values** <br/> 
+This one is simple. We receive the Leash_Stretch and Leash_Grabbed parameters. <br/> If Leash_Grabbed becomes true, we begin reading Leash_Stretch 
 
-There's two systems at play; one to "aim" what direction to move in and the physbone intelf that determines move speed.
+We'll use these values in this example: <br/> 
+Leash_IsGrabbed = True <br/> 
+Leash_Stretch = 0.95 <br/> 
 
-On the Aim system, there's 4 Contact Recieverers, a position constraint, and an aim constraint.
+**Step 2: Gather Directional Contact values** <br/> 
+![Function Example](https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif) <br/> 
+4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>  Based on where the constraint is aimed, it will give us 4 Values. 
 
-4 proximity Contacts (Z+,Z-,X+,X-) are placed around a center point which has an aim constraint with a sender on the end that triggers the proximity contacts. 
-1 Position constraint is locked to the ground plane and is tracked to the end of the leash physbone system. This allows it to be free moving wherever the end of the leash is but stay on the correct axis for the aim constraint. As the leash physbone moves around the directional, the aim constraint move along contact sender, triggering all the proximity contacts. We read that for OSC.
+If it was pointing South-South-East we would get...  <br/> 
+Leash_Z+ = 0.0 <br/> 
+Leash_Z- = 0.75 <br/> 
+Leash_X+ = 0.0 <br/> 
+Leash_X- = 0.25 <br/> 
 
-![Function Example](https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif)
+**Step 3: MAAAATH!** <br/> 
+(Z_Positive - Z_Negative) * Leash_Stretch = Vertical <br/> 
+(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal <br/> 
 
-(Z_Positive - Z_Negative) * Leash_Stretch = Vertical  <br />
-(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal
+So our calculation for speed output would look like: <br/>
+(0.0 - 0.75) * 0.95 = -0.7125 = Veritcal <br/>
+(0.25 - 0) * 0.95 = 0.2375 = Horizontal <br/>
 
-Output those two values back to VRC and boom, you're moving in the direction of the arrow based on how stretched the leash is. We use Leash_IsGrabbed as well to confirm it's actually being grabbed along with some other fancy stuff I don't really understand fully.
+**Step 4: Outputs** <br/> 
+If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0 <br/> If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
 
-##
+All movement values are relative to the VRC world's movement speed limits. <br/> So we'd be moving at 142.5% speed south and 47.5% speed to the east.
+<br/>
 
-### Known issue WITH WORKAROUND.
-
+## Known issue WITH WORKAROUND.
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
 **TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. This will probably be removed when VRC fixes the issue. Check the extra steps in setup for this.
+<br/>
 
+## Running the program
+1. **Via an executable**
+	- Download release zip from https://github.com/ZenithVal/OSCLeash/releases/tag/Main
+	- Extract wherever.
+	- Run Executable
+3. **From the source**
+	- Clone the github
+	- Run `pip install -r requirements.txt` in the directory to install libraries
+	- Run the python script
 
-##
-
-### Running the source:
-- Clone the github
-- Run `pip install -r requirements.txt` in the directory to install libraries
-- Run the python script
-
-### Running Executable
-- Download release zip from https://github.com/ZenithVal/OSCLeash/releases/tag/Main
-- Extract wherever.
-- Run Executable
-
-##
-
-### Setup
+## Setup
 Requires VRC3 Avatar SDK.
-
 1. Download the program via one of the above methods.
 2. Define config.json settings if needed.
 3. Grab the prefab from releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
-4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed. 
+4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed.
 5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
-6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. The source should be the origin of your leash.
+6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. 
+        - The source should be the origin of your leash.
 7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
-8. Run program & enjoy. 
+8. Run program.
 
-There will be a setup guide later.
-
+There will be a setup guide/wiki later.
 **If using executable with temporary xbox input workaround**
-- You need this installed https://github.com/ViGEm/ViGEmBus/releases 
-- Make sure the VRC window is selected
+You need this installed https://github.com/ViGEm/ViGEmBus/releases & the VRC window must be selected when the want the tool running.
+<br/>
 
-
-#
-
-### Config
-
-| Config | Use | default |
+## Config
+| Value | Use | default |
 | --- | --- | --- |
 | IP | Address to send OSC data to | 127.0.0.1 |
 | ListeningPort | Port to listen for OSC data on | 9001 |
 | Sending port | Port to send OSC data to | 9000 |
 | RunDeadzone | Stretch value above this will cause running | 0.70 |
-| WalkDeadzone | Stretch value above this will cause walking | 0.15 | 
+| WalkDeadzone | Stretch value above this will cause walking | 0.15 |
 | ActiveDelay | Delay between OSC messages while leash is being grabbed | 0.1 second |
 | InactiveDelay | Added delay between checks while Leash is not being grabbed. | 0.5 seconds |
 | Logging | Logging for OSC messages being output | True
 | XboxJoystickMovement | Esoteric workaround for VRC breaking animations upon OSC input | false
+| PhysboneParamaters | A list of Physbones to use as leashes | below |
+| DirectionalParamaters | A dictionary of contacts to use for direction calculation | below |
+---------
+### Physbone Parameters
+The list of the parameters your leashes are using.
+**WIP Functionaly, only one leash is supported right now.**
 
-#### Custom paramaters 
-(Still WIP functionality, the config for them won't change them yet)
+If you had two leashes, your list might look like this:
+```json
+        "PhysboneParameters":
+        [
+            "Leash1",
+            "Leash2",
+            "Dont_do_this_its_not_supported_yet"
+        ],
+```
+The script will automatically read from the _IsGrabbed and _Stretch parameters correlating with the above.
 
-| Paramater | Description |
-| --- | --- |
-|Leash_IsGrabbed | Physbone IsGrabbed value |
-|Leash_Stretch | Physbone Stretch percent | 
-| Leash_Z+ | Z Positive |
-| Leash_Z- | Z Negative |
-| Leash_X+ | X Positive |
-| Leash_X- | X Negative |
+---------
+### Directional Parameters
 
-##
+If you wish to change the contacts to used for direction calculations, you can do so here.
 
-### Default Config
+```python
+        "DirectionalParamaters":
+        {
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
+        }
+```
+
+# Default Config
 
 ```json
 {
@@ -104,27 +124,29 @@ There will be a setup guide later.
         "SendingPort": 9000,
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
+        "StrengthMultiplier": 1.2,
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": true,
-        "XboxJoystickMovement": false,   
-        "Parameters":
+        "XboxJoystickMovement": false,
+        
+        "PhysboneParameters":
+        [
+                "Leash"
+        ],
+
+        "DirectionalParamaters":
         {
-                "I GAVE UP ON THESE, THEY DON'T WORK": "if someone knows how, lmk lol",
-                "Z_Positive_Param": "/avatar/parameters/Leash_Z+",
-                "Z_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "X_Positive_Param": "/avatar/parameters/Leash_X+",
-                "X_Negative_Param": "/avatar/parameters/Leash_Z-",
-                "LeashGrab_Param": "/avatar/parameters/Leash_IsGrabbed",
-                "LeashStretch_Param": "/avatar/parameters/Leash_Stretch"
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
         }
 }
-
-
 ```
-#
-### Credits
 
+# Credits
+- @ALeonic created Version 2 Rewrite
 - @FrostbyteVR babied me through 90% of the process of making the python script.
 - @I5UCC I stared at the code of his ThumbParamsOSC for a long time to learn a bit. Some lines are a carbon copy.
 - Someone else did this but it was a closed source executable.

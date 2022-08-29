@@ -15,7 +15,7 @@ class Package:
         self.__statelock = Lock()
 
     def listen(self, leash: Leash):
-        # Paramaters to read per leash
+        # parameters to read per leash
         self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_Stretch',self.__updateStretch, leash) #Physbone Stretch Value
         self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_IsGrabbed',self.__updateGrabbed, leash) #Physbone Grab Status
         

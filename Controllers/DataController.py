@@ -18,7 +18,7 @@ DefaultConfig = {
                 "Leash"
         ],
 
-        "DirectionalParamaters":
+        "DirectionalParameters":
         {
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",

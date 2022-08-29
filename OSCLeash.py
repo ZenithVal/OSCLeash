@@ -46,8 +46,14 @@ if __name__ == "__main__":
     #   case that multiple are pulled, pick one that is in control.
     
     leashes = [] 
-    for leashName in configData["PhysboneParameters"]:
-        leashes.append(Leash(leashName, configData["DirectionalParamaters"], settings))
+    try:
+        for leashName in configData["PhysboneParameters"]:
+            leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
+    except Exception as e:
+            print('\x1b[1;31;40m' + 'Malformed Parameter names. Please fix & reboot, thx.' + '\x1b[0m')
+            print(e,"was the exception\n")
+            time.sleep(8)
+            exit()
 
     # Manage data coming in
     package = Package()
