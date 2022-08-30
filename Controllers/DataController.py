@@ -87,8 +87,9 @@ class ConfigSettings:
 
 class Leash:
 
-    def __init__(self, paraName, contacts, settings: ConfigSettings, gpController = None):
+    def __init__(self, paraName, contacts, settings: ConfigSettings):
         
+
         self.Name: str = paraName
         self.settings = settings
 
@@ -98,8 +99,10 @@ class Leash:
         self.X_Positive: float = 0
         self.X_Negative: float = 0
 
+        # Booleans for thread logic
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
+        self.Active: bool = False
 
         self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"]
         self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]

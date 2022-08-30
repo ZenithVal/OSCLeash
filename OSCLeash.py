@@ -1,4 +1,3 @@
-from pythonosc.udp_client import SimpleUDPClient
 from threading import Thread
 import json
 import os
@@ -51,36 +50,26 @@ if __name__ == "__main__":
         vgamepadImported = False
     
     # Collect Data for leash
-    
-    # TODO: Only currently works for one leash (Prepped for more)
-    # Notes: There is only one source of contacts for all Leashes. This means
-    #   that the pull result is dependent on the FIRST leash pulled. In a 
-    #   case that multiple are pulled, pick one that is in control.
 
     leashes = []
+    for leashName in configData["PhysboneParameters"]:
+        leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
+
     try:
-        for leashName in configData["PhysboneParameters"]:
-            if vgamepadImported:
-                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
-            else:
-                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
+        # Manage data coming in
+        if len(leashes) == 0: raise Exception("No leashes found. Please update config file.")
+        package = Package(leashes)
+        package.listen()
+
+        # Start server
+        serverThread = Thread(target=package.runServer, args=(settings.IP, settings.ListeningPort))
+        serverThread.start()
+        time.sleep(.1)
+        
+        #initialize input
+        if serverThread.is_alive():
+            leashes[0].Active = True
+            Thread(target=program.leashRun, args=(leashes[0],)).start()
+
     except Exception as e:
-            print('\x1b[1;31;40m' + 'Malformed Parameter names. Please fix & reboot, thx.' + '\x1b[0m')
-            print(e,"was the exception\n")
-            time.sleep(8)
-            exit()
-
-    # Manage data coming in
-    package = Package()
-
-    for leash in leashes:
-        package.listen(leash)
-
-    serverThread = Thread(target=package.runServer, args=(settings.IP, settings.ListeningPort))
-    serverThread.start()
-    time.sleep(.1)
-
-    if serverThread.is_alive():
-        Thread(target=program.leashRun, args=(leashes[0],)).start()
-
-    time.sleep(10)
+        print(e)

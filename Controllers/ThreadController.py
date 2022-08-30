@@ -17,9 +17,9 @@ class Program:
     def updateProgram(self, runBool:bool, countValue:int):
         Program.__running = runBool
 
-    def leashRun(self, leash: Leash, counter:int = 0): # TODO: make work for one leash
+    def leashRun(self, leash: Leash, counter:int = 0):
 
-        if counter == 0 and Program.__running:
+        if counter == 0 and Program.__running or not leash.Active:
             return
 
         statelock = Lock()
@@ -43,9 +43,9 @@ class Program:
 
             if leash.wasGrabbed == False:
                 leash.wasGrabbed = True
-                print("Leash recently grabbed")
+                print("{} Leash recently grabbed".format(leash.Name))
             else:
-                print("Leash is grabbed")
+                print("{} is grabbed".format(leash.Name))
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running deadzone
                 self.leashOutput(VerticalOutput, HorizontalOutput, 1, leash.settings)
@@ -58,24 +58,24 @@ class Program:
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
         
         elif leash.Grabbed != leash.wasGrabbed:
-            print("Leash has been released")
-
+            print("{} has been released".format(leash.Name))
+            leash.Active = False
             leash.resetMovement()
             self.leashOutput(0.0, 0.0, 0, leash.settings)
 
             leash.wasGrabbed = False
 
             self.resetProgram()
-            time.sleep(leash.settings.InactiveDelay)    
-
-            # Thread(target=self.leashRun, args=(leash,)).start() -NOTE: No longer needed as "IsGrabbed" will start a new thread instead
+            time.sleep(leash.settings.InactiveDelay)
         
         else: # Only used at the start
             print("Waiting...")
+
+            leash.Active = False
             self.leashOutput(0,0,0, leash.settings)
             self.resetProgram()
+
             time.sleep(leash.settings.InactiveDelay)
-            # Thread(target=self.leashRun, args=(leash,)).start() -NOTE: No longer needed as "IsGrabbed" will start a new thread instead
 
         statelock.release()
 
