@@ -84,13 +84,13 @@ class Program:
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
-        if settings.XboxJoystickMovement:  
+        if settings.XboxJoystickMovement: 
             print("\nSending through Emulated controller input\n")
             settings.gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
             if runType == 1:
-                settings.gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)      
+                settings.gamepad.press_button(button=settings.runButton)      
             else:
-                settings.gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+                settings.gamepad.release_button(button=settings.runButton)
             settings.gamepad.update()
 
         else:

@@ -38,10 +38,11 @@ if __name__ == "__main__":
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
 
+    # Add controller input if user installs vgampad
     if settings.XboxJoystickMovement:
         try:
             import vgamepad as vg
-            gamepad = vg.VX360Gamepad()
+            settings.addGamepadControls(vg.VX360Gamepad(), vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER) # Add emulated gamepad
             vgamepadImported = True
         except Exception as e:
             print(e)
@@ -55,12 +56,13 @@ if __name__ == "__main__":
     # Notes: There is only one source of contacts for all Leashes. This means
     #   that the pull result is dependent on the FIRST leash pulled. In a 
     #   case that multiple are pulled, pick one that is in control.
-    
-    leashes = [] 
+
+    leashes = []
     try:
         for leashName in configData["PhysboneParameters"]:
             if vgamepadImported:
-                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings, gamepad))
+                print("here")
+                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
             else:
                 leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
     except Exception as e:
@@ -80,7 +82,7 @@ if __name__ == "__main__":
     time.sleep(.1)
 
     if serverThread.is_alive():
+        print() #temp
         Thread(target=program.leashRun, args=(leashes[0],)).start()
-        #Xbox controller
 
     time.sleep(10)

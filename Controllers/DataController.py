@@ -59,6 +59,10 @@ class ConfigSettings:
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
 
+    def addGamepadControls(self, gamepad, runButton):
+        self.gamepad = gamepad
+        self.runButton = runButton
+
 
     def printInfo(self):        
         print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -101,13 +105,6 @@ class Leash:
         self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]
         self.X_Positive_ParamName: str = contacts["X_Positive_Param"]
         self.X_Negative_ParamName: str = contacts["X_Negative_Param"]
-
-        if not gpController == None:
-            try:
-                import vgamepad as vg
-                self.gamepad = gpController #Xbox controller
-            except Exception as e:
-                print(e)
 
     def resetMovement(self):
         self.Z_Positive: float = 0
