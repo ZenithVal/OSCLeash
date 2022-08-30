@@ -61,7 +61,6 @@ if __name__ == "__main__":
     try:
         for leashName in configData["PhysboneParameters"]:
             if vgamepadImported:
-                print("here")
                 leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
             else:
                 leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
@@ -82,7 +81,6 @@ if __name__ == "__main__":
     time.sleep(.1)
 
     if serverThread.is_alive():
-        print() #temp
         Thread(target=program.leashRun, args=(leashes[0],)).start()
 
     time.sleep(10)
