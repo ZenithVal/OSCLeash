@@ -90,7 +90,6 @@ You need this installed https://github.com/ViGEm/ViGEmBus/releases & you must se
 ---------
 ### Physbone Parameters
 The list of the parameters your leashes are using.
-**WIP Functionaly, only one leash is supported right now.**
 
 If you had two leashes, your list might look like this:
 ```json
