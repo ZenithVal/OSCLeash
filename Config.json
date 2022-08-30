@@ -8,7 +8,7 @@
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": true,
-        "XboxJoystickMovement": false,
+        "XboxJoystickMovement": true,
         
         "PhysboneParameters":
         [

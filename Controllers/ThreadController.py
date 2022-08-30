@@ -10,15 +10,12 @@ class Program:
 
     # Class variable to determine if the program is running on a thread (Prevents multiple threads)
     __running = False 
-    __threadCounter = 0
 
     def resetProgram(self):
         Program.__running = False 
-        Program.__threadCounter = 0
     
     def updateProgram(self, runBool:bool, countValue:int):
         Program.__running = runBool
-        Program.__threadCounter = countValue
 
     def leashRun(self, leash: Leash, counter:int = 0): # TODO: make work for one leash
 
@@ -28,7 +25,7 @@ class Program:
         statelock = Lock()
         statelock.acquire()
         
-        # self.cls()
+        self.cls()
         leash.settings.printInfo()
         leash.printDirections()
         print("\nCurrent Status:\n")
@@ -51,9 +48,9 @@ class Program:
                 print("Leash is grabbed")
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, True, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, 1, leash.settings)
             elif leash.Stretch > leash.settings.WalkDeadzone: #Walking deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, False, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, 0, leash.settings)
             else: #Not stretched enough to move.
                 self.leashOutput(0.0, 0.0, 0, leash.settings)
             
@@ -75,7 +72,7 @@ class Program:
         
         else: # Only used at the start
             print("Waiting...")
-
+            self.leashOutput(0,0,0, leash.settings)
             self.resetProgram()
             time.sleep(leash.settings.InactiveDelay)
             # Thread(target=self.leashRun, args=(leash,)).start() -NOTE: No longer needed as "IsGrabbed" will start a new thread instead
@@ -87,27 +84,17 @@ class Program:
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
-        if settings.vgamepadImported:
+        if settings.XboxJoystickMovement:  
             print("\nSending through Emulated controller input\n")
-            try:
-                import vgamepad as vg
-                gamepad = vg.VX360Gamepad()
-                print("Emulating Xbox 360 Controller for input instead of OSC")
-
-                gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
-                if runType == 1:
-                    gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)      
-                else:
-                    gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
-                gamepad.update()
-
-            except Exception as e:
-                print(e)
-                print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Please check the documentation.\n' + '\x1b[0m') 
-                exit()
+            settings.gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
+            if runType == 1:
+                settings.gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)      
+            else:
+                settings.gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
+            settings.gamepad.update()
 
         else:
-            #Normal function
+            #Normal OSC outputs  function
             print("\nSending through oscClient\n")
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)

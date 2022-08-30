@@ -58,15 +58,6 @@ class ConfigSettings:
             self.InactiveDelay = DefaultConfig["InactiveDelay"]
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
-        if self.XboxJoystickMovement:
-            try:
-                import vgamepad as vg
-                gamepad = vg.VX360Gamepad()
-                self.vgamepadImported = True
-            except Exception as e:
-                self.vgamepadException = e
-                self.vgamepadImported = False
-        else:self.vgamepadImported = False
 
 
     def printInfo(self):        
@@ -84,15 +75,15 @@ class ConfigSettings:
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
 
-        if self.XboxJoystickMovement and self.vgamepadImported:
-            print("Emulating Xbox 360 Controller for input instead of OSC")
-        elif self.XboxJoystickMovement and not self.vgamepadImported:
-            print(self.vgamepadException)
-            print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
+        # if self.XboxJoystickMovement and self.vgamepadImported:
+        #     print("Emulating Xbox 360 Controller for input instead of OSC")
+        # elif self.XboxJoystickMovement and not self.vgamepadImported:
+        #     print(self.vgamepadException)
+        #     print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
 
 class Leash:
 
-    def __init__(self, paraName, contacts, settings: ConfigSettings):
+    def __init__(self, paraName, contacts, settings: ConfigSettings, gpController = None):
         
         self.Name: str = paraName
         self.settings = settings
@@ -110,7 +101,14 @@ class Leash:
         self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]
         self.X_Positive_ParamName: str = contacts["X_Positive_Param"]
         self.X_Negative_ParamName: str = contacts["X_Negative_Param"]
-    
+
+        if not gpController == None:
+            try:
+                import vgamepad as vg
+                self.gamepad = gpController #Xbox controller
+            except Exception as e:
+                print(e)
+
     def resetMovement(self):
         self.Z_Positive: float = 0
         self.Z_Negative: float = 0

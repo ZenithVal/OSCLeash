@@ -37,6 +37,17 @@ if __name__ == "__main__":
 
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
+
+    if settings.XboxJoystickMovement:
+        try:
+            import vgamepad as vg
+            gamepad = vg.VX360Gamepad()
+            vgamepadImported = True
+        except Exception as e:
+            print(e)
+            vgamepadImported = False
+    else: 
+        vgamepadImported = False
     
     # Collect Data for leash
     
@@ -48,7 +59,10 @@ if __name__ == "__main__":
     leashes = [] 
     try:
         for leashName in configData["PhysboneParameters"]:
-            leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
+            if vgamepadImported:
+                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings, gamepad))
+            else:
+                leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
     except Exception as e:
             print('\x1b[1;31;40m' + 'Malformed Parameter names. Please fix & reboot, thx.' + '\x1b[0m')
             print(e,"was the exception\n")
@@ -67,5 +81,6 @@ if __name__ == "__main__":
 
     if serverThread.is_alive():
         Thread(target=program.leashRun, args=(leashes[0],)).start()
-    
+        #Xbox controller
+
     time.sleep(10)
