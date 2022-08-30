@@ -43,7 +43,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 ## Known issue WITH WORKAROUND.
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue enitely. This will probably be removed when VRC fixes the issue. Check the extra steps in setup for this.
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue. Check the extra steps in setup for this.
 <br/>
 
 ## Running the program
