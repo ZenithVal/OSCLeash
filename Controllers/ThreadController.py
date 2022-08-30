@@ -30,13 +30,24 @@ class Program:
         leash.printDirections()
         print("\nCurrent Status:\n")
 
-        #Movement
+        #Movement Math
         VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
 
-        #Grab state
-        LeashGrabbed = leash.Grabbed
-        LeashReleased = leash.Grabbed != leash.wasGrabbed #Do Leash Grab states line up?
+        #Turning Math
+        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.RunDeadzone:
+            if leash.LeashDirection == "North" and leash.Z_Positive < 0.5:
+                TurningSpeed = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.TurningMultiplier)
+            elif leash.LeashDirection == "South" and leash.Z_Negative < 0.5:
+                TurningSpeed = self.clamp((leash.X_Negative - leash.X_Positive) * leash.Stretch * leash.settings.TurningMultiplier)
+            else:
+                TurningSpeed = 0.0
+        else:
+            TurningSpeed = 0.0
+
+        #Grab state (NOTE: potentially not used)
+        # LeashGrabbed = leash.Grabbed
+        # LeashReleased = leash.Grabbed != leash.wasGrabbed #Do Leash Grab states line up?
 
         if leash.Grabbed: #Leash is grabbed
             self.updateProgram(True, counter)
@@ -48,11 +59,11 @@ class Program:
                 print("{} is grabbed".format(leash.Name))
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, 1, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
             elif leash.Stretch > leash.settings.WalkDeadzone: #Walking deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, 0, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 0, leash.settings)
             else: #Not stretched enough to move.
-                self.leashOutput(0.0, 0.0, 0, leash.settings)
+                self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
             
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
@@ -61,7 +72,7 @@ class Program:
             print("{} has been released".format(leash.Name))
             leash.Active = False
             leash.resetMovement()
-            self.leashOutput(0.0, 0.0, 0, leash.settings)
+            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
 
             leash.wasGrabbed = False
 
@@ -72,14 +83,14 @@ class Program:
             print("Waiting...")
 
             leash.Active = False
-            self.leashOutput(0,0,0, leash.settings)
+            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
             self.resetProgram()
 
             time.sleep(leash.settings.InactiveDelay)
 
         statelock.release()
 
-    def leashOutput(self, vert: float, hori: float, runType: int, settings: ConfigSettings):
+    def leashOutput(self, vert: float, hori: float, turn: float, runType: int, settings: ConfigSettings):
 
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
@@ -87,6 +98,7 @@ class Program:
         if settings.XboxJoystickMovement: 
             print("\nSending through Emulated controller input\n")
             settings.gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
+            settings.gamepad.right_joystick_float(x_value_float=turn, y_value_float=0)
             if runType == 1:
                 settings.gamepad.press_button(button=settings.runButton)      
             else:
@@ -98,9 +110,12 @@ class Program:
             print("\nSending through oscClient\n")
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)
+            oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType) # recommend using bool instead of int if possible
 
+
         print("\tVertical: {}\n\tHorizontal: {}\n\tRun: {}".format(vert,hori,runType))
+        if settings.TurningEnabled: print("\tTurn: {}".format(turn))
 
     def clamp (self, n):
         return max(-1.0, min(n, 1.0))

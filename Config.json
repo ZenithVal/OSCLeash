@@ -5,16 +5,18 @@
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
-        "ActiveDelay": 0.1,     
+        "TurningEnabled": false,
+        "TurningMultiplier": 0.7,
+        "TurningDeadzone": 0.15,
+        "ActiveDelay": 0.1,
         "InactiveDelay": 0.5,
         "Logging": true,
-        "XboxJoystickMovement": true,
+        "XboxJoystickMovement": false,
         
         "PhysboneParameters":
         [
                 "Leash"
         ],
-
         "DirectionalParameters":
         {
                 "Z_Positive_Param": "Leash_Z+",

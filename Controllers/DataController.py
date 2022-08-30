@@ -1,4 +1,5 @@
 import sys
+import time
 import ctypes #Required for colored error messages.
 
 DefaultConfig = {
@@ -8,6 +9,9 @@ DefaultConfig = {
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
+        "TurningEnabled": False,
+        "TurningMultiplier": 0.7,
+        "TurningDeadzone": 0.15,
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": True,
@@ -41,6 +45,9 @@ class ConfigSettings:
             self.RunDeadzone = configJson["RunDeadzone"]
             self.WalkDeadzone = configJson["WalkDeadzone"]
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
+            self.TurningEnabled = configJson["TurningEnabled"]
+            self.TurningMultiplier = configJson["TurningMultiplier"]
+            self.TurningDeadzone = configJson["TurningDeadzone"]
             self.ActiveDelay = configJson["ActiveDelay"]
             self.InactiveDelay = configJson["InactiveDelay"]
             self.Logging = configJson["Logging"]
@@ -54,15 +61,18 @@ class ConfigSettings:
             self.RunDeadzone = DefaultConfig["RunDeadzone"]
             self.WalkDeadzone = DefaultConfig["WalkDeadzone"]
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
+            self.TurningEnabled = DefaultConfig["TurningEnabled"]
+            self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
+            self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
             self.ActiveDelay = DefaultConfig["ActiveDelay"]
             self.InactiveDelay = DefaultConfig["InactiveDelay"]
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
+            time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
         self.gamepad = gamepad
         self.runButton = runButton
-
 
     def printInfo(self):        
         print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
@@ -77,13 +87,7 @@ class ConfigSettings:
         print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
-        #print("Inactive delay of {:.0f}".format(InactiveDelay*1000),"ms")
-
-        # if self.XboxJoystickMovement and self.vgamepadImported:
-        #     print("Emulating Xbox 360 Controller for input instead of OSC")
-        # elif self.XboxJoystickMovement and not self.vgamepadImported:
-        #     print(self.vgamepadException)
-        #     print('\x1b[1;31;40m' + 'Tool required for controller emulation not installed. Check the docs.' + '\x1b[0m') 
+        if self.TurningEnabled: print("Turning is enabled","with a multiplier of",self.TurningMultiplier,"and deadzone of",self.TurningDeadzone)
 
 class Leash:
 
@@ -103,6 +107,14 @@ class Leash:
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
         self.Active: bool = False
+
+        if settings.TurningEnabled:
+            self.LeashDirection = paraName.split("_")[-1]
+
+        # paraName -> Leash_2_type_Front + _IsGrabbed
+        # Leash_North_IsGrabbed
+        # Leash_2_South_IsGrabbed
+
 
         self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"]
         self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]

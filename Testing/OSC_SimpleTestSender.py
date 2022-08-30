@@ -10,25 +10,32 @@ import json
 
 from pythonosc import udp_client
 
+def sendData(leashName):
+  for x in range(10000):
+    randNum1 = random.random()
+    randNum2 = random.random()
+    randNum3 = random.random()
+    boolTest = bool(random.getrandbits(1))
+
+    print("{}: {} out of 10,000:\n\tRandValue1: {}\n\tRandValue2: {}\n\tRandValue3: {}\n\tBool: {}".format(leashName, x, randNum1, randNum2, randNum3, boolTest))
+
+    client.send_message("/avatar/parameters/Leash_Z+", randNum1)
+    client.send_message("/avatar/parameters/Leash_Z-", 0)
+    client.send_message("/avatar/parameters/Leash_X+", randNum2)
+    client.send_message("/avatar/parameters/Leash_X-", 0)
+    client.send_message(f"/avatar/parameters/{leashName}_Stretch", randNum3)
+    client.send_message(f"/avatar/parameters/{leashName}_IsGrabbed", boolTest)
+
+    time.sleep(0.5)
 
 if __name__ == "__main__":
   try:
-    configData = json.load(open("../config.json"))
+    configData = json.load(open("../Config.json"))
   except Exception as e:
     print(e)
     exit()
 
   client = udp_client.SimpleUDPClient(configData["IP"], configData["ListeningPort"])
 
-  for x in range(10000):
-    randNum = random.random()
-    leashName = "Leash"
-    boolTest = bool(random.getrandbits(1))
-    print("{} out of 10,000:\n\tValue: {}\n\tBool: {}".format(x, randNum, boolTest))
-    client.send_message("/avatar/parameters/Leash_Z+", randNum)
-    client.send_message("/avatar/parameters/Leash_Z-", 0)
-    client.send_message("/avatar/parameters/Leash_X+", randNum)
-    client.send_message("/avatar/parameters/Leash_X-", 0)
-    client.send_message(f"/avatar/parameters/{leashName}_Stretch", randNum)
-    client.send_message(f"/avatar/parameters/{leashName}_IsGrabbed", boolTest)
-    time.sleep(0.5)
+  for leashName in configData["PhysboneParameters"]:
+    sendData(leashName)
