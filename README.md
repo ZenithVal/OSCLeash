@@ -54,7 +54,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 ## Known issue & Xbox input Workaround.
 
-As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
+As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes your arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
 
 
@@ -131,7 +131,7 @@ There will be a setup video later.
 
 ### Physbone Parameters
 
-The list of the parameters your leashes are using. <br/>If you had two leashes, your list might look like this:
+The list of the parameters your leashes are using. <br/>If you had three leashes, your list might look like this:
 
 ```json
         "PhysboneParameters":
