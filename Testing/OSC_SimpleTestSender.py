@@ -19,11 +19,11 @@ def sendData(leashName):
 
     print("{}: {} out of 10,000:\n\tRandValue1: {}\n\tRandValue2: {}\n\tRandValue3: {}\n\tBool: {}".format(leashName, x, randNum1, randNum2, randNum3, boolTest))
 
-    client.send_message("/avatar/parameters/Leash_Z+", 0.2)
+    client.send_message("/avatar/parameters/Leash_Z+", randNum1)
     client.send_message("/avatar/parameters/Leash_Z-", 0)
-    client.send_message("/avatar/parameters/Leash_X+", 0.8)
+    client.send_message("/avatar/parameters/Leash_X+", randNum2)
     client.send_message("/avatar/parameters/Leash_X-", 0)
-    client.send_message(f"/avatar/parameters/{leashName}_Stretch", 1.0)
+    client.send_message(f"/avatar/parameters/{leashName}_Stretch", randNum3)
     client.send_message(f"/avatar/parameters/{leashName}_IsGrabbed", True)
 
     time.sleep(0.5)

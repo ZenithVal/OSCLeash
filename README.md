@@ -113,7 +113,7 @@ There will be a setup video later.
 | WalkDeadzone          | Stretch value above this will cause walking                    | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
 | TurningEnabled        | Enable turning functionality                                   | false       |
-| TurningMultiplier     | Adjust turning speeds                                          | 0.5         |
+| TurningMultiplier     | Adjust turning speed                                           | 0.5         |
 | TurningDeadzone       | Stretch value above this will begin turning                    | .15         |
 | TurningGoal           | Goal degree range for turning. (0° to 144°)                    | 90°         |
 | ActiveDelay           | Delay between OSC messages while the leash is being grabbed.   | 0.1 seconds |
@@ -206,7 +206,7 @@ If you wish to change the contacts to used for direction calculations, you can d
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
         "TurningEnabled": false,
-        "TurningMultiplier": 0.25,
+        "TurningMultiplier": 0.5,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
         "ActiveDelay": 0.1,

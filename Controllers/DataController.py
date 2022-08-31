@@ -97,7 +97,6 @@ class Leash:
 
     def __init__(self, paraName, contacts, settings: ConfigSettings):
         
-
         self.Name: str = paraName
         self.settings = settings
 
@@ -114,11 +113,6 @@ class Leash:
 
         if settings.TurningEnabled:
             self.LeashDirection = paraName.split("_")[-1]
-
-        # paraName -> Leash_2_type_Front + _IsGrabbed
-        # Leash_North_IsGrabbed
-        # Leash_2_South_IsGrabbed
-
 
         self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"]
         self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]
