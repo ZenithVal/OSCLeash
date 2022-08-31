@@ -38,6 +38,7 @@ class Program:
         #Turning Math
         if leash.settings.TurningEnabled:
             TurnDirect = "N"
+
             if leash.Stretch > leash.settings.TurningDeadzone:
                 if leash.LeashDirection == "North" and leash.Z_Positive < leash.settings.TurningGoal:
                     if leash.X_Positive > leash.X_Negative:
@@ -49,23 +50,26 @@ class Program:
                         TurnDirect = "L"
                     else:
                         TurnDirect = "R"
-                # elif leash.LeashDirection == "East" and leash.X_Positive < leash.settings.TurningGoal:
-                #     if leash.Z_Positive > leash.Z_Positive:
-                #         TurnDirect = "R"
-                #     else:
-                #         TurnDirect = "L"
-                # elif leash.LeashDirection == "West" and leash.X_Positive < leash.settings.TurningGoal:
-                #     if leash.Z_Positive > leash.Z_Positive:
-                #         TurnDirect = "L"
-                #     else:
-                #         TurnDirect = "R"
+                elif leash.LeashDirection == "East" and leash.X_Positive < leash.settings.TurningGoal:
+                    if leash.Z_Positive > leash.Z_Positive:
+                        TurnDirect = "R"
+                    else:
+                        TurnDirect = "L"
+                elif leash.LeashDirection == "West" and leash.X_Positive < leash.settings.TurningGoal:
+                    if leash.Z_Positive > leash.Z_Positive:
+                        TurnDirect = "L"
+                    else:
+                        TurnDirect = "R"
             #Directional Output
+            #AdjustedTurnSpeed = ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier)
             if TurnDirect == "L":
-                TurningSpeed = self.clampNeg((-1.0 * leash.Stretch * leash.settings.TurningMultiplier) + leash.settings.TurningDeadzone)
+                TurningSpeed = self.clampNeg(-1.0 * ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier))
             elif TurnDirect == "R":
-                TurningSpeed = self.clampPos((1.0 * leash.Stretch * leash.settings.TurningMultiplier) - leash.settings.TurningDeadzone)
+                TurningSpeed = self.clampPos(1.0 * ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier))
             else:
                 TurningSpeed = 0.0
+        else:
+            TurningSpeed = 0.0
 
         if leash.Grabbed: #Leash is grabbed
             self.updateProgram(True, counter)

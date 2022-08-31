@@ -54,7 +54,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 ## Known issue & Xbox input Workaround.
 
-As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes your arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
+As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes your arms to be locked into desktop pose, please slap some support onto [this canny](https://feedback.vrchat.com/feature-requests/p/osc-locks-arms)! 
 
 
 
@@ -65,7 +65,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 ## Running the program
 
 1. **Via an executable**
-   - Download release zip from https://github.com/ZenithVal/OSCLeash/releases/tag/Main
+   - Download latest zip [from releases](https://github.com/ZenithVal/OSCLeash/releases/tag/Main)
    - Extract wherever.
    - Run Executable
 2. **From the source**
@@ -81,7 +81,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 
 1. Download the program via one of the above methods.
 2. Define config.json settings if needed.
-3. Grab the prefab from releases https://github.com/ZenithVal/OSCLeash/releases/tag/Main
+3. Grab the prefab [from releases](https://github.com/ZenithVal/OSCLeash/releases/tag/Main) 
 4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed.
 5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
 6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. 
@@ -97,7 +97,7 @@ There will be a setup video later.
 
 **If you are using Xbox input**
 
-- You need this tool installed https://github.com/ViGEm/ViGEmBus/releases 
+- You need [ViGEm](https://github.com/ViGEm/ViGEmBus/releases) installed.
 - The VRC window must be focused for inputs to be recieved.
 
 <br/>
@@ -113,7 +113,7 @@ There will be a setup video later.
 | WalkDeadzone          | Stretch value above this will cause walking                    | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
 | TurningEnabled        | Enable turning functionality                                   | false       |
-| TurningMultiplier     | Adjust turning speed                                           | 0.5         |
+| TurningMultiplier     | Adjust turning speed                                           | 0.75        |
 | TurningDeadzone       | Stretch value above this will begin turning                    | .15         |
 | TurningGoal           | Goal degree range for turning. (0° to 144°)                    | 90°         |
 | ActiveDelay           | Delay between OSC messages while the leash is being grabbed.   | 0.1 seconds |
@@ -150,7 +150,9 @@ The script will automatically read from the _IsGrabbed and _Stretch parameters c
 
 ### Turning Functionality
 
-WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math.<br/>If you want to enable the feature make sure to set **TurningEnabled to True**. `Only supports North and South ATM.`<br/>
+WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math.<br/>
+If you want to enable the feature make sure to set **TurningEnabled to True**.<br/>
+`Currently Supports North, East, South, & West`<br/>
 
 If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front)<br/>Set set the parameter on your Leash Physbone and config to `Leash_North`.<br/>
 
@@ -162,7 +164,7 @@ If you had a leash up front and you want to turn to match the direction it's pul
         ],
 ```
 
-We'll parse the name of your leath for `North` or `South` based on underscores. 
+We'll parse the name of your leath for North, South, ect based on underscores. 
 
 Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/>It will continue to turn until it is greater than the deadzone. <br/>
 
@@ -206,7 +208,7 @@ If you wish to change the contacts to used for direction calculations, you can d
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
         "TurningEnabled": false,
-        "TurningMultiplier": 0.5,
+        "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
         "ActiveDelay": 0.1,

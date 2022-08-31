@@ -10,7 +10,7 @@ DefaultConfig = {
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
         "TurningEnabled": False,
-        "TurningMultiplier": 0.5,
+        "TurningMultiplier": 0.75,
         "TurningDeadzone": .15,
         "TurningGoal": 90,
         "ActiveDelay": 0.1,     
