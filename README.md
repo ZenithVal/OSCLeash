@@ -24,7 +24,7 @@ We'll use these values in this example:
 
 Based on where the constraint is aimed, it will give us 4 values. <br/>
 
-If it was pointing 1-South-East we would get...
+If it was pointing South-South-West, we would get:
 
 > Leash_Z+ = $0.0$<br/>Leash_Z- = $0.75$<br/>Leash_X+ = $0.0$<br/>Leash_X- = $0.25$ 
 
@@ -34,11 +34,11 @@ If it was pointing 1-South-East we would get...
 
 Math is fun. Add the negative and positive contacts & multiply by the stretch value.
 
-> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal 
+> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positive - X_Negative) * Leash_Stretch = Horizontal 
 
 So our calculation for speed output would look like:
 
-> $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.25 - 0) * 0.95 = 0.2375$ = Horizontal
+> $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.0 - 0.25) * 0.95 = -0.2375$ = Horizontal
 
 <br/>
 
@@ -46,7 +46,7 @@ So our calculation for speed output would look like:
 
 If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
 
-All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the east. 
+All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the West. 
 
 If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
 
@@ -154,7 +154,7 @@ WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't 
 If you want to enable the feature make sure to set **TurningEnabled to True**.<br/>
 `Currently Supports North, East, South, & West`<br/>
 
-If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front)<br/>Set set the parameter on your Leash Physbone and config to `Leash_North`.<br/>
+If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front) Set set the parameter on your Leash Physbone and config to `Leash_North`.<br/>
 
 ```json
         "PhysboneParameters":
@@ -174,7 +174,7 @@ Here's the simplified logic of the system.
 
 ```python
 if LeashDirection == "North" and Z_Positive < TurningGoal:
-    TurningSpeed = ((X_Negative - X_Positive) * leash.Stretch * TurningMultiplier)
+    TurningSpeed = ((X_Negative - X_Positive) * LeashStretch * TurningMultiplier)
 ```
 
 <br/>
