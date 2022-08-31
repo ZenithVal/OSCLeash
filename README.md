@@ -22,7 +22,7 @@ We'll use these values in this example:
 <img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
 4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
 
-Based on where the constraint is aimed, it will give us 4 Values. <br/>
+Based on where the constraint is aimed, it will give us 4 values. <br/>
 
 If it was pointing 1-South-East we would get...
 
@@ -46,7 +46,7 @@ So our calculation for speed output would look like:
 
 If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
 
-All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5%$ speed south and $47.5%$ speed to the east. 
+All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the east. 
 
 If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
 
@@ -113,15 +113,15 @@ There will be a setup video later.
 | WalkDeadzone          | Stretch value above this will cause walking                    | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
 | TurningEnabled        | Enable turning functionality                                   | false       |
-| TurningMultiplier     | Adjust turning speeds                                          | 0.7         |
-| TurningDeadZone       | Stretch value above this will begin turning                    | .15         |
+| TurningMultiplier     | Adjust turning speeds                                          | 0.5         |
+| TurningDeadzone       | Stretch value above this will begin turning                    | .15         |
 | TurningGoal           | Goal degree range for turning. (0° to 144°)                    | 90°         |
 | ActiveDelay           | Delay between OSC messages while the leash is being grabbed.   | 0.1 seconds |
 | InactiveDelay         | Delay between non-essential OSC messages                       | 0.5 seconds |
 | Logging               | Logging for Directional compass inputs                         | false       |
 | XboxJoystickMovement  | Esoteric workaround for VRC breaking animations upon OSC input | false       |
-| PhysboneParamaters    | A list of Physbones to use as leashes                          | below       |
-| DirectionalParamaters | A dictionary of contacts to use for direction calculation      | below       |
+| PhysboneParameters    | A list of Physbones to use as leashes                          | see below   |
+| DirectionalParameters | A dictionary of contacts to use for direction calculation      | see below   |
 
 ᴹᵃⁿ ᵗʰᵉʳᵉ'ˢ ᵃ ˡᵒᵗ ᵒᶠ ˢᵉᵗᵗᶦⁿᵍˢ
 
@@ -195,7 +195,7 @@ If you wish to change the contacts to used for direction calculations, you can d
 
 <br/>
 
-# Default Config
+# Default Config.json
 
 ```json
 {
@@ -206,14 +206,14 @@ If you wish to change the contacts to used for direction calculations, you can d
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
         "TurningEnabled": false,
-        "TurningMultiplier": 0.7,
+        "TurningMultiplier": 0.25,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
         "ActiveDelay": 0.1,
         "InactiveDelay": 0.5,
         "Logging": false,
         "XboxJoystickMovement": false,
-
+        
         "PhysboneParameters":
         [
                 "Leash"

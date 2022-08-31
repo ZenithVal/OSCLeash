@@ -38,9 +38,9 @@ class Program:
         #Turning Math
         if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:
             if leash.LeashDirection == "North" and leash.Z_Positive < leash.settings.TurningGoal:
-                TurningSpeed = self.clamp((leash.X_Negative - leash.X_Positive) * leash.Stretch * leash.settings.TurningMultiplier)
-            elif leash.LeashDirection == "South" and leash.Z_Negative < leash.settings.TurningGoal:
                 TurningSpeed = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.TurningMultiplier)
+            elif leash.LeashDirection == "South" and leash.Z_Negative < leash.settings.TurningGoal:
+                TurningSpeed = self.clamp((leash.X_Negative - leash.X_Positive) * leash.Stretch * leash.settings.TurningMultiplier)
             else:
                 TurningSpeed = 0.0
         else:
@@ -95,7 +95,7 @@ class Program:
         if settings.XboxJoystickMovement: 
             print("\nSending through Emulated controller input\n")
             settings.gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
-            settings.gamepad.right_joystick_float(x_value_float=turn, y_value_float=0)
+            settings.gamepad.right_joystick_float(x_value_float=turn, y_value_float=0.0)
             if runType == 1:
                 settings.gamepad.press_button(button=settings.runButton)      
             else:
