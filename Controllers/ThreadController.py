@@ -21,7 +21,10 @@ class Program:
 
         if counter == 0 and Program.__running or not leash.Active:
             return
-
+        
+        if counter < 0: # Prevents int overflow possibility by resetting counter at continuation state
+            counter = 1
+        
         statelock = Lock()
         statelock.acquire()
         
