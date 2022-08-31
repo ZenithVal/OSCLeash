@@ -27,7 +27,8 @@ class Program:
         
         self.cls()
         leash.settings.printInfo()
-        leash.printDirections()
+        if leash.settings.Logging:
+            leash.printDirections()
         print("\nCurrent Status:\n")
 
         #Movement Math
@@ -36,10 +37,10 @@ class Program:
 
         #Turning Math
         if leash.settings.TurningEnabled and leash.Stretch > leash.settings.RunDeadzone:
-            if leash.LeashDirection == "North" and leash.Z_Positive < 0.5:
-                TurningSpeed = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.TurningMultiplier)
-            elif leash.LeashDirection == "South" and leash.Z_Negative < 0.5:
+            if leash.LeashDirection == "North" and leash.Z_Positive < leash.settings.TurningGoal:
                 TurningSpeed = self.clamp((leash.X_Negative - leash.X_Positive) * leash.Stretch * leash.settings.TurningMultiplier)
+            elif leash.LeashDirection == "South" and leash.Z_Negative < leash.settings.TurningGoal:
+                TurningSpeed = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.TurningMultiplier)
             else:
                 TurningSpeed = 0.0
         else:

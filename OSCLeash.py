@@ -19,6 +19,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
         print(e)
         exit()
 
+
 if __name__ == "__main__":
 
     #*************Setup*************#

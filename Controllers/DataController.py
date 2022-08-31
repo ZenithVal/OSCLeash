@@ -11,7 +11,8 @@ DefaultConfig = {
         "StrengthMultiplier": 1.2,
         "TurningEnabled": False,
         "TurningMultiplier": 0.7,
-        "TurningDeadzone": 0.15,
+        "TurningDeadzone": 90,
+        "TurningGoal": 90,
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": True,
@@ -48,6 +49,7 @@ class ConfigSettings:
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
             self.TurningDeadzone = configJson["TurningDeadzone"]
+            self.TurningGoal = (configJson["TurningGoal"]/180)
             self.ActiveDelay = configJson["ActiveDelay"]
             self.InactiveDelay = configJson["InactiveDelay"]
             self.Logging = configJson["Logging"]
@@ -64,6 +66,7 @@ class ConfigSettings:
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
             self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
+            self.TurningGoal = (DefaultConfig["TurningGoal"]/180)
             self.ActiveDelay = DefaultConfig["ActiveDelay"]
             self.InactiveDelay = DefaultConfig["InactiveDelay"]
             self.Logging = DefaultConfig["Logging"]
@@ -87,8 +90,9 @@ class ConfigSettings:
         print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
-        if self.TurningEnabled: print("Turning is enabled","with a multiplier of",self.TurningMultiplier,"and deadzone of",self.TurningDeadzone)
-
+        if self.TurningEnabled: 
+            print(f"Turning is enabled:\n\tMultiplier of {self.TurningMultiplier}\n\tDeadzone of {self.TurningDeadzone}\n\tGoal of {self.TurningGoal*180}°")
+            
 class Leash:
 
     def __init__(self, paraName, contacts, settings: ConfigSettings):

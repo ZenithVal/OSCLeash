@@ -8,9 +8,10 @@
         "TurningEnabled": false,
         "TurningMultiplier": 0.7,
         "TurningDeadzone": 0.15,
+        "TurningGoal": 90,
         "ActiveDelay": 0.1,
         "InactiveDelay": 0.5,
-        "Logging": true,
+        "Logging": false,
         "XboxJoystickMovement": false,
         
         "PhysboneParameters":
