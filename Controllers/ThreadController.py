@@ -46,10 +46,6 @@ class Program:
         else:
             TurningSpeed = 0.0
 
-        #Grab state (NOTE: potentially not used)
-        # LeashGrabbed = leash.Grabbed
-        # LeashReleased = leash.Grabbed != leash.wasGrabbed #Do Leash Grab states line up?
-
         if leash.Grabbed: #Leash is grabbed
             self.updateProgram(True, counter)
 

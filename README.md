@@ -1,59 +1,62 @@
 # OSCLeash
 
-A "simple" system to make a functional "Leash" in VRchat using OSC.
-I swear I'm not a disappointment to my parents. This is **kinda** user friendly now. 
-This can be adapted to any pullable physbone; EG: A tail.
+A "simple" system to make a functional "Leash" in VRchat using OSC. <br/>I swear I'm not a disappointment to my parents. This is **kinda** user friendly now. <br/>This can be adapted to any pullable physbone; EG: A tail. 
+
+<br/>
 
 ## How TF this work??
 
-##### **Step 1: Gather Leash Physbone Values**
+**Step 1: Gather Leash Physbone Values**
 
 This one is simple. We receive the Leash_Stretch and Leash_Grabbed parameters.  
 If Leash_Grabbed becomes true, we begin reading Leash_Stretch 
 
 We'll use these values in this example:  
 
-> Leash_IsGrabbed = True
-> Leash_Stretch = 0.95 
+> Leash_IsGrabbed = True<br/>Leash_Stretch = $0.95$
+
+<br/>
 
 **Step 2: Gather Directional Contact values**
 
 <img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
 4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) Based on where the constraint is aimed, it will give us 4 Values. 
 
-If it was pointing South-South-East we would get...
+If it was pointing 1-South-East we would get...
 
-> Leash_Z+ = 0.0
-> Leash_Z- = 0.75
-> Leash_X+ = 0.0
-> Leash_X- = 0.25 
+> Leash_Z+ = $0.0$<br/>Leash_Z- = $0.75$<br/>Leash_X+ = $0.0$<br/>Leash_X- = $0.25$ 
 
-##### **Step 3: MAAAATH!**
+<br/>
+
+**Step 3: MAAAATH!**
 
 Math is fun. Add the negative and positive contacts & multiply by the stretch value.
 
-> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical
-> (X_Positrive - Z_Negative) * Leash_Stretch = Horizontal 
+> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positrive - Z_Negative) * Leash_Stretch = Horizontal 
 
 So our calculation for speed output would look like:
 
-> (0.0 - 0.75) * 0.95 = -0.7125 = Veritcal
-> (0.25 - 0) * 0.95 = 0.2375 = Horizontal
+> $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.25 - 0) * 0.95 = 0.2375$ = Horizontal
 
-##### **Step 4: Outputs**
+<br/>
 
-If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
+**Step 4: Outputs**
 
-All movement values are relative to the VRC world's movement speed limits. 
-So we'd be moving at 142.5% speed south and 47.5% speed to the east. 
+If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
+
+All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5%$ speed south and $47.5%$ speed to the east. 
 
 If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
 
-## Known issue WITH WORKAROUND.
+<br/>
+
+## Known issue & Xbox input Workaround.
 
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue. Check the extra steps in setup for this.
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue.<u> Check the extra steps in setup for this. </u>
+
+<br/>
 
 ## Running the program
 
@@ -65,6 +68,8 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
    - Clone the github
    - Run `pip install -r requirements.txt` in the directory to install libraries
    - Run the python script
+
+<br/>
 
 ## Setup
 
@@ -80,13 +85,15 @@ Requires VRC3 Avatar SDK.
 7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
 8. Run program.
 
-There will be a setup guide/wiki later.
+There will be a setup video later.<br/>
 **If using executable with temporary xbox input workaround**
 You need this installed https://github.com/ViGEm/ViGEmBus/releases & you must select the VRC window while running the tool.
 
+<br/>
+
 # Config
 
-| Value                 | Use                                                            | Default     |
+| Value                 | Info                                                           | Default     |
 |:--------------------- | -------------------------------------------------------------- |:-----------:|
 | IP                    | Address to send OSC data to                                    | 127.0.0.1   |
 | ListeningPort         | Port to listen for OSC data on                                 | 9001        |
@@ -100,20 +107,20 @@ You need this installed https://github.com/ViGEm/ViGEmBus/releases & you must se
 | TurningGoal           | Goal degree range for turning. (0° to 144°)                    | 90°         |
 | ActiveDelay           | Delay between OSC messages while the leash is being grabbed.   | 0.1 seconds |
 | InactiveDelay         | Delay between non-essential OSC messages                       | 0.5 seconds |
-| Logging               | Logging for OSC messages being output                          | True        |
+| Logging               | Logging for Directional compass inputs                         | false       |
 | XboxJoystickMovement  | Esoteric workaround for VRC breaking animations upon OSC input | false       |
 | PhysboneParamaters    | A list of Physbones to use as leashes                          | below       |
 | DirectionalParamaters | A dictionary of contacts to use for direction calculation      | below       |
 
 ᴹᵃⁿ ᵗʰᵉʳᵉ'ˢ ᵃ ˡᵒᵗ ᵒᶠ ˢᵉᵗᵗᶦⁿᵍˢ
 
+<br/>
+
 ---------
 
 ### Physbone Parameters
 
-The list of the parameters your leashes are using.
-
-If you had two leashes, your list might look like this:
+The list of the parameters your leashes are using. <br/>If you had two leashes, your list might look like this:
 
 ```json
         "PhysboneParameters":
@@ -126,11 +133,13 @@ If you had two leashes, your list might look like this:
 
 The script will automatically read from the _IsGrabbed and _Stretch parameters correlating with the above.
 
+<br/>
+
 ---
 
 ### Turning Functionality
 
-WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math, we'll do it. If you want to enable the feature make sure to set **TurningEnabled to True**. `Currently only supports North and South`
+WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math.<br/>If you want to enable the feature make sure to set **TurningEnabled to True**. `Only supports North and South ATM.`<br/>
 
 If you had a leash up front (EG: Front connection of a collar) and you want the script to  to automatically turn you towards the direction it's pulling from, we can do that! Set the Paramater on your Leash Physbone to `Leash_North` and do the same in the config file.
 
@@ -142,24 +151,26 @@ If you had a leash up front (EG: Front connection of a collar) and you want the 
         ],
 ```
 
-We'll parse the name of your leath for `North` or `South` based on underscores.
+We'll parse the name of your leath for `North` or `South` based on underscores. 
 
-Whenever this leash is grabbed and pulled past the deadzone, it will continue to turn in an attempt to match the goal degree range specified in the config.  
+Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/> It will continue to turn until it is greater than the deadzone. <br/>
 
 Here's the simplified logic of the system.
 
 ```python
 if LeashDirection == "North" and Z_Positive < TurningGoal:
-    TurningSpeed = ((X_Positive - X_Negative) * leash.Stretch * TurningMultiplier)
+    TurningSpeed = ((X_Negative - X_Positive) * leash.Stretch * TurningMultiplier)
 ```
+
+<br/>
 
 ---
 
 ### Directional Parameters
 
-If you wish to change the contacts to used for direction calculations, you can do so here. You probably don't wanna do this.
+If you wish to change the contacts to used for direction calculations, you can do so here. 
 
-{
+```json
         "DirectionalParameters":
         {
                 "Z_Positive_Param": "Leash_Z+",
@@ -167,9 +178,9 @@ If you wish to change the contacts to used for direction calculations, you can d
                 "X_Positive_Param": "Leash_X+",
                 "X_Negative_Param": "Leash_X-"
         }
-}
+```
 
-# 
+ <br/>
 
 # Default Config
 
@@ -207,6 +218,6 @@ If you wish to change the contacts to used for direction calculations, you can d
 # Credits
 
 - @ALeonic created Version 2 Rewrite
-- @FrostbyteVR babied me through 90% of the process of making the python script.
-- @I5UCC I stared at the code of his ThumbParamsOSC for a long time to learn a bit. Some lines are a carbon copy.
+- @FrostbyteVR babied me through 90% of the process of making v1
+- @I5UCC I stared at the code of their ThumbParamsOSC tool for a long time.
 - Someone else did this but it was a closed source executable.
