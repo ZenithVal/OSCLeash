@@ -36,7 +36,7 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
 
         #Turning Math
-        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.RunDeadzone:
+        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:
             if leash.LeashDirection == "North" and leash.Z_Positive < leash.settings.TurningGoal:
                 TurningSpeed = self.clamp((leash.X_Negative - leash.X_Positive) * leash.Stretch * leash.settings.TurningMultiplier)
             elif leash.LeashDirection == "South" and leash.Z_Negative < leash.settings.TurningGoal:
