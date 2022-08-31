@@ -20,7 +20,9 @@ We'll use these values in this example:
 **Step 2: Gather Directional Contact values**
 
 <img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
-4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) Based on where the constraint is aimed, it will give us 4 Values. 
+4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
+
+Based on where the constraint is aimed, it will give us 4 Values. <br/>
 
 If it was pointing 1-South-East we would get...
 
@@ -54,7 +56,9 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes you arms to be locked into desktop pose, please slap some support onto this canny! https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
 
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue.<u> Check the extra steps in setup for this. </u>
+
+
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue.<u> Check the extra steps in setup for this. <br/></u>
 
 <br/>
 
@@ -73,7 +77,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 
 ## Setup
 
-Requires VRC3 Avatar SDK.
+**Requires VRC3 Avatar SDK.**
 
 1. Download the program via one of the above methods.
 2. Define config.json settings if needed.
@@ -85,9 +89,16 @@ Requires VRC3 Avatar SDK.
 7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
 8. Run program.
 
-There will be a setup video later.<br/>
-**If using executable with temporary xbox input workaround**
-You need this installed https://github.com/ViGEm/ViGEmBus/releases & you must select the VRC window while running the tool.
+<br/>
+
+There will be a setup video later.
+
+<br/>
+
+**If you are using Xbox input**
+
+- You need this tool installed https://github.com/ViGEm/ViGEmBus/releases 
+- The VRC window must be focused for inputs to be recieved.
 
 <br/>
 
@@ -141,7 +152,7 @@ The script will automatically read from the _IsGrabbed and _Stretch parameters c
 
 WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math.<br/>If you want to enable the feature make sure to set **TurningEnabled to True**. `Only supports North and South ATM.`<br/>
 
-If you had a leash up front (EG: Front connection of a collar) and you want the script to  to automatically turn you towards the direction it's pulling from, we can do that! Set the Paramater on your Leash Physbone to `Leash_North` and do the same in the config file.
+If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front)<br/>Set set the parameter on your Leash Physbone and config to `Leash_North`.<br/>
 
 ```json
         "PhysboneParameters":
@@ -153,7 +164,9 @@ If you had a leash up front (EG: Front connection of a collar) and you want the 
 
 We'll parse the name of your leath for `North` or `South` based on underscores. 
 
-Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/> It will continue to turn until it is greater than the deadzone. <br/>
+Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/>It will continue to turn until it is greater than the deadzone. <br/>
+
+<br/>
 
 Here's the simplified logic of the system.
 
@@ -180,7 +193,7 @@ If you wish to change the contacts to used for direction calculations, you can d
         }
 ```
 
- <br/>
+<br/>
 
 # Default Config
 
@@ -217,7 +230,7 @@ If you wish to change the contacts to used for direction calculations, you can d
 
 # Credits
 
-- @ALeonic created Version 2 Rewrite
+- @ALeonic is responsible for a majority of v2
 - @FrostbyteVR babied me through 90% of the process of making v1
 - @I5UCC I stared at the code of their ThumbParamsOSC tool for a long time.
 - Someone else did this but it was a closed source executable.
