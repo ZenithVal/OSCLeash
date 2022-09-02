@@ -22,9 +22,9 @@ def sendData():
     LeashZPos = 1.0
   elif Directional >= .50:  # South
     LeashZNeg = 1.0
-  elif Directional >= .25:   # West
+  elif Directional >= .25:   # East
     LeashXPos = 1.0
-  else:                     # East
+  else:                     # West
     LeashXNeg = 1.0
 
   #IsGrabbedState = bool(random.getrandbits(1))
