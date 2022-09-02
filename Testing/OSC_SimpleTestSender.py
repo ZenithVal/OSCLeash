@@ -22,7 +22,7 @@ def sendData():
     LeashZPos = 1.0
   elif Directional >= .50:  # South
     LeashZNeg = 1.0
-  elif Directional >=.25:   # West
+  elif Directional >= .25:   # West
     LeashXPos = 1.0
   else:                     # East
     LeashXNeg = 1.0
