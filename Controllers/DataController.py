@@ -85,8 +85,7 @@ class ConfigSettings:
         else:  
             print("IP: Not Localhost? Wack.")
 
-        print("Listening on port", self.ListeningPort)
-        print("Sending on port", self.SendingPort)
+        print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
         print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")

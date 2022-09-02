@@ -45,7 +45,7 @@ if __name__ == "__main__":
             import vgamepad as vg
             settings.addGamepadControls(vg.VX360Gamepad(), vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER) # Add emulated gamepad
         except Exception as e:
-            print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...' + '\x1b[0m')
+            print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
             settings.XboxJoystickMovement = False
             time.sleep(7)
 

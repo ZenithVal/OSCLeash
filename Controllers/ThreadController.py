@@ -39,32 +39,35 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
 
         #Turning Math
-        if leash.settings.TurningEnabled:
-            TurnDirect = "N"
+        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:
+            TurnDirect = None
+            match leash.LeashDirection:
+                case "North":
+                    if leash.Z_Positive < leash.settings.TurningGoal:
+                        if leash.X_Positive > leash.X_Negative:
+                            TurnDirect = "R"
+                        else:
+                            TurnDirect = "L"                 
+                case "South":
+                    if leash.Z_Negative < leash.settings.TurningGoal:
+                        if leash.X_Positive > leash.X_Negative:
+                            TurnDirect = "L"
+                        else:
+                            TurnDirect = "R"
+                case "East":
+                    if leash.X_Positive < leash.settings.TurningGoal:
+                        if leash.Z_Positive > leash.Z_Negative:
+                            TurnDirect = "L"
+                        else:
+                            TurnDirect = "R"                
+                case "West":
+                    if leash.X_Negative < leash.settings.TurningGoal:
+                        if leash.Z_Positive > leash.Z_Negative:
+                            TurnDirect = "R"
+                        else:
+                            TurnDirect = "L"
 
-            if leash.Stretch > leash.settings.TurningDeadzone:
-                if leash.LeashDirection == "North" and leash.Z_Positive < leash.settings.TurningGoal:
-                    if leash.X_Positive > leash.X_Negative:
-                        TurnDirect = "R"
-                    else:
-                        TurnDirect = "L"
-                elif leash.LeashDirection == "South" and leash.Z_Negative < leash.settings.TurningGoal:
-                    if leash.X_Positive > leash.X_Negative:
-                        TurnDirect = "L"
-                    else:
-                        TurnDirect = "R"
-                elif leash.LeashDirection == "East" and leash.X_Positive < leash.settings.TurningGoal:
-                    if leash.Z_Positive > leash.Z_Positive:
-                        TurnDirect = "R"
-                    else:
-                        TurnDirect = "L"
-                elif leash.LeashDirection == "West" and leash.X_Positive < leash.settings.TurningGoal:
-                    if leash.Z_Positive > leash.Z_Positive:
-                        TurnDirect = "L"
-                    else:
-                        TurnDirect = "R"
             #Directional Output
-            #AdjustedTurnSpeed = ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier)
             if TurnDirect == "L":
                 TurningSpeed = self.clampNeg(-1.0 * ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier))
             elif TurnDirect == "R":
@@ -74,7 +77,9 @@ class Program:
         else:
             TurningSpeed = 0.0
 
-        if leash.Grabbed: #Leash is grabbed
+
+        #Leash is grabbed
+        if leash.Grabbed: 
             self.updateProgram(True, counter)
 
             if leash.wasGrabbed == False:
@@ -101,14 +106,15 @@ class Program:
 
             leash.wasGrabbed = False
 
-            self.resetProgram()
+            self.resetProgram()\
+            
             time.sleep(leash.settings.InactiveDelay)
         
         else: # Only used at the start
             print("Waiting...")
 
             leash.Active = False
-            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
+            self.leashOutput(0.0, 0.0, 0, 0, leash.settings)
             self.resetProgram()
 
             time.sleep(leash.settings.InactiveDelay)
@@ -122,8 +128,9 @@ class Program:
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
         if settings.XboxJoystickMovement: 
             print("\nSending through Emulated controller input\n")
-            settings.gamepad.left_joystick_float(x_value_float=hori, y_value_float=vert)
-            settings.gamepad.right_joystick_float(x_value_float=turn, y_value_float=0.0)
+            settings.gamepad.left_joystick_float(x_value_float=float(hori), y_value_float=float(vert))
+            if settings.TurningEnabled: 
+                settings.gamepad.right_joystick_float(x_value_float=float(turn), y_value_float=0.0)
             if runType == 1:
                 settings.gamepad.press_button(button=settings.runButton)      
             else:
@@ -135,7 +142,8 @@ class Program:
             print("\nSending through oscClient\n")
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)
-            oscClient.send_message("/input/LookHorizontal", turn)
+            if settings.TurningEnabled: 
+                oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType)
 
 
@@ -146,10 +154,10 @@ class Program:
         return max(-1.0, min(n, 1.0))
 
     def clampPos (self, n):
-        return max(0.0, min(n, 1.0))
+        return max(0.0, min(n, 0.99999))
 
     def clampNeg (self, n):
-        return max(-1.0, min(n, 0.0))
+        return max(-0.99999, min(n, 0.0))
 
     def cls(self): # Console Clear
         """Clears Console"""

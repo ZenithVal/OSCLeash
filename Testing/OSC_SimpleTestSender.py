@@ -6,7 +6,7 @@ import time
 
 from pythonosc import udp_client
 
-LeashNameString = "Leash_South"
+LeashNameString = "Leash_North"
 PORT = 9001
 IP = "127.0.0.1"
 
