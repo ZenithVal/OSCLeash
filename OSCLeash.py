@@ -9,7 +9,7 @@ from Controllers.ThreadController import Program
 
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
-        with open("config.json", "w") as cf:
+        with open(configPath, "w") as cf:
             json.dump(DefaultConfig, cf)
 
         print("Default config file created")
@@ -17,6 +17,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
 
     except Exception as e:
         print(e)
+        time.sleep(5)
         exit()
 
 
@@ -43,12 +44,10 @@ if __name__ == "__main__":
         try:
             import vgamepad as vg
             settings.addGamepadControls(vg.VX360Gamepad(), vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER) # Add emulated gamepad
-            vgamepadImported = True
         except Exception as e:
             print(e)
-            vgamepadImported = False
-    else: 
-        vgamepadImported = False
+            time.sleep(5)
+
     
     # Collect Data for leash
 
@@ -74,3 +73,4 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(e)
+        time.sleep(5)

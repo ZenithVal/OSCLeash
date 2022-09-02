@@ -19,6 +19,7 @@ class Package:
             self.leashes = leashCollection
         except Exception as e:
             print(e)
+            time.sleep(5)
 
     def listen(self):
         # parameters to read per leash
@@ -44,7 +45,7 @@ class Package:
                 self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
 
     def __updateZ_Negative(self, addr, value):
         try:
@@ -54,7 +55,7 @@ class Package:
                 self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
 
     def __updateX_Positive(self, addr, value):
         try:
@@ -64,7 +65,7 @@ class Package:
                 self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
 
     def __updateX_Negative(self, addr, value):
         try:
@@ -74,7 +75,8 @@ class Package:
                 self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
+
 
     def __updateStretch(self, addr, extraArgs, value):
         try:
@@ -84,7 +86,7 @@ class Package:
             self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
             
     def __updateGrabbed(self, addr, extraArgs, value):
         try:
@@ -106,7 +108,7 @@ class Package:
             self.__statelock.release()
         except Exception as e:
             print(e)
-            exit()
+            time.sleep(5)
     
     def runServer(self, IP, Port):
         try:
@@ -116,3 +118,4 @@ class Package:
             print('\x1b[1;31;40m' + '   Warning: An application might already be running on this port!   ' + '\x1b[0m')
             print('\x1b[1;31;41m' + '                                                                    \n' + '\x1b[0m')
             print(e)
+            # No delay here as error message is displayed somewhere else when this fails
