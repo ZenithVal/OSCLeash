@@ -147,6 +147,17 @@ The script will automatically read from the _IsGrabbed and _Stretch parameters c
 <br/>
 
 ---
+### Multiple Leashes
+
+I wouldn't reccomend attempting this at the moment unless you understand constraints and animations. <br/>
+ - Depending on which is grabbed, you'll need to animate two position constraints. 
+   - We only care about which one was grabbed first. 
+ - The Source of `Aim Target` should alernate the ends of the leashes
+ - The source of a psotion constraint on the OSCLeash Prefab should move between the origins of the leashes.
+
+This will be included in a setup video eventually. <br/>
+
+---
 
 ### Turning Functionality
 
