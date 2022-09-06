@@ -152,6 +152,7 @@ The script will automatically read from the _IsGrabbed and _Stretch parameters c
 
 WOAAAH! **Motion sickness warning!** This gets a bit funky but you really don't need to worry about the math.<br/>
 If you want to enable the feature make sure to set **TurningEnabled to True**.<br/>
+**This does not work well with the controller workaround**<br/>
 `Currently Supports North, East, South, & West`<br/>
 
 If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front) Set set the parameter on your Leash Physbone and config to `Leash_North`.<br/>
@@ -160,13 +161,15 @@ If you had a leash up front and you want to turn to match the direction it's pul
         "PhysboneParameters":
         [
             "Leash_North",
-            "Leash_South"
+            "Leash_South",
+            "Leash_East",
+            "Leash_West"
         ],
 ```
 
-We'll parse the name of your leath for North, South, ect based on underscores. 
+We'll parse the name of your leath for North, South, ect based on underscores. So `"Tail_South"` would work.
 
-Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/>It will continue to turn until it is greater than the deadzone. <br/>
+Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/>It will continue to turn until it is greater than the TurningDeadzone value. <br/>
 
 <br/>
 
