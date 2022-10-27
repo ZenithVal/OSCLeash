@@ -50,6 +50,10 @@ All movement values are relative to the VRC world's movement speed limits. <br/>
 
 If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
 
+##
+
+For setup questions/support feel free to shoot me a DM or ask in #OSC-Talkin in [my Discord](https://discord.gg/7VAm3twDyy)
+
 <br/>
 
 ## Known issue & Xbox input Workaround.
