@@ -66,10 +66,10 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 
 <br/>
 
-## Running the program
+## Options for running the program
 
 1. **Via an executable**
-   - Download latest zip [from releases](https://github.com/ZenithVal/OSCLeash/releases/tag/Main)
+   - Download latest zip [from releases](https://github.com/ZenithVal/OSCLeash/releases)
    - Extract wherever.
    - Run Executable
 2. **From the source**
@@ -85,7 +85,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 
 1. Download the program via one of the above methods.
 2. Define config.json settings if needed.
-3. Grab the prefab [from releases](https://github.com/ZenithVal/OSCLeash/releases/tag/Main) 
+3. Grab the prefab [from releases](https://github.com/ZenithVal/OSCLeash/releases) 
 4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed.
 5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
 6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. 
