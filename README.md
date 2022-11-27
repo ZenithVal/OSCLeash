@@ -4,69 +4,7 @@ A "simple" system to make a functional "Leash" in VRchat using OSC. <br/>I swear
 
 <br/>
 
-## How TF this work??
-
-**Step 1: Gather Leash Physbone Values**
-
-This one is simple. We receive the Leash_Stretch and Leash_Grabbed parameters.  
-If Leash_Grabbed becomes true, we begin reading Leash_Stretch 
-
-We'll use these values in this example:  
-
-> Leash_IsGrabbed = True<br/>Leash_Stretch = $0.95$
-
-<br/>
-
-**Step 2: Gather Directional Contact values**
-
-<img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
-4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
-
-Based on where the constraint is aimed, it will give us 4 values. <br/>
-
-If it was pointing South-South-West, we would get:
-
-> Leash_Z+ = $0.0$<br/>Leash_Z- = $0.75$<br/>Leash_X+ = $0.0$<br/>Leash_X- = $0.25$ 
-
-<br/>
-
-**Step 3: MAAAATH!**
-
-Math is fun. Add the negative and positive contacts & multiply by the stretch value.
-
-> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positive - X_Negative) * Leash_Stretch = Horizontal 
-
-So our calculation for speed output would look like:
-
-> $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.0 - 0.25) * 0.95 = -0.2375$ = Horizontal
-
-<br/>
-
-**Step 4: Outputs**
-
-If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
-
-All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the West. 
-
-If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
-
-##
-
-For setup questions/support feel free to shoot me a DM or ask in #OSC-Talkin in [my Discord](https://discord.gg/7VAm3twDyy)
-
-<br/>
-
-## Known issue & Xbox input Workaround.
-
-As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes your arms to be locked into desktop pose, please slap some support onto [this canny](https://feedback.vrchat.com/feature-requests/p/osc-locks-arms)! 
-
-
-
-**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue.<u> Check the extra steps in setup for this. <br/></u>
-
-<br/>
-
-## Options for running the program
+## Options for running OSCLeash
 
 1. **Via an executable**
    - Download latest zip [from releases](https://github.com/ZenithVal/OSCLeash/releases)
@@ -76,8 +14,6 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
    - Clone the github
    - Run `pip install -r requirements.txt` in the directory to install libraries
    - Run the python script
-
-<br/>
 
 ## Setup
 
@@ -97,14 +33,26 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 
 There will be a setup video later.
 
+For setup questions/support feel free to shoot me a DM or ask in #OSC-Talkin in [my Discord](https://discord.gg/7VAm3twDyy)
+
 <br/>
 
-**If you are using Xbox input**
+## Known issue & Xbox input Workaround.
+
+As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement causes your arms to be locked into desktop pose, please slap some support onto [this canny](https://feedback.vrchat.com/feature-requests/p/osc-locks-arms)! 
+
+
+**TEMPORARY WORKAROUND**: Set "XboxJoystickMovement" to true in the config file. Instead of outputting movement with OSC, this will emulate an Xbox controller joystick! Skipping over the above issue entirely. This will probably be removed when VRC fixes the issue.<u> Check the extra steps in setup for this. <br/></u>
+
+<br/>
+
+**For Xbox input**
 
 - You need [ViGEm](https://github.com/ViGEm/ViGEmBus/releases) installed.
 - The VRC window must be focused for inputs to be recieved.
 
 <br/>
+
 
 # Config
 
@@ -128,8 +76,6 @@ There will be a setup video later.
 | DirectionalParameters | A dictionary of contacts to use for direction calculation      | see below   |
 
 ᴹᵃⁿ ᵗʰᵉʳᵉ'ˢ ᵃ ˡᵒᵗ ᵒᶠ ˢᵉᵗᵗᶦⁿᵍˢ
-
-<br/>
 
 ---------
 
@@ -215,7 +161,9 @@ If you wish to change the contacts to used for direction calculations, you can d
 
 <br/>
 
-# Default Config.json
+---
+
+### Default Config.json
 
 ```json
 {
@@ -247,6 +195,55 @@ If you wish to change the contacts to used for direction calculations, you can d
         }
 }
 ```
+---
+
+## How does this work??
+
+**Step 1: Gather Leash Physbone Values**
+
+This one is simple. We receive the Leash_Stretch and Leash_Grabbed parameters.  
+If Leash_Grabbed becomes true, we begin reading Leash_Stretch 
+
+We'll use these values in this example:  
+
+> Leash_IsGrabbed = True<br/>Leash_Stretch = $0.95$
+
+<br/>
+
+**Step 2: Gather Directional Contact values**
+
+<img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
+4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
+
+Based on where the constraint is aimed, it will give us 4 values. <br/>
+
+If it was pointing South-South-West, we would get:
+
+> Leash_Z+ = $0.0$<br/>Leash_Z- = $0.75$<br/>Leash_X+ = $0.0$<br/>Leash_X- = $0.25$ 
+
+<br/>
+
+**Step 3: MAAAATH!**
+
+Math is fun. Add the negative and positive contacts & multiply by the stretch value.
+
+> (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positive - X_Negative) * Leash_Stretch = Horizontal 
+
+So our calculation for speed output would look like:
+
+> $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.0 - 0.25) * 0.95 = -0.2375$ = Horizontal
+
+<br/>
+
+**Step 4: Outputs**
+
+If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
+
+All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the West. 
+
+If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
+
+<br/>
 
 # Credits
 
