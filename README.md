@@ -21,13 +21,16 @@ A "simple" system to make a functional "Leash" in VRchat using OSC. <br/>I swear
 
 1. Download the program via one of the above methods.
 2. Define config.json settings if needed.
-3. Grab the prefab [from releases](https://github.com/ZenithVal/OSCLeash/releases) 
-4. Set the source of `Leash Physbone` to whatever you like, and adjust it if needed.
-5. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
-6. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. 
+3. Grab the prefab [from releases](https://github.com/ZenithVal/OSCLeash/releases)
+4. Place the prefab on the ROOT of the model. (Next to Meshes/Armature)
+5. Set the source of `Leash Physbone` to your leash, and adjust it if needed. 
+   - Only one physbone can control the bones, delete your pre-existing physbone if needed.
+6. The position constrain source on `Aim Target` should be assigned to the last bone of your leash.
+7. If your phybone is off center, copy the constraint from above and paste it on the root of the prefab. 
    - The source should be the origin of your leash.
-7. Make sure to reset OSC in the radial menu if this is being retrofit as an update to an avatar.
-8. Run program.
+8. Enable OSC in the radial menu (Options->OSC->Enable)
+   - Also click Reset OSC in the radial menu if this is an update to a pre-existing model.
+9. Run program.
 
 <br/>
 
@@ -177,7 +180,7 @@ If you wish to change the contacts to used for direction calculations, you can d
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
-        "ActiveDelay": 0.1,
+        "ActiveDelay": 0.01,
         "InactiveDelay": 0.5,
         "Logging": false,
         "XboxJoystickMovement": false,

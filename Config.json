@@ -9,7 +9,7 @@
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
-        "ActiveDelay": 0.1,
+        "ActiveDelay": 0.01,
         "InactiveDelay": 0.5,
         "Logging": false,
         "XboxJoystickMovement": false,
