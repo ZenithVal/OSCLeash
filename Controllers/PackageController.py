@@ -25,6 +25,7 @@ class Package:
         # parameters to read per leash
         self.listenLeash(self.leashes)
         self.listenParam(self.leashes[0])
+        self.listenScale(self.leashes[0])
 
     def listenLeash(self, leashCollection):
         for leash in leashCollection:
@@ -36,6 +37,19 @@ class Package:
         self.__dispatcher.map(f'/avatar/parameters/{leash.Z_Negative_ParamName}',self.__updateZ_Negative) #Z Negative
         self.__dispatcher.map(f'/avatar/parameters/{leash.X_Positive_ParamName}',self.__updateX_Positive) #X Positive
         self.__dispatcher.map(f'/avatar/parameters/{leash.X_Negative_ParamName}',self.__updateX_Negative) #X Negative
+
+    def listenScale(self, leash):
+        self.__dispatcher.map(f'/avatar/parameters/{leash.settings.ScaleParameter}',self.__updateScale)
+
+    def __updateScale(self, addr, value):
+        try:
+            for leash in self.leashes:
+                self.__statelock.acquire()
+                leash.CurrentScale = value
+                self.__statelock.release()
+        except Exception as e:
+            print(e)
+            time.sleep(5)
 
     def __updateZ_Positive(self, addr, value):
         try:

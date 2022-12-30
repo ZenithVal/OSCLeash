@@ -24,5 +24,9 @@
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
                 "X_Negative_Param": "Leash_X-"
-        }
+        },
+        
+        "ScaleSlowdownEnabled": true,
+        "ScaleParameter": "Go/Scale",
+        "ScaleNormal": 0.25
 }

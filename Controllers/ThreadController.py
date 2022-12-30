@@ -32,11 +32,23 @@ class Program:
         leash.settings.printInfo()
         if leash.settings.Logging:
             leash.printDirections()
+        print("Last Scale:")
+        print(round(leash.CurrentScale, 3))
         print("\nCurrent Status:\n")
 
+        #Quick scaling ratio math
+        ScaleRatio = 1
+        if leash.settings.ScaleParameter != "" and leash.settings.ScaleSlowdownEnabled:
+            ScaleRatio = leash.CurrentScale/leash.settings.ScaleNormal
+            if ScaleRatio == 0 or ScaleRatio < 0:
+                ScaleRatio = 0.1
+            elif ScaleRatio > 1:
+                ScaleRatio = 1
+
+
         #Movement Math
-        VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
-        HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
+        VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
+        HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
 
         #Turning Math
         if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:

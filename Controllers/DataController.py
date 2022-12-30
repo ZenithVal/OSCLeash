@@ -29,7 +29,11 @@ DefaultConfig = {
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
                 "X_Negative_Param": "Leash_X-"
-        }
+        },
+
+        "ScaleSlowdownEnabled": False,
+        "ScaleParameter": "Go/Scale",
+        "ScaleNormal": 0.25
 }
 
 
@@ -54,6 +58,9 @@ class ConfigSettings:
             self.InactiveDelay = configJson["InactiveDelay"]
             self.Logging = configJson["Logging"]
             self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
+            self.ScaleSlowdownEnabled = configJson["ScaleSlowdownEnabled"]
+            self.ScaleParameter = configJson["ScaleParameter"]
+            self.ScaleNormal = configJson["ScaleNormal"]
         except Exception as e: 
             print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
             print(e,"was the exception\n")
@@ -71,6 +78,9 @@ class ConfigSettings:
             self.InactiveDelay = DefaultConfig["InactiveDelay"]
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
+            self.ScaleSlowdownEnabled = DefaultConfig["ScaleSlowdownEnabled"]
+            self.ScaleParameter = DefaultConfig["ScaleParameter"]
+            self.ScaleNormal = DefaultConfig["ScaleNormal"]
             time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
@@ -104,6 +114,7 @@ class Leash:
         self.Z_Negative: float = 0
         self.X_Positive: float = 0
         self.X_Negative: float = 0
+        self.CurrentScale: float = 0.25
 
         # Booleans for thread logic
         self.Grabbed: bool = False
