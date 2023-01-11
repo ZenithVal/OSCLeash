@@ -62,7 +62,7 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
 
         #Turning Math
-        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:
+        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone and leash.Grabbed:
             TurnDirect = None
             match leash.LeashDirection:
                 case "North":
