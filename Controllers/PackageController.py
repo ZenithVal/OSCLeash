@@ -40,12 +40,17 @@ class Package:
 
     def listenScale(self, leash):
         self.__dispatcher.map(f'/avatar/parameters/{leash.settings.ScaleParameter}',self.__updateScale)
+        self.__dispatcher.map(f'/avatar/change',self.__updateScale)
 
     def __updateScale(self, addr, value):
         try:
             for leash in self.leashes:
                 self.__statelock.acquire()
-                leash.CurrentScale = value
+                # If the avatar changed, just set it to 100%
+                if isinstance(value, str):
+                    leash.CurrentScale = leash.settings.ScaleNormal
+                else:
+                    leash.CurrentScale = value
                 self.__statelock.release()
         except Exception as e:
             print(e)

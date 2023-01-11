@@ -3,6 +3,7 @@ from threading import Lock, Thread
 import time
 import os
 import ctypes #Required for colored error messages.
+import math
 
 from Controllers.DataController import ConfigSettings, Leash
 
@@ -16,6 +17,16 @@ class Program:
     
     def updateProgram(self, runBool:bool, countValue:int):
         Program.__running = runBool
+
+    def scaleCurve(self, currentScale, normalScale):
+        # magic math i did while high
+        vector = [10, 5]
+        scale = (currentScale/normalScale) * 0.25
+        speed = math.sqrt(vector[0]**2 + vector[1]**2)
+        curve = scale / math.log(speed + 1)
+        vector[0] *= curve
+        vector[1] *= curve
+        return vector[0]
 
     def leashRun(self, leash: Leash, counter:int = 0):
 
@@ -32,19 +43,19 @@ class Program:
         leash.settings.printInfo()
         if leash.settings.Logging:
             leash.printDirections()
-        print("Last Scale:")
-        print(round(leash.CurrentScale, 3))
-        print("\nCurrent Status:\n")
 
         #Quick scaling ratio math
         ScaleRatio = 1
         if leash.settings.ScaleParameter != "" and leash.settings.ScaleSlowdownEnabled:
-            ScaleRatio = leash.CurrentScale/leash.settings.ScaleNormal
+            ScaleRatio = self.scaleCurve(leash.CurrentScale, leash.settings.ScaleNormal)
             if ScaleRatio == 0 or ScaleRatio < 0:
-                ScaleRatio = 0.1
+                ScaleRatio = 0.01
             elif ScaleRatio > 1:
                 ScaleRatio = 1
 
+        print("Last Scale:")
+        print(str(round(ScaleRatio*100, 3))+"%")
+        print("\nCurrent Status:\n")
 
         #Movement Math
         VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
@@ -157,6 +168,7 @@ class Program:
             if settings.TurningEnabled: 
                 oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType)
+
 
 
         print(f"\tVertical: {vert}\n\tHorizontal: {hori}\n\tRun: {runType}")
