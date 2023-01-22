@@ -114,7 +114,7 @@ class Program:
 
 
         #Leash is grabbed
-        if leash.Grabbed: 
+        if leash.Grabbed and leash.Disabled == False: 
             self.updateProgram(True, counter)
 
             if leash.wasGrabbed == False:

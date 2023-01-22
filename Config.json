@@ -31,5 +31,6 @@
     "ScaleNormal": 0.25,
     "BringGameToFront": false,
     "GameTitle": "VRChat",
-    "AutoStartSteamVR": true
+    "AutoStartSteamVR": true,
+    "DisableParameter": "LeashDisable"
 }

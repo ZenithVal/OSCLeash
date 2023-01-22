@@ -34,6 +34,7 @@ DefaultConfig = {
         "BringGameToFront": False,
         "GameTitle": "VRChat",
         "AutoStartSteamVR": True,
+        "DisableParameter": "LeashDisable",
 }
 
 AppManifest = {
@@ -80,6 +81,7 @@ class ConfigSettings:
             self.BringGameToFront = configJson["BringGameToFront"]
             self.GameTitle = configJson["GameTitle"]
             self.AutoStartSteamVR = configJson["AutoStartSteamVR"]
+            self.DisableParameter = configJson["DisableParameter"]
         except Exception as e: 
             print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
             print(e,"was the exception\n")
@@ -103,6 +105,7 @@ class ConfigSettings:
             self.BringGameToFront = DefaultConfig["BringGameToFront"]
             self.GameTitle = DefaultConfig["GameTitle"]
             self.AutoStartSteamVR = DefaultConfig["AutoStartSteamVR"]
+            self.DisableParameter = DefaultConfig["DisableParameter"]
             time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
@@ -142,6 +145,7 @@ class Leash:
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
         self.Active: bool = False
+        self.Disabled: bool = False
 
         if settings.TurningEnabled:
             self.LeashDirection = paraName.split("_")[-1]
