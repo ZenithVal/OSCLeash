@@ -2,16 +2,27 @@ from pythonosc.udp_client import SimpleUDPClient
 from threading import Lock, Thread
 import time
 import os
-import ctypes #Required for colored error messages.
+from Controllers.DataController import ConfigSettings, Leash
+from pprint import pprint
+import pygetwindow as gw
 import math
 
-from Controllers.DataController import ConfigSettings, Leash
 
 class Program:
 
     # Class variable to determine if the program is running on a thread (Prevents multiple threads)
     __running = False 
-
+    def __init__(self, do_print:bool = False):
+        self.do_print = do_print
+        self.setWindowTitle()
+        # self.cls()
+    
+    def print(self, *args, **kwargs):
+        if self.do_print: 
+            print(args, kwargs)
+        else:
+            pass
+        
     def resetProgram(self):
         Program.__running = False 
     
@@ -28,7 +39,8 @@ class Program:
         vector[1] *= curve
         return vector[0]
 
-    def leashRun(self, leash: Leash, counter:int = 0):
+    #@timing
+    def leashRun(self, leash: Leash, counter:int = 0, out_queue = None):
 
         if counter == 0 and Program.__running or not leash.Active:
             return
@@ -39,7 +51,6 @@ class Program:
         statelock = Lock()
         statelock.acquire()
         
-        self.cls()
         leash.settings.printInfo()
         if leash.settings.Logging:
             leash.printDirections()
@@ -53,14 +64,15 @@ class Program:
             elif ScaleRatio > 1:
                 ScaleRatio = 1
 
-        print("Last Scale:")
-        print(str(round(ScaleRatio*100, 3))+"%")
-        print("\nCurrent Status:\n")
+        self.print("Last Scale:")
+        scalePercent = round(ScaleRatio*100, 3)
+        self.print(str(scalePercent)+"%")
+        self.print("\nCurrent Status:\n")
 
         #Movement Math
         VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier * ScaleRatio)
-
+                
         #Turning Math
         if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone and leash.Grabbed:
             TurnDirect = None
@@ -107,25 +119,39 @@ class Program:
 
             if leash.wasGrabbed == False:
                 leash.wasGrabbed = True
-                print("{} Leash recently grabbed".format(leash.Name))
+                self.print("{} Leash recently grabbed".format(leash.Name))
+                
+                # Bring VRChat window to Foreground
+                if leash.settings.BringGameToFront:
+                    windows = gw.getWindowsWithTitle(leash.settings.GameTitle)
+                    # Find the window with the exact title
+                    for window in windows:
+                        if window.title == leash.settings.GameTitle:
+                            try:
+                                window.activate()
+                            except (SyntaxError, gw.PyGetWindowException):
+                                self.print("Error: Could not bring {} to front?".format(leash.settings.GameTitle))
+                                pass
+                            break
+
             else:
-                print("{} is grabbed".format(leash.Name))
+                self.print("{} is grabbed".format(leash.Name))
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, scalePercent, True, leash, out_queue)
             elif leash.Stretch > leash.settings.WalkDeadzone: #Walking deadzone
-                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 0, leash.settings)
+                self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, scalePercent, False, leash, out_queue)
             else: #Not stretched enough to move.
-                self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
+                self.leashOutput(0.0, 0.0, 0.0, scalePercent, False, leash, out_queue)
             
             time.sleep(leash.settings.ActiveDelay)
-            Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
+            Thread(target=self.leashRun, args=(leash, counter+1, out_queue)).start()# Run thread if still grabbed
         
         elif leash.Grabbed != leash.wasGrabbed:
-            print("{} has been released".format(leash.Name))
+            self.print("{} has been released".format(leash.Name))
             leash.Active = False
             leash.resetMovement()
-            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
+            self.leashOutput(0.0, 0.0, 0.0, scalePercent, False, leash, out_queue)
 
             leash.wasGrabbed = False
 
@@ -134,26 +160,31 @@ class Program:
             time.sleep(leash.settings.InactiveDelay)
         
         else: # Only used at the start
-            print("Waiting...")
+            self.print("Waiting...")
 
             leash.Active = False
-            self.leashOutput(0.0, 0.0, 0, 0, leash.settings)
+            self.leashOutput(0.0, 0.0, 0.0, scalePercent, False, leash, out_queue)
             self.resetProgram()
 
             time.sleep(leash.settings.InactiveDelay)
 
         statelock.release()
-
-    def leashOutput(self, vert: float, hori: float, turn: float, runType: bool, settings: ConfigSettings):
-
+    
+    def leashOutput(self, vert: float, hori: float, turn: float, scale: float, runType: bool, leash: Leash, out_queue):
+        #Output to queue
+        settings = leash.settings
+        if out_queue != None:
+            out_queue.put(item=(leash.Name, vert, hori, turn, scale), block=False)
+        
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
-        #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
+        #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXEDpytho
         if settings.XboxJoystickMovement: 
-            print("\nSending through Emulated controller input\n")
-            settings.gamepad.left_joystick_float(x_value_float=float(hori), y_value_float=float(vert))
+            self.print("\nSending through Emulated controller input\n")
+            offset = 1
+            settings.gamepad.left_joystick_float(x_value_float=float(hori * offset), y_value_float=float(vert * offset))
             if settings.TurningEnabled: 
-                settings.gamepad.right_joystick_float(x_value_float=float(turn), y_value_float=0.0)
+                settings.gamepad.right_joystick_float(x_value_float=float(turn * offset), y_value_float=0.0)
             if runType == 1:
                 settings.gamepad.press_button(button=settings.runButton)      
             else:
@@ -162,7 +193,7 @@ class Program:
 
         else:
             #Normal OSC outputs  function
-            print("\nSending through oscClient\n")
+            self.print("\nSending through oscClient\n")
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)
             if settings.TurningEnabled: 
@@ -170,9 +201,8 @@ class Program:
             oscClient.send_message("/input/Run", runType)
 
 
-
-        print(f"\tVertical: {vert}\n\tHorizontal: {hori}\n\tRun: {runType}")
-        if settings.TurningEnabled: print(f"\tTurn: {turn}")
+        self.print(f"\tVertical: {vert}\n\tHorizontal: {hori}\n\tRun: {runType}")
+        if settings.TurningEnabled: self.print(f"\tTurn: {turn}")
 
     def clamp (self, n):
         return max(-1.0, min(n, 1.0))
@@ -189,5 +219,4 @@ class Program:
 
     def setWindowTitle(self): # Set window title
         if os.name == 'nt':
-            ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
-    
+            os.system("title OSCLeash")

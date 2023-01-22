@@ -1,16 +1,1 @@
-{
-	"source" : "builtin",
-	"applications": [{
-		"app_key": "zenithval.LeashSC",
-		"launch_type": "binary",
-		"binary_path_windows": "./OSCLeash.exe",
-		"is_dashboard_overlay": true,
-
-		"strings": {
-			"en_us": {
-				"name": "OSCLeash",
-				"description": "OSCLeash"
-			}
-		}
-	}]
-}
+{"source": "builtin", "applications": [{"app_key": "zenithval.LeashSC", "launch_type": "binary", "binary_path_windows": "./OSCLeash.exe", "is_dashboard_overlay": true, "strings": {"en_us": {"name": "OSCLeash", "description": "OSCLeash"}}}]}

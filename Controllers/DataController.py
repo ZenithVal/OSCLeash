@@ -1,6 +1,4 @@
-import sys
 import time
-import ctypes #Required for colored error messages.
 
 DefaultConfig = {
         "IP": "127.0.0.1",
@@ -30,12 +28,30 @@ DefaultConfig = {
                 "X_Positive_Param": "Leash_X+",
                 "X_Negative_Param": "Leash_X-"
         },
-
-        "ScaleSlowdownEnabled": False,
-        "ScaleParameter": "Go/Scale",
-        "ScaleNormal": 0.25
+        "ScaleSlowdownEnabled": True,
+        "ScaleParameter": "Go/ScaleFloat",
+        "ScaleNormal": 0.25,
+        "BringGameToFront": False,
+        "GameTitle": "VRChat",
+        "AutoStartSteamVR": True,
 }
 
+AppManifest = {
+	"source" : "builtin",
+	"applications": [{
+		"app_key": "zenithval.LeashSC",
+		"launch_type": "binary",
+		"binary_path_windows": "./OSCLeash.exe",
+		"is_dashboard_overlay": True,
+
+		"strings": {
+			"en_us": {
+				"name": "OSCLeash",
+				"description": "OSCLeash"
+			}
+		}
+	}]
+}
 
 class ConfigSettings:
 
@@ -61,6 +77,9 @@ class ConfigSettings:
             self.ScaleSlowdownEnabled = configJson["ScaleSlowdownEnabled"]
             self.ScaleParameter = configJson["ScaleParameter"]
             self.ScaleNormal = configJson["ScaleNormal"]
+            self.BringGameToFront = configJson["BringGameToFront"]
+            self.GameTitle = configJson["GameTitle"]
+            self.AutoStartSteamVR = configJson["AutoStartSteamVR"]
         except Exception as e: 
             print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
             print(e,"was the exception\n")
@@ -81,6 +100,9 @@ class ConfigSettings:
             self.ScaleSlowdownEnabled = DefaultConfig["ScaleSlowdownEnabled"]
             self.ScaleParameter = DefaultConfig["ScaleParameter"]
             self.ScaleNormal = DefaultConfig["ScaleNormal"]
+            self.BringGameToFront = DefaultConfig["BringGameToFront"]
+            self.GameTitle = DefaultConfig["GameTitle"]
+            self.AutoStartSteamVR = DefaultConfig["AutoStartSteamVR"]
             time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
@@ -88,20 +110,20 @@ class ConfigSettings:
         self.runButton = runButton
 
     def printInfo(self):        
-        print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
+        # print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
 
-        if self.IP == "127.0.0.1":
-            print("IP: Localhost")
-        else:  
-            print("IP: Not Localhost? Wack.")
+        # if self.IP == "127.0.0.1":
+        #     print("IP: Localhost")
+        # else:  
+        #     print("IP: Not Localhost? Wack.")
 
-        print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
-        print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
-        print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
-        print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
-        if self.TurningEnabled: 
-            print(f"Turning is enabled:\n\tMultiplier of {self.TurningMultiplier}\n\tDeadzone of {self.TurningDeadzone}\n\tGoal of {self.TurningGoal*180}°")
-            
+        # print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
+        # print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
+        # print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
+        # print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
+        # if self.TurningEnabled: 
+        #     print(f"Turning is enabled:\n\tMultiplier of {self.TurningMultiplier}\n\tDeadzone of {self.TurningDeadzone}\n\tGoal of {self.TurningGoal*180}°")
+        pass    
 class Leash:
 
     def __init__(self, paraName, contacts, settings: ConfigSettings):

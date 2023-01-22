@@ -1,4 +1,9 @@
-
-Controllers/__pycache__/DataController.cpython-310.pyc
-Controllers/__pycache__/PackageController.cpython-310.pyc
-Controllers/__pycache__/ThreadController.cpython-310.pyc
+*__pycache__*
+DataController.cpython-310.pyc
+PackageController.cpython-310.pyc
+ThreadController.cpython-310.pyc
+.venv/
+build/
+output/
+dist/
+*OSCLeash.exe

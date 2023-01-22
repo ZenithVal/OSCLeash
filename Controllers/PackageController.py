@@ -1,7 +1,4 @@
-from array import array
 import time
-import sys
-import ctypes #Required for colored error messages.
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import osc_server
 from threading import Lock, Thread
@@ -11,9 +8,11 @@ from Controllers.ThreadController import Program
 
 class Package:
     
-    def __init__(self, leashCollection):
+    def __init__(self, leashCollection, out_queue):
         self.__dispatcher = Dispatcher()
         self.__statelock = Lock()
+        self.out_queue = out_queue
+        self.last_avatar = None
         try:
             if len(leashCollection) == 0: raise Exception("Leash collection empty within Package manager.")
             self.leashes = leashCollection
@@ -48,7 +47,9 @@ class Package:
                 self.__statelock.acquire()
                 # If the avatar changed, just set it to 100%
                 if isinstance(value, str):
-                    leash.CurrentScale = leash.settings.ScaleNormal
+                    if value != self.last_avatar:
+                        self.last_avatar = value
+                        leash.CurrentScale = leash.settings.ScaleNormal
                 else:
                     leash.CurrentScale = value
                 self.__statelock.release()
@@ -122,7 +123,7 @@ class Package:
                 if not threadInProgress:
                     program = Program()
                     currLeash.Active = True
-                    Thread(target=program.leashRun, args=(currLeash,)).start()
+                    Thread(target=program.leashRun, args=(currLeash, 0, self.out_queue)).start()
 
             self.__statelock.release()
         except Exception as e:
