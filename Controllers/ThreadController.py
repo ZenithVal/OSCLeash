@@ -39,6 +39,24 @@ class Program:
         vector[1] *= curve
         return vector[0]
 
+    # Stolen from @NicoHood and @st42 (github users) in a discussion about the
+    # map() function being weird
+    # https://github.com/arduino/ArduinoCore-API/issues/51#issuecomment-87432953
+    def map_with_clamp(self, x, in_min, in_max, out_min, out_max):
+        # if input is smaller/bigger than expected return the min/max out ranges value
+        if x < in_min:
+            return out_min
+        elif x > in_max:
+            return out_max
+
+        # map the input to the output range.
+        # round up if mapping bigger ranges to smaller ranges
+        elif (in_max - in_min) > (out_max - out_min):
+            return (x - in_min) * (out_max - out_min + 1) / (in_max - in_min + 1) + out_min
+        # round down if mapping smaller ranges to bigger ranges
+        else:
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
     #@timing
     def leashRun(self, leash: Leash, counter:int = 0, out_queue = None):
 
@@ -181,10 +199,11 @@ class Program:
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXEDpytho
         if settings.XboxJoystickMovement: 
             self.print("\nSending through Emulated controller input\n")
-            offset = 1
-            settings.gamepad.left_joystick_float(x_value_float=float(hori * offset), y_value_float=float(vert * offset))
+            offset = 0.8
+
+            settings.gamepad.left_joystick_float(x_value_float=self.map_with_clamp(float(hori), offset*-1, offset, -1.0, 1.0), y_value_float=self.map_with_clamp(float(vert), offset*-1, offset, -1.0, 1.0))
             if settings.TurningEnabled: 
-                settings.gamepad.right_joystick_float(x_value_float=float(turn * offset), y_value_float=0.0)
+                settings.gamepad.right_joystick_float(x_value_float=self.map_with_clamp(float(turn), -0.5, 0.5, -1.0, 1.0), y_value_float=0.0)
             if runType == 1:
                 settings.gamepad.press_button(button=settings.runButton)      
             else:
