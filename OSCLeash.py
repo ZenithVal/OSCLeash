@@ -72,6 +72,8 @@ def setup_openvr():
                 print("Error adding manifest: ", error)
             else:
                 print("Manifest added successfully")
+                # Set the application to start automatically when SteamVR starts
+                applications.setApplicationAutoLaunch(AppManifest["applications"][0]["app_key"], True)
                 
             # Listen for the event that SteamVR is shutting down
             # This is a blocking call, so it will wait here until SteamVR shuts down
