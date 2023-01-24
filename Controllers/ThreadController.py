@@ -6,7 +6,7 @@ from Controllers.DataController import ConfigSettings, Leash
 from pprint import pprint
 import pygetwindow as gw
 import math
-
+from queue import LifoQueue
 
 class Program:
 
@@ -188,10 +188,16 @@ class Program:
 
         statelock.release()
     
-    def leashOutput(self, vert: float, hori: float, turn: float, scale: float, runType: bool, leash: Leash, out_queue):
+    def leashOutput(self, vert: float, hori: float, turn: float, scale: float, runType: bool, leash: Leash, out_queue: LifoQueue):
         #Output to queue
         settings = leash.settings
         if out_queue != None:
+            # Clear the queue to prevent erroneous GUI output
+            if vert == 0.0 and hori == 0.0 and turn == 0.0:
+                while not out_queue.qsize() == 0:
+                    out_queue.get()
+                    out_queue.task_done()
+                    
             out_queue.put(item=(leash.Name, vert, hori, turn, scale), block=False)
         
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
@@ -199,7 +205,7 @@ class Program:
         #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXEDpytho
         if settings.XboxJoystickMovement: 
             self.print("\nSending through Emulated controller input\n")
-            offset = 0.8
+            offset = 0.65
 
             settings.gamepad.left_joystick_float(x_value_float=self.map_with_clamp(float(hori), offset*-1, offset, -1.0, 1.0), y_value_float=self.map_with_clamp(float(vert), offset*-1, offset, -1.0, 1.0))
             if settings.TurningEnabled: 
