@@ -10,7 +10,6 @@ import asyncio
 import darkdetect
 import os
 
-
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
 printInfo(config)

@@ -68,41 +68,42 @@ AppManifest = {
 	}]
 }
 
-def setup_openvr(config):
+def setup_openvr():
     # Import openvr if user wants to autostart the app with SteamVR
-    if config["StartWithSteamVR"]:
-        try:
-            import openvr
-            vr = openvr.init(openvr.VRApplication_Utility)
-            # Create an IVRApplications object
-            applications = openvr.IVRApplications()
+    # if config["StartWithSteamVR"]: We don't need an if, this was called in an if.
+    try:
+        import openvr
+        vr = openvr.init(openvr.VRApplication_Utility)
+        # Create an IVRApplications object
+        applications = openvr.IVRApplications()
 
-            # Save AppManifest to manifest.vrmanifest
-            with open("./manifest.vrmanifest", "w") as f:
-                f.write(json.dumps(AppManifest))
-            
-            # Register the manifest file's absolute path with SteamVR
-            manifest_path = os.path.abspath("./manifest.vrmanifest")
-            error = openvr.EVRFirmwareError()
-            applications.addApplicationManifest(manifest_path, False)
-            #applications.removeApplicationManifest(manifest_path)
-            if error.value != 0:
-                print("Error adding manifest: ", error)
-            else:
-                print("Manifest added successfully")
-                # Set the application to start automatically when SteamVR starts
-                applications.setApplicationAutoLaunch(AppManifest["applications"][0]["app_key"], True)
-                
-            # Listen for the event that SteamVR is shutting down
-            # This is a blocking call, so it will wait here until SteamVR shuts down
-            #event = openvr.VREvent_t()
-            #while True:
-            #    if vr.pollNextEvent(event):
-            #        if event.eventType == openvr.VREvent_Quit:
-            #            break
+        # Save AppManifest to manifest.vrmanifest
+        with open("./manifest.vrmanifest", "w") as f:
+            f.write(json.dumps(AppManifest))
         
-        except openvr.error_code.ApplicationError_InvalidManifest as e:
-            print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Was not able to import openvr!' + '\x1b[0m')
+        # Register the manifest file's absolute path with SteamVR
+        manifest_path = os.path.abspath("./manifest.vrmanifest")
+        error = openvr.EVRFirmwareError()
+        applications.addApplicationManifest(manifest_path, False)
+        #applications.removeApplicationManifest(manifest_path)
+        if error.value != 0:
+            print("Error adding manifest: ", error)
+        else:
+            applications.setApplicationAutoLaunch(AppManifest["applications"][0]["app_key"], True)
+            print("Manifest added successfully")
+            # Set the application to start automatically when SteamVR starts
+            
+        # Listen for the event that SteamVR is shutting down
+        # This is a blocking call, so it will wait here until SteamVR shuts down
+        #event = openvr.VREvent_t()
+        #while True:
+        #    if vr.pollNextEvent(event):
+        #        if event.eventType == openvr.VREvent_Quit:
+        #            break
+    
+    except openvr.error_code.ApplicationError_InvalidManifest as e:
+        print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Was not able to import openvr!' + '\x1b[0m')
+
 
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
@@ -115,7 +116,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
         print("Error creating default config file: ", e)
         raise e
 
-def bootstrap(configPath = "./Config.json") -> dict:
+def bootstrap(configPath = "./config.json") -> dict:
     # Test if Config file exists. Create the default if it does not. Initialize OpenVR if user wants to autostart with SteamVR
     if not os.path.exists(configPath):
         print("Config file was not found...", "\nCreating default config file...")
@@ -129,13 +130,11 @@ def bootstrap(configPath = "./Config.json") -> dict:
         try:
             with open(configPath, "r") as cf:
                 config = json.load(cf)
-            setup_openvr(config)
             return config  
         except Exception as e: #Catch a malformed config file.
             print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
             print(e,"was the exception\n")
             time.sleep(2)
-            setup_openvr(DefaultConfig)
             return DefaultConfig
     
 
@@ -161,8 +160,13 @@ def printInfo(config):
         print("GUI is Enabled")
 
     if config['StartWithSteamVR']:
-        print("OSCLeash will attempt to start with SteamVR")
-    
+        print("OSCLeash will start with SteamVR")
+        try:
+            setup_openvr()
+        except Exception as e:
+            print(e)
+
+
     print("")
 
     print("Run Deadzone of {:.0f}".format(config['RunDeadzone']*100)+"% stretch")
