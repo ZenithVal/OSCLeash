@@ -9,6 +9,7 @@
     "TurningMultiplier": 0.75,
     "TurningDeadzone": 0.15,
     "TurningGoal": 90,
+    "TurningKp": 0.5,
     "ActiveDelay": 0.05,
     "InactiveDelay": 0.5,
     "Logging": false,
@@ -33,4 +34,5 @@
     "GameTitle": "VRChat",
     "AutoStartSteamVR": true,
     "DisableParameter": "LeashDisable"
+    "DisableGUI": false
 }
