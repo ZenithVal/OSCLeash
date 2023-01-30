@@ -1,38 +1,45 @@
 {
-    "IP": "127.0.0.1",
-    "ListeningPort": 9001,
-    "SendingPort": 9000,
-    "RunDeadzone": 0.70,
-    "WalkDeadzone": 0.15,
-    "StrengthMultiplier": 1.2,
-    "TurningEnabled": false,
-    "TurningMultiplier": 0.75,
-    "TurningDeadzone": 0.15,
-    "TurningGoal": 90,
-    "TurningKp": 0.5,
-    "ActiveDelay": 0.05,
-    "InactiveDelay": 0.5,
-    "Logging": false,
-    "XboxJoystickMovement": false,
-    
-    "PhysboneParameters":
-    [
-            "Leash"
-    ],
-    "DirectionalParameters":
-    {
-            "Z_Positive_Param": "Leash_Z+",
-            "Z_Negative_Param": "Leash_Z-",
-            "X_Positive_Param": "Leash_X+",
-            "X_Negative_Param": "Leash_X-"
-    },
-    
-    "ScaleSlowdownEnabled": false,
-    "ScaleParameter": "Go/ScaleFloat",
-    "ScaleNormal": 0.25,
-    "BringGameToFront": false,
-    "GameTitle": "VRChat",
-    "AutoStartSteamVR": true,
-    "DisableParameter": "LeashDisable",
-    "DisableGUI": false
+        "IP": "127.0.0.1",
+        "ListeningPort": 9001,
+        "SendingPort": 9000,
+
+        "DisableGUI": false,
+        "Logging": true,
+        "StartWithSteamVR": false,
+
+        "ActiveDelay": 0.05,     
+        "InactiveDelay": 0.5,
+
+        "RunDeadzone": 0.70,
+        "WalkDeadzone": 0.15,
+        "StrengthMultiplier": 1.2,
+
+        "TurningEnabled": false,
+        "TurningMultiplier": 0.75,
+        "TurningDeadzone": 0.15,
+        "TurningGoal": 90,
+        "TurningKp": 0.5,
+
+        "XboxJoystickMovement": true,
+        "BringGameToFront": false,
+        "GameTitle": "VRChat",
+
+        "PhysboneParameters":
+        [
+                "Leash"
+        ],
+
+        "DirectionalParameters":
+        {
+                "Z_Positive_Param": "Leash_Z+",
+                "Z_Negative_Param": "Leash_Z-",
+                "X_Positive_Param": "Leash_X+",
+                "X_Negative_Param": "Leash_X-"
+        },
+
+        "DisableParameter": "",
+
+        "ScaleSlowdownEnabled": true,
+        "ScaleParameter": "Go/ScaleFloat",
+        "ScaleDefault": 0.25
 }

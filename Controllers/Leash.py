@@ -14,7 +14,7 @@ class LeashActions:
         self.isGrabbed = False
         self.stretch = 0.0
         self.activeLeashes = []
-        self.scale = self.config['ScaleNormal']
+        self.scale = self.config['ScaleDefault']
         self.lastAvatar = None
         self.isDisabled = False
 
@@ -83,21 +83,21 @@ class LeashActions:
             self.negVector = [0.0,0.0,0.0]
             self.sendUpdate()
 
-        # pprint(f"OSCServer: {address} {grabbed} {self.isGrabbed}")
+        # print(f"OSCServer: {address} {grabbed} {self.isGrabbed}")
 
     def updateScale(self, address: str, variable: any):
         # Checking if the variable is a string, if it is, it's the avatar ID instead of the new scale
         if isinstance(variable, str):
             if variable != self.last_avatar:
                 self.last_avatar = variable
-                # self.scale = self.config['ScaleNormal']
-                self.scale = self.config['ScaleNormal']
+                # self.scale = self.config['ScaleDefault']
+                self.scale = self.config['ScaleDefault']
                 self.isDisabled = False
         else:
-            if variable <= self.config['ScaleNormal']:
+            if variable <= self.config['ScaleDefault']:
                 self.scale = variable
             else:
-                self.scale = self.config['ScaleNormal']
+                self.scale = self.config['ScaleDefault']
         self.sendUpdate()
 
 
@@ -116,7 +116,7 @@ class LeashActions:
         if self.config['ScaleSlowdownEnabled']:
             # magic math i did while high
             vector = [10, 5]
-            scale = (inputScale/self.config['ScaleNormal']) * 0.25
+            scale = (inputScale/self.config['ScaleDefault']) * 0.25
             speed = math.sqrt(vector[0]**2 + vector[1]**2)
             curve = scale / math.log(speed + 1)
             vector[0] *= curve

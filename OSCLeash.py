@@ -3,15 +3,17 @@ from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
 from Controllers.Leash import LeashActions
 from Controllers.Movement import MovementController
-import PySimpleGUI as sg      
-from bootstrap import bootstrap
+from Controllers.Bootstrap import bootstrap, printInfo
+import PySimpleGUI as sg
 from multiprocessing import Queue
 import asyncio
 import darkdetect
+import os
 
 
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
+printInfo(config)
 
 
 def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
@@ -66,7 +68,7 @@ class App():
                 self.window['leash-x'].update(values['vector'][0])
                 self.window['leash-z'].update(values['vector'][2])
                 self.window['leash-turn'].update(values['turn'])
-                self.window['current-scale'].update(str(round(values['scale']/config['ScaleNormal']*100))+"%")
+                self.window['current-scale'].update(str(round(values['scale']/config['ScaleDefault']*100))+"%")
             await asyncio.sleep(0)
 
 
