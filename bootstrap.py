@@ -14,6 +14,7 @@ DefaultConfig = {
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.15,
         "TurningGoal": 90,
+        "TurningKp": 0.5,
         "ActiveDelay": 0.1,     
         "InactiveDelay": 0.5,
         "Logging": True,
