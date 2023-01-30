@@ -1,78 +1,123 @@
-from threading import Thread
-import json
-import os
-import time
+from pythonosc.dispatcher import Dispatcher
+from pythonosc.osc_server import AsyncIOOSCUDPServer
+from pythonosc.udp_client import SimpleUDPClient
+from Controllers.Leash import LeashActions
+from Controllers.Movement import MovementController
+import PySimpleGUI as sg      
+from bootstrap import bootstrap
+from multiprocessing import Queue
+import asyncio
+import darkdetect
 
-from Controllers.DataController import DefaultConfig, ConfigSettings, Leash
-from Controllers.PackageController import Package
-from Controllers.ThreadController import Program
 
-def createDefaultConfigFile(configPath): # Creates a default config
-    try:
-        with open(configPath, "w") as cf:
-            json.dump(DefaultConfig, cf)
+config = bootstrap()
+leashCollection = [x for x in config["PhysboneParameters"]]
 
-        print("Default config file created")
-        time.sleep(3)
 
-    except Exception as e:
-        print(e)
-        time.sleep(5)
-        exit()
+def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
+    for leash in leashCollection:
+            dispatcher.map(f'/avatar/parameters/{leash}_Stretch', actions.updateStretch)
+            dispatcher.map(f'/avatar/parameters/{leash}_IsGrabbed', actions.updateGrabbed)
+
+    for v in config['DirectionalParameters'].values():
+        dispatcher.map(f'/avatar/parameters/{v}', actions.updateDirectional)
+    
+    dispatcher.map(f'/avatar/parameters/{config["ScaleParameter"]}', actions.updateScale)
+    dispatcher.map(f'/avatar/parameters/{config["DisableParameter"]}', actions.updateDisable)
+    dispatcher.map(f'/avatar/change', actions.updateScale)
+
+       
+class App():            
+    def __init__(self):
+        if darkdetect.isDark():
+            sg.theme('DarkPurple5')   # Add a touch of color
+        else:
+            sg.theme('LightPurple')   # Add a touch of color
+        # All the stuff inside your window.
+        # ToDo prepolulate with multiple sections for Physbone names in Config.json
+        self.mainLayout = [  [sg.Text('Leash Name:'), (sg.Text('Null', key='leash-name'))],
+                    [sg.Text('Leash X:'), (sg.Text('Null', key='leash-x'))],
+                    [sg.Text('Leash Z:'), (sg.Text('Null', key='leash-z'))],
+                    [sg.Text('Leash Turn:'), (sg.Text('Null', key='leash-turn'))],
+                    [sg.Text('Current Scale:'), (sg.Text('Null', key='current-scale'))],]
+
+                            
+        # Create the Window
+        self.window = sg.Window('OSCLeash - GUI', self.mainLayout, enable_close_attempted_event=True)
+        
+        # Event Loop to process "events" and get the "values" of the inputs
+    
+    async def run(self, in_q: Queue, out_q: Queue):    
+        self.window.finalize()
+        self.window.set_min_size((250, 100))
+        while True:
+            event, values = self.window.read(0)
+            if event == sg.WIN_CLOSED or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT: # if user closes window
+                out_q.put("gui-exit")
+                raise SystemExit
+            if in_q != None and in_q.qsize() > 0:
+                values = in_q.get()
+                if config['Logging']:
+                    print(values) # Debug print of gui values
+                if len(values['active-leashes']):
+                    self.window['leash-name'].update(values['active-leashes'][-1])
+                else:
+                    self.window['leash-name'].update("None")
+                self.window['leash-x'].update(values['vector'][0])
+                self.window['leash-z'].update(values['vector'][2])
+                self.window['leash-turn'].update(values['turn'])
+                self.window['current-scale'].update(str(round(values['scale']/config['ScaleNormal']*100))+"%")
+            await asyncio.sleep(0)
+
+
+async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
+    # Start OSC System    
+    dispatcher = Dispatcher()
+    server = AsyncIOOSCUDPServer((config['IP'], config['ListeningPort']), dispatcher, asyncio.get_event_loop())
+    transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
+    
+    client = SimpleUDPClient(config['IP'], config['SendingPort'])
+
+
+    actions = LeashActions(config, in_q, out_q)
+    dispatcherMap(dispatcher, actions)
+    movement = MovementController(config, out_q, gui_q)
+    movement.setup_xbox_movement()
+
+
+    while True:
+        if config['Logging'] and not ['DisableGUI']:
+            if not gui_q.empty():
+                print(gui_q.get(block=False))
+                
+        bundle = movement.sendMovement()
+        if bundle is not None: 
+            for msg in bundle:
+                client.send_message(msg[0], msg[1])
+        await asyncio.sleep(0)
 
 
 if __name__ == "__main__":
-
-    #*************Setup*************#
-    program = Program()
-    program.setWindowTitle()
-    program.cls()
-
-    # Test if Config file exists. Create the default if it does not.
-    configRelativePath = "./config.json"
-    if not os.path.exists(configRelativePath):
-        print("Config file was not found...", "\nCreating default config file...")
-        createDefaultConfigFile(configRelativePath)
-    else:
-        print("Config file found\n")
-
-    configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
-    settings = ConfigSettings(configData) # Get settings from config file
-
-    # Add controller input if user installs vgampad
-    if settings.XboxJoystickMovement:
-        try:
-            import vgamepad as vg
-            settings.addGamepadControls(vg.VX360Gamepad(), vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER) # Add emulated gamepad
-        except Exception as e:
-            print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
-            settings.XboxJoystickMovement = False
-            time.sleep(7)
-
-    
-    # Collect Data for leash
-
-    leashes = []
-    for leashName in configData["PhysboneParameters"]:
-        leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
-
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    in_q = Queue()
+    out_q = Queue()
+    gui_q = Queue()
+    gui = App()
     try:
-        # Manage data coming in
-        if len(leashes) == 0: raise Exception("No leashes found. Please update config file.")
-        package = Package(leashes)
-        package.listen()
+        mainLogic = asyncio.ensure_future(init_main(in_q, out_q, gui_q))
+        # Hide the GUI if the user doesn't want it
+        if not config['DisableGUI']:
+            guiLogic = asyncio.ensure_future(gui.run(gui_q, in_q))
+        asyncio.get_event_loop().run_forever()
 
-        # Start server
-        serverThread = Thread(target=package.runServer, args=(settings.IP, settings.ListeningPort))
-        serverThread.start()
-        time.sleep(.1)
-        
-        #initialize input
-        if serverThread.is_alive():
-            leashes[0].Active = True
-            Thread(target=program.leashRun, args=(leashes[0],)).start()
-        else: raise Exception()
-            
-    except Exception as e:
-        print(e)
-        time.sleep(10)
+    except KeyboardInterrupt as e:
+        try:
+            mainLogic.cancel()
+            if not config['DisableGUI']:
+                guiLogic.cancel()
+
+        except asyncio.exceptions as e:
+            pass
+    finally:
+        loop.close()
