@@ -27,8 +27,6 @@ class MovementController:
                 self.config['XboxJoystickMovement'] = False
                 
     def makeMovement(self, leashData):
-
-        
         if self.config['XboxJoystickMovement']: 
             #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
             offset = 0.65

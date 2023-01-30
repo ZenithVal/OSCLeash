@@ -1,13 +1,14 @@
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
-from controllers.Leash import LeashActions
-from controllers.Movement import MovementController
+from Controllers.Leash import LeashActions
+from Controllers.Movement import MovementController
 import PySimpleGUI as sg      
 from bootstrap import bootstrap
 from multiprocessing import Queue
 import asyncio
 import darkdetect
+
 
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
@@ -25,8 +26,7 @@ def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
     dispatcher.map(f'/avatar/parameters/{config["DisableParameter"]}', actions.updateDisable)
     dispatcher.map(f'/avatar/change', actions.updateScale)
 
-     
-           
+       
 class App():            
     def __init__(self):
         if darkdetect.isDark():
@@ -95,7 +95,6 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
             for msg in bundle:
                 client.send_message(msg[0], msg[1])
         await asyncio.sleep(0)
-
 
 
 if __name__ == "__main__":

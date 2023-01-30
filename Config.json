@@ -33,6 +33,6 @@
     "BringGameToFront": false,
     "GameTitle": "VRChat",
     "AutoStartSteamVR": true,
-    "DisableParameter": "LeashDisable"
+    "DisableParameter": "LeashDisable",
     "DisableGUI": false
 }
