@@ -4,6 +4,7 @@
         "SendingPort": 9000,
 
         "DisableGUI": false,
+        "GUITheme": "Topanga",
         "Logging": true,
         "StartWithSteamVR": false,
 

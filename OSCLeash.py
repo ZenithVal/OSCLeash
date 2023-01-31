@@ -30,10 +30,7 @@ def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
        
 class App():            
     def __init__(self):
-        if darkdetect.isDark():
-            sg.theme('DarkPurple5')   # Add a touch of color
-        else:
-            sg.theme('LightPurple')   # Add a touch of color
+        sg.theme(config['GUITheme'])   # Add a touch of color
         # All the stuff inside your window.
         # ToDo prepolulate with multiple sections for Physbone names in Config.json
         self.mainLayout = [  [sg.Text('Leash Name:'), (sg.Text('Null', key='leash-name'))],
