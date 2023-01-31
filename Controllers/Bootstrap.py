@@ -1,6 +1,5 @@
 import json
 import os
-import ctypes
 import time
 
 # Default configs in case the user doesn't have one
@@ -10,8 +9,9 @@ DefaultConfig = {
         "ListeningPort": 9001,
         "SendingPort": 9000,
 
-        "DisableGUI": False,
         "Logging": True,
+        "GUIEnabled": True,
+        "GUITheme": "",
         "StartWithSteamVR": False,
 
         "ActiveDelay": 0.05,     
@@ -149,15 +149,22 @@ def printInfo(config):
     print(f"Listening on port {config['ListeningPort']}\nSending on port {config['SendingPort']}")
     print("Delays of {:.0f}".format(config['ActiveDelay']*1000),"& {:.0f}".format(config['InactiveDelay']*1000),"ms")
 
-    if config['Logging']:
-        print("Logging is Enabled")
-    else:
-        print("Logging is Disabled")
+    print("")
 
-    if config['DisableGUI']:
-        print("GUI is Disabled")
+    if config['Logging']:
+        print("Logging is enabled")
     else:
-        print("GUI is Enabled")
+        print("Logging is disabled")
+
+    if config['GUIEnabled']:
+        print("GUI is enabled:")
+        if config["GUITheme"] != "":
+            print(f'\tAttempting to use {config["GUITheme"]} as the theme')
+        else:
+            print(f"\tUsing standard theme")
+    else:
+        print("GUI is disabled")
+
 
     if config['StartWithSteamVR']:
         print("OSCLeash will start with SteamVR")
@@ -165,7 +172,6 @@ def printInfo(config):
             setup_openvr()
         except Exception as e:
             print(e)
-
 
     print("")
 
@@ -191,7 +197,7 @@ def printInfo(config):
 
     # XBOX SUPPORT: Remove later when not needed.
     if config['XboxJoystickMovement']:
-        print("Controller support is enabled.")
+        print("Controller emulation is enabled.")
         if config['BringGameToFront']:
             print(f"The {config['GameTitle']} window will be brought to the front when required" )
     else:

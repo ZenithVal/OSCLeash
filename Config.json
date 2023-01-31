@@ -3,8 +3,9 @@
         "ListeningPort": 9001,
         "SendingPort": 9000,
 
-        "DisableGUI": false,
         "Logging": true,
+        "GUIEnabled": true,
+        "GUITheme": "",
         "StartWithSteamVR": false,
 
         "ActiveDelay": 0.05,     

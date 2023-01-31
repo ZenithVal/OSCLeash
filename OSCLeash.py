@@ -8,12 +8,12 @@ import PySimpleGUI as sg
 from multiprocessing import Queue
 import asyncio
 import darkdetect
+import time
 import os
 
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
 printInfo(config)
-
 
 def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
     for leash in leashCollection:
@@ -30,10 +30,14 @@ def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
        
 class App():            
     def __init__(self):
-        if darkdetect.isDark():
-            sg.theme('DarkPurple5')   # Add a touch of color
+        if config["GUITheme"] != "":
+            sg.theme(config["GUITheme"])  
         else:
-            sg.theme('LightPurple')   # Add a touch of color
+            if darkdetect.isDark():
+                sg.theme('DarkPurple5')   # Add a touch of color
+            else:
+                sg.theme('LightPurple')   # Add a touch of color
+        print("")
         # All the stuff inside your window.
         # ToDo prepolulate with multiple sections for Physbone names in Config.json
         self.mainLayout = [  [sg.Text('Leash Name:'), (sg.Text('Null', key='leash-name'))],
@@ -74,20 +78,33 @@ class App():
 async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
     # Start OSC System    
     dispatcher = Dispatcher()
+
+    #Make sure a threading application isnt running on the port already.
+    # checkServer(config, dispatcher)
+    # try:
+    #     portTestserver = ThreadingOSCUDPServer((config['IP'], config['ListeningPort']),dispatcher).shutdown()
+    #     time.sleep(1)
+    # except Exception as e:
+    #     print('\x1b[1;31;41m' + '                                                                    ' + '\x1b[0m')
+    #     print('\x1b[1;31;40m' + '   Warning: An application might already be running on this port!   ' + '\x1b[0m')
+    #     print('\x1b[1;31;41m' + '                                                                    \n' + '\x1b[0m')
+    #     print(e)
+    #     time.sleep(4)
+    #     raise SystemExit
+
     server = AsyncIOOSCUDPServer((config['IP'], config['ListeningPort']), dispatcher, asyncio.get_event_loop())
     transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
-    
     client = SimpleUDPClient(config['IP'], config['SendingPort'])
-
 
     actions = LeashActions(config, in_q, out_q)
     dispatcherMap(dispatcher, actions)
-    movement = MovementController(config, out_q, gui_q)
-    movement.setup_xbox_movement()
 
+    movement = MovementController(config, out_q, gui_q)
+    if config['XboxJoystickMovement']:
+        movement.setup_xbox_movement()
 
     while True:
-        if config['Logging'] and not ['DisableGUI']:
+        if config['Logging'] and ['GUIEnabled']:
             if not gui_q.empty():
                 print(gui_q.get(block=False))
                 
@@ -95,7 +112,8 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
         if bundle is not None: 
             for msg in bundle:
                 client.send_message(msg[0], msg[1])
-        await asyncio.sleep(0)
+        await asyncio.sleep(config['ActiveDelay'])
+        # time.sleep(self.config['ActiveDelay'])
 
 
 if __name__ == "__main__":
@@ -108,14 +126,16 @@ if __name__ == "__main__":
     try:
         mainLogic = asyncio.ensure_future(init_main(in_q, out_q, gui_q))
         # Hide the GUI if the user doesn't want it
-        if not config['DisableGUI']:
+        if config['GUIEnabled']:
             guiLogic = asyncio.ensure_future(gui.run(gui_q, in_q))
         asyncio.get_event_loop().run_forever()
 
     except KeyboardInterrupt as e:
+        if config['Logging']:
+            print(e)
         try:
             mainLogic.cancel()
-            if not config['DisableGUI']:
+            if config['GUIEnabled']:
                 guiLogic.cancel()
 
         except asyncio.exceptions as e:

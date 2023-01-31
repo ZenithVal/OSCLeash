@@ -39,7 +39,8 @@ class App():
                 raise SystemExit
             if in_q != None and in_q.qsize() > 0:
                 values = in_q.get()
-                # pprint(values) # Debug print of gui values
+                if self.window['Logging']:
+                    print(values) # Debug print of gui values
                 if len(values['active-leashes']):
                     self.window['leash-name'].update(values['active-leashes'][-1])
                 else:
