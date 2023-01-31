@@ -1,5 +1,6 @@
 import math
 import time
+from colorama import Fore
 
 DIRECTION_VECTORS = {'North': (0, 0, 1),
                      'South': (0, 0, -1),
@@ -22,8 +23,9 @@ class MovementController:
                 import vgamepad as vg
                 self.gamepad = vg.VX360Gamepad()
                 self.runButton = vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER
+                print(Fore.RED + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + Fore.RESET)
             except Exception as e:
-                print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
+                print(Fore.RED + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + Fore.RESET)
                 time.sleep(1)
                 self.config['XboxJoystickMovement'] = False
                 

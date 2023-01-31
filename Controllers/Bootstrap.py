@@ -1,7 +1,7 @@
 import json
 import os
-import ctypes
 import time
+from colorama import Fore
 
 # Default configs in case the user doesn't have one
 
@@ -11,6 +11,7 @@ DefaultConfig = {
         "SendingPort": 9000,
 
         "DisableGUI": False,
+        "GUITheme": "Topanga",
         "Logging": True,
         "StartWithSteamVR": False,
 
@@ -100,9 +101,9 @@ def setup_openvr():
         #    if vr.pollNextEvent(event):
         #        if event.eventType == openvr.VREvent_Quit:
         #            break
-    
+        print(Fore.RED + f'Error: YOU DONT NEED CTYPES TO USE ANSI ESCAPE CHARACTERS!' + Fore.RESET)
     except openvr.error_code.ApplicationError_InvalidManifest as e:
-        print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Was not able to import openvr!' + '\x1b[0m')
+        print(Fore.RED + f'Error: {e}\nWarning: Was not able to import openvr!' + Fore.RESET)
 
 
 def createDefaultConfigFile(configPath): # Creates a default config
@@ -132,14 +133,14 @@ def bootstrap(configPath = "./config.json") -> dict:
                 config = json.load(cf)
             return config  
         except Exception as e: #Catch a malformed config file.
-            print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
+            print(Fore.RED + 'Malformed config file. Loading default values.' + Fore.RESET)
             print(e,"was the exception\n")
             time.sleep(2)
             return DefaultConfig
     
 
 def printInfo(config):       
-    print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
+    print(Fore.GREEN + 'OSCLeash is Running!' + Fore.RESET)
 
     if config['IP'] == "127.0.0.1":
         print("IP: Localhost")

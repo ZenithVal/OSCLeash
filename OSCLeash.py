@@ -5,11 +5,12 @@ from Controllers.Leash import LeashActions
 from Controllers.Movement import MovementController
 from Controllers.Bootstrap import bootstrap, printInfo
 import PySimpleGUI as sg
-from multiprocessing import Queue
+from queue import LifoQueue as Queue
 import asyncio
 import darkdetect
 import os
-
+from colorama import init
+init() # Initialize colorama
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
 printInfo(config)
