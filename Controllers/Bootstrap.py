@@ -101,7 +101,6 @@ def setup_openvr():
         #    if vr.pollNextEvent(event):
         #        if event.eventType == openvr.VREvent_Quit:
         #            break
-        print(Fore.RED + f'Error: YOU DONT NEED CTYPES TO USE ANSI ESCAPE CHARACTERS!' + Fore.RESET)
     except openvr.error_code.ApplicationError_InvalidManifest as e:
         print(Fore.RED + f'Error: {e}\nWarning: Was not able to import openvr!' + Fore.RESET)
 

@@ -62,7 +62,6 @@ class LeashActions:
         else:         
             if name in self.activeLeashes:
                 self.activeLeashes.remove(name)
-        
         self.isGrabbed = len(self.activeLeashes) > 0
         if self.isGrabbed and not self.isDisabled:
             # Bring VRChat window to Foreground
@@ -78,6 +77,11 @@ class LeashActions:
                             pass
                         break
         else:
+            # Clear the out queue
+            while not self.out_queue.qsize() == 0:
+                self.out_queue.get()
+                self.out_queue.task_done()
+                
             self.stretch = 0.0
             self.posVector = [0.0,0.0,0.0]
             self.negVector = [0.0,0.0,0.0]
@@ -88,9 +92,8 @@ class LeashActions:
     def updateScale(self, address: str, variable: any):
         # Checking if the variable is a string, if it is, it's the avatar ID instead of the new scale
         if isinstance(variable, str):
-            if variable != self.last_avatar:
-                self.last_avatar = variable
-                # self.scale = self.config['ScaleDefault']
+            if variable != self.lastAvatar:
+                self.lastAvatar = variable
                 self.scale = self.config['ScaleDefault']
                 self.isDisabled = False
         else:

@@ -9,7 +9,8 @@ from queue import LifoQueue as Queue
 import asyncio
 import darkdetect
 import os
-from colorama import init
+from colorama import init, Fore
+import socket
 init() # Initialize colorama
 config = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
@@ -69,15 +70,28 @@ class App():
             await asyncio.sleep(0)
 
 
+def checkBindable(sock: socket.socket, host, port, timeout=5.0):
+    sock.settimeout(timeout)
+    try:
+        sock.bind((host, port))
+        sock.close()
+        return True
+    except:
+        return False
+    
+    
 async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
     # Start OSC System    
     dispatcher = Dispatcher()
     server = AsyncIOOSCUDPServer((config['IP'], config['ListeningPort']), dispatcher, asyncio.get_event_loop())
-    transport, protocol = await server.create_serve_endpoint()  # Create datagram endpoint and start serving
-    
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    if not checkBindable(sock, config['IP'], config['ListeningPort']):
+        print(Fore.RED + "Failed to bind to port, is another instance of OSCLeash running?", Fore.RESET)
+        raise SystemExit
+
+    transport, protocol = await asyncio.wait_for(server.create_serve_endpoint(), 5)  # Create datagram endpoint and start serving
     client = SimpleUDPClient(config['IP'], config['SendingPort'])
-
-
+    
     actions = LeashActions(config, in_q, out_q)
     dispatcherMap(dispatcher, actions)
     movement = MovementController(config, out_q, gui_q)
@@ -85,6 +99,7 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
 
 
     while True:
+        
         if config['Logging'] and not ['DisableGUI']:
             if not gui_q.empty():
                 print(gui_q.get(block=False))
@@ -110,7 +125,8 @@ if __name__ == "__main__":
             guiLogic = asyncio.ensure_future(gui.run(gui_q, in_q))
         asyncio.get_event_loop().run_forever()
 
-    except KeyboardInterrupt as e:
+    except Exception as e:
+        print(e)
         try:
             mainLogic.cancel()
             if not config['DisableGUI']:
