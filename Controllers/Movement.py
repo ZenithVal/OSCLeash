@@ -1,5 +1,5 @@
 import math
-
+import time
 
 DIRECTION_VECTORS = {'North': (0, 0, 1),
                      'South': (0, 0, -1),
@@ -16,7 +16,7 @@ class MovementController:
         self.runButton = None
         
     def setup_xbox_movement(self):
-        # Add controller input if user installs vgamepad
+        # Add controller input if user installs and enables vgamepad
         if self.config['XboxJoystickMovement']:
             try:
                 import vgamepad as vg
@@ -24,6 +24,7 @@ class MovementController:
                 self.runButton = vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER
             except Exception as e:
                 print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
+                time.sleep(1)
                 self.config['XboxJoystickMovement'] = False
                 
     def makeMovement(self, leashData):
