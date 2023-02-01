@@ -107,10 +107,8 @@ class LeashActions:
     def updateDisable(self, address: str, disabled: bool):
         self.isDisabled = disabled
         if disabled:
-            self.stretch = 0.0
-            self.posVector = [0.0,0.0,0.0]
-            self.negVector = [0.0,0.0,0.0]
-            self.sendUpdate()
+            self.activeLeashes.clear()
+            self.updateGrabbed(address, False)
     
     
     def combinedVector(self):
