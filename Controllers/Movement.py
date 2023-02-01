@@ -23,7 +23,6 @@ class MovementController:
                 import vgamepad as vg
                 self.gamepad = vg.VX360Gamepad()
                 self.runButton = vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER
-                print(Fore.RED + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + Fore.RESET)
             except Exception as e:
                 print(Fore.RED + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + Fore.RESET)
                 time.sleep(1)
@@ -45,7 +44,7 @@ class MovementController:
             else:
                 self.gamepad.release_button(button=self.runButton)
             self.gamepad.update()
-            # time.sleep(0.01)
+            #time.sleep(0.01)
 
         else:
             #Normal OSC outputs  function                    

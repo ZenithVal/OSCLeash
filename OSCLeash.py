@@ -69,8 +69,9 @@ class App():
                 self.window['current-scale'].update(str(round(values['scale']/config['ScaleDefault']*100))+"%")
             await asyncio.sleep(0)
 
-
-def checkBindable(sock: socket.socket, host, port, timeout=5.0):
+# Thanks again, ChatGPT!
+def checkBindable(host, port, timeout=5.0):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(timeout)
     try:
         sock.bind((host, port))
@@ -84,8 +85,7 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
     # Start OSC System    
     dispatcher = Dispatcher()
     server = AsyncIOOSCUDPServer((config['IP'], config['ListeningPort']), dispatcher, asyncio.get_event_loop())
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    if not checkBindable(sock, config['IP'], config['ListeningPort']):
+    if not checkBindable(config['IP'], config['ListeningPort']):
         print(Fore.RED + "Failed to bind to port, is another instance of OSCLeash running?", Fore.RESET)
         raise SystemExit
 
