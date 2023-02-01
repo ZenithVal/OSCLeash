@@ -10,12 +10,12 @@ DefaultConfig = {
         "ListeningPort": 9001,
         "SendingPort": 9000,
 
-        "DisableGUI": False,
-        "GUITheme": "Topanga",
         "Logging": True,
+        "GUIEnabled": True,
+        "GUITheme": "",
         "StartWithSteamVR": False,
 
-        "ActiveDelay": 0.05,     
+        "ActiveDelay": 0.05,
         "InactiveDelay": 0.5,
 
         "RunDeadzone": 0.70,
@@ -81,7 +81,7 @@ def setup_openvr():
         # Save AppManifest to manifest.vrmanifest
         with open("./manifest.vrmanifest", "w") as f:
             f.write(json.dumps(AppManifest))
-        
+
         # Register the manifest file's absolute path with SteamVR
         manifest_path = os.path.abspath("./manifest.vrmanifest")
         error = openvr.EVRFirmwareError()
@@ -93,7 +93,7 @@ def setup_openvr():
             applications.setApplicationAutoLaunch(AppManifest["applications"][0]["app_key"], True)
             print("Manifest added successfully")
             # Set the application to start automatically when SteamVR starts
-            
+
         # Listen for the event that SteamVR is shutting down
         # This is a blocking call, so it will wait here until SteamVR shuts down
         #event = openvr.VREvent_t()
@@ -130,34 +130,41 @@ def bootstrap(configPath = "./config.json") -> dict:
         try:
             with open(configPath, "r") as cf:
                 config = json.load(cf)
-            return config  
+            return config
         except Exception as e: #Catch a malformed config file.
             print(Fore.RED + 'Malformed config file. Loading default values.' + Fore.RESET)
             print(e,"was the exception\n")
             time.sleep(2)
             return DefaultConfig
-    
 
-def printInfo(config):       
+
+def printInfo(config):
     print(Fore.GREEN + 'OSCLeash is Running!' + Fore.RESET)
 
     if config['IP'] == "127.0.0.1":
         print("IP: Localhost")
-    else:  
+    else:
         print("IP: Not Localhost? Wack.")
 
     print(f"Listening on port {config['ListeningPort']}\nSending on port {config['SendingPort']}")
     print("Delays of {:.0f}".format(config['ActiveDelay']*1000),"& {:.0f}".format(config['InactiveDelay']*1000),"ms")
 
-    if config['Logging']:
-        print("Logging is Enabled")
-    else:
-        print("Logging is Disabled")
+    print("")
 
-    if config['DisableGUI']:
-        print("GUI is Disabled")
+    if config['Logging']:
+        print("Logging is enabled")
     else:
-        print("GUI is Enabled")
+        print("Logging is disabled")
+
+    if config['GUIEnabled']:
+        print("GUI is enabled:")
+        if config["GUITheme"] != "":
+            print(f'\tAttempting to use {config["GUITheme"]} as the theme')
+        else:
+            print(f"\tUsing standard theme")
+    else:
+        print("GUI is disabled")
+
 
     if config['StartWithSteamVR']:
         print("OSCLeash will start with SteamVR")
@@ -166,13 +173,12 @@ def printInfo(config):
         except Exception as e:
             print(e)
 
-
     print("")
 
     print("Run Deadzone of {:.0f}".format(config['RunDeadzone']*100)+"% stretch")
     print("Walking Deadzone of {:.0f}".format(config['WalkDeadzone']*100)+"% stretch")
 
-    if config['TurningEnabled']: 
+    if config['TurningEnabled']:
         print(f"Turning is enabled:\n\tMultiplier of {config['TurningMultiplier']}\n\tDeadzone of {config['TurningDeadzone']}\n\tGoal of {config['TurningGoal']*180}°")
     else:
         print("Turning is disabled")
@@ -191,7 +197,7 @@ def printInfo(config):
 
     # XBOX SUPPORT: Remove later when not needed.
     if config['XboxJoystickMovement']:
-        print("Controller support is enabled.")
+        print("Controller emulation is enabled.")
         if config['BringGameToFront']:
             print(f"The {config['GameTitle']} window will be brought to the front when required" )
     else:

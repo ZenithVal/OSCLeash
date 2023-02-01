@@ -3,12 +3,12 @@
         "ListeningPort": 9001,
         "SendingPort": 9000,
 
-        "DisableGUI": false,
-        "GUITheme": "Topanga",
         "Logging": true,
+        "GUIEnabled": true,
+        "GUITheme": "",
         "StartWithSteamVR": false,
 
-        "ActiveDelay": 0.05,     
+        "ActiveDelay": 0.05,
         "InactiveDelay": 0.5,
 
         "RunDeadzone": 0.70,
