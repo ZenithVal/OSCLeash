@@ -35,12 +35,21 @@
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         },
 
         "DisableParameter": "",
 
         "ScaleSlowdownEnabled": true,
         "ScaleParameter": "Go/ScaleFloat",
-        "ScaleDefault": 0.25
+        "ScaleDefault": 0.25,
+
+        "ArmLockFix": false,
+        "ArmLockFixInterval": 0.5,
+        "ArmLockFixDuration": 0.02,
+
+        "VerticalMovement": false,
+        "VerticalMovementSpeed": 0.1
 }

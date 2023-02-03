@@ -2,23 +2,29 @@ import math
 import time
 from colorama import Fore
 from functools import wraps
-from Throttle import ThrottleDecorator
-
+from Controllers.Throttle import ThrottleDecorator
+import openvr
 
 DIRECTION_VECTORS = {'North': (0, 0, 1),
                      'South': (0, 0, -1),
                      'East': (1, 0, 0),
                      'West': (-1, 0, 0)}                    
 
+ZERO_BUNDLE = [
+               ("/input/Vertical", 0.0),
+               ("/input/Horizontal", 0.0),
+               ("/input/Run", False),
+               ("/input/LookHorizontal", 0.0),
+               ]
 
 class MovementController:
-    def __init__(self, config, in_queue, gui_queue) -> None:
+    def __init__(self, config, in_queue, gui_queue, vrActive) -> None:
         self.config = config
         self.in_queue = in_queue
         self.gui_queue = gui_queue
         self.gamepad = None
         self.runButton = None
-
+        self.vrActive = vrActive
         
     def setup_xbox_movement(self):
         # Add controller input if user installs and enables vgamepad
@@ -33,6 +39,9 @@ class MovementController:
                 self.config['XboxJoystickMovement'] = False
                 
     def makeMovement(self, leashData):
+        if self.config['VerticalMovement'] and self.vrActive:
+            self.verticalMovement(leashData)
+            
         if self.config['XboxJoystickMovement']: 
             #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
             offset = 0.65
@@ -96,7 +105,21 @@ class MovementController:
                 self.gui_queue.put(leashData, block=False)
                 return self.makeMovement(leashData)
         return _sendMovement(self)
-        
+    
+    def verticalMovement(self, leashData):
+        print("bungus")
+        if self.config['VerticalMovement'] and abs(leashData['vector'][1]) >= .05:
+            standing_zero_to_raw_tracking_pose = openvr.VRChaperoneSetup().getWorkingStandingZeroPoseToRawTrackingPose()
+            # Convert the HmdMatrix34_t type to a 3x4 numpy array for easier manipulation
+            pose = standing_zero_to_raw_tracking_pose[1]
+            print(pose)
+            # Print the first row of the transformation matrix
+            pose[1][3] -= leashData['vector'][1]*self.config['VerticalMovementSpeed']
+            openvr.VRChaperoneSetup().setWorkingStandingZeroPoseToRawTrackingPose(pose)
+            #openvr.VRChaperoneSetup().
+            openvr.VRChaperoneSetup().commitWorkingCopy(openvr.EChaperoneConfigFile_Live)
+            #openvr.VRChaperoneSetup().showWorkingSetPreview()
+
     @staticmethod
     def proportionalTurn(current_vector, kp=1, direction='North'):
         target_direction = DIRECTION_VECTORS[direction]

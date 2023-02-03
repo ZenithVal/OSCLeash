@@ -30,10 +30,10 @@ class LeashActions:
                 self.posVector[0] = magnitude
             elif direction == self.config['DirectionalParameters']['X_Negative_Param']:
                 self.negVector[0] = magnitude
-            # elif direction == self.config['DirectionalParameters']['Y_Positive_Param']: # Y is not used in this project yet
-            #     self.posVector[1] = magnitude
-            # elif direction == self.config['DirectionalParameters']['Y_Negative_Param']:
-            #     self.negVector[1] = magnitude
+            elif direction == self.config['DirectionalParameters']['Y_Positive_Param']:
+                self.posVector[1] = magnitude
+            elif direction == self.config['DirectionalParameters']['Y_Negative_Param']:
+                self.negVector[1] = magnitude
             
             #print(f'leash: {self.combinedVector()}')
             self.sendUpdate()
@@ -54,14 +54,17 @@ class LeashActions:
     def updateGrabbed(self, address: str, grabbed: bool):
         name = address[len(self.prefix):]
         suffix = "_IsGrabbed"
-        name = name[:-len(suffix)]
-        pprint(name)
+        if name.endswith(suffix):
+            name_trimmed = name[:-len(suffix)]
+        else:
+            name_trimmed = name
+        pprint(f"{name_trimmed} event: {grabbed}")
         if grabbed:
-            if name not in self.activeLeashes:
-                self.activeLeashes.append(name)
+            if name_trimmed not in self.activeLeashes:
+                self.activeLeashes.append(name_trimmed)
         else:         
-            if name in self.activeLeashes:
-                self.activeLeashes.remove(name)
+            if name_trimmed in self.activeLeashes:
+                self.activeLeashes.remove(name_trimmed)
         self.isGrabbed = len(self.activeLeashes) > 0
         if self.isGrabbed and not self.isDisabled:
             # Bring VRChat window to Foreground
@@ -108,6 +111,9 @@ class LeashActions:
         self.isDisabled = disabled
         if disabled:
             self.activeLeashes.clear()
+            self.updateGrabbed(address, True)
+        else:
+            self.activeLeashes.clear()
             self.updateGrabbed(address, False)
     
     
@@ -116,7 +122,22 @@ class LeashActions:
             modifier = self.stretch * self.config['StrengthMultiplier'] * self.scaleCurve(self.scale)
         else:
             modifier = 0
-        return [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
+        
+        try:
+            YCompensate = 1.0/(self.posVector[0]+self.negVector[0]+self.posVector[2]+self.negVector[2])
+        except ZeroDivisionError:
+            YCompensate = 1.0
+
+        vector = [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
+
+        # TODO Make "0.4" config option
+        if (self.posVector[1] < 0.4 and self.negVector[1] < 0.4) or not self.config['VerticalMovement']:
+            vector[0] = self.clamp(vector[0]*YCompensate)
+            vector[1] = 0.0
+            vector[2] = self.clamp(vector[2]*YCompensate)
+            return vector
+
+        return vector
 
     def scaleCurve(self, inputScale):
         if self.config['ScaleSlowdownEnabled']:
@@ -145,5 +166,5 @@ class LeashActions:
         self.out_queue.put(self.__toDict__())
     
     @staticmethod
-    def clamp(num):
-        return -1 if num < -1 else 1 if num > 1 else num
+    def clamp(num) -> float:
+        return -1.0 if num < -1.0 else 1.0 if num > 1.0 else num

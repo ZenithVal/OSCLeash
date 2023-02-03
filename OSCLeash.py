@@ -2,7 +2,7 @@ from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
 from Controllers.Leash import LeashActions
-from Controllers.Movement import MovementController
+from Controllers.Movement import MovementController, ZERO_BUNDLE
 from Controllers.Bootstrap import bootstrap, printInfo
 import PySimpleGUI as sg
 from queue import LifoQueue as Queue
@@ -12,8 +12,10 @@ import time
 import os
 from colorama import init, Fore
 import socket
+
+
 init() # Initialize colorama
-config = bootstrap()
+config, vrActive = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
 printInfo(config)
 
@@ -44,6 +46,7 @@ class App():
         # ToDo prepolulate with multiple sections for Physbone names in Config.json
         self.mainLayout = [  [sg.Text('Leash Name:'), (sg.Text('Null', key='leash-name'))],
                     [sg.Text('Leash X:'), (sg.Text('Null', key='leash-x'))],
+                    [sg.Text('Leash Y:'), (sg.Text('Null', key='leash-y'))],
                     [sg.Text('Leash Z:'), (sg.Text('Null', key='leash-z'))],
                     [sg.Text('Leash Turn:'), (sg.Text('Null', key='leash-turn'))],
                     [sg.Text('Current Scale:'), (sg.Text('Null', key='current-scale'))],]
@@ -71,6 +74,7 @@ class App():
                 else:
                     self.window['leash-name'].update("None")
                 self.window['leash-x'].update(values['vector'][0])
+                self.window['leash-y'].update(values['vector'][1])
                 self.window['leash-z'].update(values['vector'][2])
                 self.window['leash-turn'].update(values['turn'])
                 self.window['current-scale'].update(str(round(values['scale']/config['ScaleDefault']*100))+"%")
@@ -115,18 +119,37 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
 
     actions = LeashActions(config, in_q, out_q)
     dispatcherMap(dispatcher, actions)
-
-    movement = MovementController(config, out_q, gui_q)
+    
+    if not config['VerticalMovement']: 
+        vr = None
+    
+    movement = MovementController(config, out_q, gui_q, vrActive)
     if config['XboxJoystickMovement']:
         movement.setup_xbox_movement()
+
+    lastZeroFixerSent = time.time()
 
     while True:
         if config['Logging'] and ['GUIEnabled']:
             if not gui_q.empty():
                 print(gui_q.get(block=False))
+        
 
         bundle = movement.sendMovement()
+
         if bundle is not None:
+            # Arm lock Fix
+            # Thanks to McArdellje on the VRChat Canny for the workaround!
+            # https://feedback.vrchat.com/feature-requests/p/osc-locks-arms
+            if not config['XboxJoystickMovement'] and config['ArmLockFix']:
+                now = time.time()
+                if now - lastZeroFixerSent > config['ArmLockFixInterval']:
+                    lastZeroFixerSent = now
+                    bundle = ZERO_BUNDLE
+                    for msg in bundle:
+                        client.send_message(msg[0], msg[1])
+                    await asyncio.sleep(config['ArmLockFixDuration'])
+
             for msg in bundle:
                 client.send_message(msg[0], msg[1])
         await asyncio.sleep(config['ActiveDelay'])

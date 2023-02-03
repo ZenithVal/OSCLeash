@@ -42,14 +42,23 @@ DefaultConfig = {
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         },
 
         "DisableParameter": "LeashDisable",
 
         "ScaleSlowdownEnabled": True,
         "ScaleParameter": "Go/ScaleFloat",
-        "ScaleDefault": 0.25
+        "ScaleDefault": 0.25,
+
+        "ArmLockFix": True,
+        "ArmLockFixInterval": 0.7,
+        "ArmLockFixDuration": 0.02,
+
+        "VerticalMovement": True,
+        "VerticalMovementSpeed": 0.1,
 }
 
 AppManifest = {
@@ -74,6 +83,7 @@ def setup_openvr():
     # if config["StartWithSteamVR"]: We don't need an if, this was called in an if.
     try:
         import openvr
+        # Setting this to Overlay will start SteamVR, which sucks when testing stuff in just Unity
         vr = openvr.init(openvr.VRApplication_Utility)
         # Create an IVRApplications object
         applications = openvr.IVRApplications()
@@ -101,9 +111,11 @@ def setup_openvr():
         #    if vr.pollNextEvent(event):
         #        if event.eventType == openvr.VREvent_Quit:
         #            break
+        return True
     except openvr.error_code.ApplicationError_InvalidManifest as e:
         print(Fore.RED + f'Error: {e}\nWarning: Was not able to import openvr!' + Fore.RESET)
-
+        return False
+        
 
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
@@ -122,20 +134,20 @@ def bootstrap(configPath = "./config.json") -> dict:
         print("Config file was not found...", "\nCreating default config file...")
         time.sleep(2)
         createDefaultConfigFile(configPath)
-        setup_openvr(DefaultConfig)
         printInfo(DefaultConfig)
-        return DefaultConfig
+        return DefaultConfig, setup_openvr()
     else:
         print("Config file found\n")
         try:
             with open(configPath, "r") as cf:
                 config = json.load(cf)
-            return config
+            return config, setup_openvr()
         except Exception as e: #Catch a malformed config file.
             print(Fore.RED + 'Malformed config file. Loading default values.' + Fore.RESET)
             print(e,"was the exception\n")
+            setup_openvr()
             time.sleep(2)
-            return DefaultConfig
+            return DefaultConfig, setup_openvr()
 
 
 def printInfo(config):
@@ -202,6 +214,10 @@ def printInfo(config):
             print(f"The {config['GameTitle']} window will be brought to the front when required" )
     else:
         print(f'Controller support is disabled')
+        if config['ArmLockFix']:
+            print(f"OSC Arm Lock Fix is enabled. Interval of {config['ArmLockFixInterval']}s, and will wait for {config['ArmLockFixDuration']}s")
+        else:
+            print("OSC Arm Lock Fix is disabled")
 
     print("")
 
