@@ -78,7 +78,7 @@ As with RavenBuilds's take on the OSCLeash, using OSC as an input for movement c
 | PhysboneParameters    | A list of Physbones to use as leashes                          | see below   |
 | DirectionalParameters | A dictionary of contacts to use for direction calculation      | see below   |
 
-ᴹᵃⁿ ᵗʰᵉʳᵉ'ˢ ᵃ ˡᵒᵗ ᵒᶠ ˢᵉᵗᵗᶦⁿᵍˢ
+ᴹᵃⁿ ᵗʰᵉʳᵉ'ˢ ᵃ ˡᵒᵗ ᵒᶠ ˢᵉᵗᵗᶦⁿᵍˢ :o
 
 ---------
 
