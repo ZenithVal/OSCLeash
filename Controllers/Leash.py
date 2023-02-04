@@ -123,18 +123,40 @@ class LeashActions:
         else:
             modifier = 0
         
-        try:
-            YCompensate = 1.0/(self.posVector[0]+self.negVector[0]+self.posVector[2]+self.negVector[2])
-        except ZeroDivisionError:
-            YCompensate = 1.0
-
         vector = [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
+        rawVector = [self.clamp(x)-self.clamp(y) for x,y in zip(self.posVector, self.negVector)]
+        # vector correction
+        vectorMagnitude = math.sqrt(rawVector[0]**2 + rawVector[1]**2 + rawVector[2]**2)
+        # print(f"Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
+        print(f"Pre math Vector: {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
+        #correct vector by scaling it with the magnitude of the raw vector
+        if vectorMagnitude > 0:
+            vector = [x/vectorMagnitude for x in vector]
+
+        print(f"Post Math Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
+        
+                    
+        # print("YCompensate:")
+        # try:
+        #     #YCompensate = 1.0/(self.posVector[0]+self.negVector[0]+self.posVector[2]+self.negVector[2])
+        #     #xyz = (self.posVector[0]-self.negVector[0]+self.posVector[1]-self.negVector[1]+self.posVector[2]-self.negVector[2])
+        #     #xyz = vector[0]+vector[1]+vector[2]
+        #     xyz = (self.posVector[0]+self.negVector[0]+self.posVector[1]+self.negVector[1]+self.posVector[2]+self.negVector[2])
+        #     print(xyz)
+        #     #xz = (self.posVector[0]-self.negVector[0]+self.posVector[2]-self.negVector[2])
+        #     #xz = vector[0]+vector[2]
+        #     xz = (self.posVector[0]+self.negVector[0]+self.posVector[2]+self.negVector[2])
+        #     print(xz)
+        #     YCompensate = xyz/xz
+        # except ZeroDivisionError:
+        #     YCompensate = 1.0
+        # print(YCompensate)
 
         # TODO Make "0.4" config option
         if (self.posVector[1] < 0.4 and self.negVector[1] < 0.4) or not self.config['VerticalMovement']:
-            vector[0] = self.clamp(vector[0]*YCompensate)
+            vector[0] = self.clamp(vector[0])
             vector[1] = 0.0
-            vector[2] = self.clamp(vector[2]*YCompensate)
+            vector[2] = self.clamp(vector[2])
             return vector
 
         return vector

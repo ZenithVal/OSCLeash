@@ -20,7 +20,7 @@ DefaultConfig = {
 
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
-        "StrengthMultiplier": 1.2,
+        "StrengthMultiplier": 1.1,
 
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
