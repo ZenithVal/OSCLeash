@@ -1,8 +1,9 @@
 import json
 import os
+import sys
 import time
 from colorama import Fore
-
+from pprint import pprint
 # Default configs in case the user doesn't have one
 
 DefaultConfig = {
@@ -78,6 +79,28 @@ AppManifest = {
 	}]
 }
 
+# From https://stackoverflow.com/a/42615559
+# determine if application is a script file or frozen exe
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__+"/.."))
+    
+    
+def combineJson(defaults: dict, config: dict):
+    # Combine the default config with the user's config
+    wasConfigMalformed = False
+    config = config.copy()
+    for key, value in defaults.items():
+        if key not in config.keys():
+            wasConfigMalformed = True
+            config[key] = value
+        elif isinstance(value, dict) and not isinstance(config[key], list):
+            config[key], _wasConfigMalformed = combineJson(value, config[key])
+            if _wasConfigMalformed:
+                wasConfigMalformed = True
+    return config, wasConfigMalformed
+
 def setup_openvr():
     # Import openvr if user wants to autostart the app with SteamVR
     # if config["StartWithSteamVR"]: We don't need an if, this was called in an if.
@@ -89,11 +112,11 @@ def setup_openvr():
         applications = openvr.IVRApplications()
 
         # Save AppManifest to manifest.vrmanifest
-        with open("./manifest.vrmanifest", "w") as f:
-            f.write(json.dumps(AppManifest))
+        with open(f"{application_path}\\manifest.vrmanifest", "w") as f:
+            f.write(json.dumps(AppManifest, indent=2))
 
         # Register the manifest file's absolute path with SteamVR
-        manifest_path = os.path.abspath("./manifest.vrmanifest")
+        manifest_path = os.path.abspath(f"{application_path}\\manifest.vrmanifest")
         error = openvr.EVRFirmwareError()
         applications.addApplicationManifest(manifest_path, False)
         #applications.removeApplicationManifest(manifest_path)
@@ -112,7 +135,7 @@ def setup_openvr():
         #        if event.eventType == openvr.VREvent_Quit:
         #            break
         return True
-    except openvr.error_code.ApplicationError_InvalidManifest as e:
+    except Exception as e:
         print(Fore.RED + f'Error: {e}\nWarning: Was not able to import openvr!' + Fore.RESET)
         return False
         
@@ -120,7 +143,7 @@ def setup_openvr():
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
         with open(configPath, "w") as cf:
-            json.dump(DefaultConfig, cf)
+            cf.write(json.dumps(DefaultConfig, indent=2))
 
         print("Default config file created")
 
@@ -128,24 +151,35 @@ def createDefaultConfigFile(configPath): # Creates a default config
         print("Error creating default config file: ", e)
         raise e
 
-def bootstrap(configPath = "./config.json") -> dict:
+def bootstrap(configPath = f"{application_path}\\Config.json") -> dict:
     # Test if Config file exists. Create the default if it does not. Initialize OpenVR if user wants to autostart with SteamVR
+    print(f"Checking for config file at {configPath}...")
     if not os.path.exists(configPath):
-        print("Config file was not found...", "\nCreating default config file...")
+        print(f"Config file was not found...", "\nCreating default config file...")
         time.sleep(2)
         createDefaultConfigFile(configPath)
-        printInfo(DefaultConfig)
+        #printInfo(DefaultConfig)
         return DefaultConfig, setup_openvr()
     else:
         print("Config file found\n")
         try:
+            pprint(json.dumps(DefaultConfig, indent=2))
             with open(configPath, "r") as cf:
-                config = json.load(cf)
+                _config = json.load(cf)
+            config, wasConfigMalformed = combineJson(DefaultConfig, _config)
+            if wasConfigMalformed:
+                oldConfigPath = configPath + ".old"
+                with open(oldConfigPath, "w") as cfo:
+                    cfo.write(json.dumps(_config, indent=2))
+                with open(configPath, "w") as cf:
+                    cf.write(json.dumps(config, indent=2))
+                print(Fore.RED + 'Malformed config file. Loading default values.' + Fore.RESET)
+                print("Your config file has been backed up to " + f"{oldConfigPath}\n")
+                time.sleep(2)
             return config, setup_openvr()
         except Exception as e: #Catch a malformed config file.
             print(Fore.RED + 'Malformed config file. Loading default values.' + Fore.RESET)
             print(e,"was the exception\n")
-            setup_openvr()
             time.sleep(2)
             return DefaultConfig, setup_openvr()
 
@@ -180,10 +214,10 @@ def printInfo(config):
 
     if config['StartWithSteamVR']:
         print("OSCLeash will start with SteamVR")
-        try:
-            setup_openvr()
-        except Exception as e:
-            print(e)
+        # try:
+        #     setup_openvr()
+        # except Exception as e:
+        #     print(e)
 
     print("")
 
