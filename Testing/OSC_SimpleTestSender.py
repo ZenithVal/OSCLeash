@@ -41,11 +41,11 @@ def sendData():
   client.send_message(f"/avatar/parameters/{LeashNameString}_Stretch", StretchValue)
   client.send_message(f"/avatar/parameters/{LeashNameString}_IsGrabbed", IsGrabbedState)
 
-  time.sleep(2)
+  time.sleep(0.001)
 
 if __name__ == "__main__":
 
   client = udp_client.SimpleUDPClient(IP, PORT)
 
-  for x in range(10000):
+  for x in range(100):
     sendData()

@@ -67,8 +67,8 @@ class App():
                 raise SystemExit
             if in_q != None and in_q.qsize() > 0:
                 values = in_q.get()
-                if config['Logging']:
-                    print(values) # Debug print of gui values
+                # if config['Logging']:
+                #     print(f" Debug Print: {values}") # Debug print of gui values
                 if len(values['active-leashes']):
                     self.window['leash-name'].update(values['active-leashes'][-1])
                 else:
@@ -130,11 +130,11 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
     lastZeroFixerSent = time.time()
 
     while True:
-        if config['Logging'] and ['GUIEnabled']:
-            if not gui_q.empty():
-                print(gui_q.get(block=False))
+        if config['Logging']:
+            if not out_q.empty():
+                print(f" New Debug Print: {out_q.get(block=False)}")
         
-
+        await asyncio.sleep(config['ActiveDelay'])
         bundle = movement.sendMovement()
 
         if bundle is not None:
@@ -152,9 +152,7 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
 
             for msg in bundle:
                 client.send_message(msg[0], msg[1])
-        await asyncio.sleep(config['ActiveDelay'])
-        # time.sleep(self.config['ActiveDelay'])
-
+        # time.sleep(self.config['ActiveDelay'])a
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()

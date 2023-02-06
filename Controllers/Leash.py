@@ -1,7 +1,7 @@
 import math
 from pprint import pprint
 import pygetwindow as gw
-
+from timing_util import timing
 
 class LeashActions:
     def __init__(self, config, in_queue, out_queue) -> None:
@@ -17,9 +17,10 @@ class LeashActions:
         self.scale = self.config['ScaleDefault']
         self.lastAvatar = None
         self.isDisabled = False
+        self.maxQ = 10
 
     def updateDirectional(self, address: str, magnitude: float):
-        if self.isGrabbed and not self.isDisabled:
+        if self.isGrabbed and not self.isDisabled and self.outQueueSize() < self.maxQ:
             direction = address[len(self.prefix):]
             # pprint(f"OSCServer: {direction} {magnitude}")
             if direction == self.config['DirectionalParameters']['Z_Positive_Param']:
@@ -39,7 +40,7 @@ class LeashActions:
             self.sendUpdate()
 
     def updateStretch(self, address: str, magnitude: float):
-        if self.isGrabbed and not self.isDisabled:
+        if self.isGrabbed and not self.isDisabled and self.outQueueSize() < self.maxQ:
             name = address[len(self.prefix):]
             suffix = "_Stretch"
             name = name[:-len(suffix)]
@@ -81,9 +82,7 @@ class LeashActions:
                         break
         else:
             # Clear the out queue
-            while not self.out_queue.qsize() == 0:
-                self.out_queue.get()
-                self.out_queue.task_done()
+            self.clearOutQueue()
                 
             self.stretch = 0.0
             self.posVector = [0.0,0.0,0.0]
@@ -106,7 +105,6 @@ class LeashActions:
                 self.scale = self.config['ScaleDefault']
         self.sendUpdate()
 
-
     def updateDisable(self, address: str, disabled: bool):
         self.isDisabled = disabled
         if disabled:
@@ -115,8 +113,7 @@ class LeashActions:
         else:
             self.activeLeashes.clear()
             self.updateGrabbed(address, False)
-    
-    
+     
     def combinedVector(self):
         if self.stretch >= self.config['WalkDeadzone']:
             modifier = self.stretch * self.config['StrengthMultiplier'] * self.scaleCurve(self.scale)
@@ -160,11 +157,15 @@ class LeashActions:
             return vector
 
         return vector
-
+    def clearOutQueue(self):
+        while not self.out_queue.qsize() == 0:
+            self.out_queue.get()
+            self.out_queue.task_done()
+                
     def scaleCurve(self, inputScale):
         if self.config['ScaleSlowdownEnabled']:
             # magic math i did while high
-            vector = [10, 5]
+            vector = [10, 5] 
             scale = (inputScale/self.config['ScaleDefault']) * 0.25
             speed = math.sqrt(vector[0]**2 + vector[1]**2)
             curve = scale / math.log(speed + 1)
@@ -175,7 +176,7 @@ class LeashActions:
             return vector[0]
         else:
             return 1.0
-    
+
     def __toDict__(self) -> str:
         return {"LeashActions": {
                 'vector': self.combinedVector(),
@@ -183,8 +184,13 @@ class LeashActions:
                 'stretch': self.stretch,
                 'active-leashes': self.activeLeashes,
                 'scale': self.scale}}
-    
+
+    def outQueueSize(self) -> int:
+        return self.out_queue.qsize()
+
     def sendUpdate(self):
+        if not self.outQueueSize() == 1:
+            self.clearOutQueue()
         self.out_queue.put(self.__toDict__())
     
     @staticmethod

@@ -163,7 +163,6 @@ def bootstrap(configPath = f"{application_path}\\Config.json") -> dict:
     else:
         print("Config file found\n")
         try:
-            pprint(json.dumps(DefaultConfig, indent=2))
             with open(configPath, "r") as cf:
                 _config = json.load(cf)
             config, wasConfigMalformed = combineJson(DefaultConfig, _config)

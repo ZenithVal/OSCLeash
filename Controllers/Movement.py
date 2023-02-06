@@ -4,6 +4,7 @@ from colorama import Fore
 from functools import wraps
 from Controllers.Throttle import ThrottleDecorator
 import openvr
+from timing_util import timing
 
 DIRECTION_VECTORS = {'North': (0, 0, 1),
                      'South': (0, 0, -1),
@@ -25,7 +26,7 @@ class MovementController:
         self.gamepad = None
         self.runButton = None
         self.vrActive = vrActive
-        
+
     def setup_xbox_movement(self):
         # Add controller input if user installs and enables vgamepad
         if self.config['XboxJoystickMovement']:
@@ -102,12 +103,14 @@ class MovementController:
                 else:
                     leashData['vector'] = [0.0,0.0,0.0]
                 
-                self.gui_queue.put(leashData, block=False)
+                if self.config['GUIEnabled']:
+                    self.gui_queue.put(leashData, block=False)
                 return self.makeMovement(leashData)
         return _sendMovement(self)
     
     def verticalMovement(self, leashData):
         if self.config['VerticalMovement'] and abs(leashData['vector'][1]) >= .05:
+            openvr.VRChaperoneSetup().revertWorkingCopy()
             standing_zero_to_raw_tracking_pose = openvr.VRChaperoneSetup().getWorkingStandingZeroPoseToRawTrackingPose()
             # Convert the HmdMatrix34_t type to a 3x4 numpy array for easier manipulation
             pose = standing_zero_to_raw_tracking_pose[1]
