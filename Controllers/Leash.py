@@ -2,11 +2,12 @@ import math
 from pprint import pprint
 import pygetwindow as gw
 from timing_util import timing
+from trio import MemorySendChannel, WouldBlock
+import time
 
 class LeashActions:
-    def __init__(self, config, in_queue, out_queue) -> None:
-        self.in_queue = in_queue
-        self.out_queue = out_queue
+    def __init__(self, config, leash_output: MemorySendChannel) -> None:
+        self.leash_output = leash_output
         self.config = config
         self.prefix = "/avatar/parameters/"
         self.posVector = [0.0,0.0,0.0]
@@ -17,10 +18,12 @@ class LeashActions:
         self.scale = self.config['ScaleDefault']
         self.lastAvatar = None
         self.isDisabled = False
-        self.maxQ = 10
+        self.maxQ = 20
+        self.lastSentTime = 0
 
-    def updateDirectional(self, address: str, magnitude: float):
-        if self.isGrabbed and not self.isDisabled and self.outQueueSize() < self.maxQ:
+    async def updateDirectional(self, address: str, magnitude: float):
+        
+        if self.isGrabbed and not self.isDisabled:
             direction = address[len(self.prefix):]
             # pprint(f"OSCServer: {direction} {magnitude}")
             if direction == self.config['DirectionalParameters']['Z_Positive_Param']:
@@ -36,11 +39,12 @@ class LeashActions:
             elif direction == self.config['DirectionalParameters']['Y_Negative_Param']:
                 self.negVector[1] = magnitude
             
-            #print(f'leash: {self.combinedVector()}')
-            self.sendUpdate()
+            if time.time() - self.lastSentTime > self.config['ActiveDelay']:
+                self.lastSentTime = time.time()
+                await self.sendUpdate()
 
-    def updateStretch(self, address: str, magnitude: float):
-        if self.isGrabbed and not self.isDisabled and self.outQueueSize() < self.maxQ:
+    async def updateStretch(self, address: str, magnitude: float):
+        if self.isGrabbed and not self.isDisabled:
             name = address[len(self.prefix):]
             suffix = "_Stretch"
             name = name[:-len(suffix)]
@@ -52,7 +56,7 @@ class LeashActions:
         elif self.isGrabbed and self.isDisabled:
             self.stretch = 0.0
 
-    def updateGrabbed(self, address: str, grabbed: bool):
+    async def updateGrabbed(self, address: str, grabbed: bool):
         name = address[len(self.prefix):]
         suffix = "_IsGrabbed"
         if name.endswith(suffix):
@@ -82,16 +86,16 @@ class LeashActions:
                         break
         else:
             # Clear the out queue
-            self.clearOutQueue()
+            # self.clearOutQueue()
                 
             self.stretch = 0.0
             self.posVector = [0.0,0.0,0.0]
             self.negVector = [0.0,0.0,0.0]
-            self.sendUpdate()
+            await self.sendUpdate(True)
 
         # print(f"OSCServer: {address} {grabbed} {self.isGrabbed}")
 
-    def updateScale(self, address: str, variable: any):
+    async def updateScale(self, address: str, variable: any):
         # Checking if the variable is a string, if it is, it's the avatar ID instead of the new scale
         if isinstance(variable, str):
             if variable != self.lastAvatar:
@@ -103,9 +107,9 @@ class LeashActions:
                 self.scale = variable
             else:
                 self.scale = self.config['ScaleDefault']
-        self.sendUpdate()
+        await self.sendUpdate()
 
-    def updateDisable(self, address: str, disabled: bool):
+    async def updateDisable(self, address: str, disabled: bool):
         self.isDisabled = disabled
         if disabled:
             self.activeLeashes.clear()
@@ -125,12 +129,12 @@ class LeashActions:
         # vector correction
         vectorMagnitude = math.sqrt(rawVector[0]**2 + rawVector[1]**2 + rawVector[2]**2)
         # print(f"Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
-        print(f"Pre math Vector: {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
+        #print(f"Pre math Vector: {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
         #correct vector by scaling it with the magnitude of the raw vector
         if vectorMagnitude > 0:
             vector = [x/vectorMagnitude for x in vector]
 
-        print(f"Post Math Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
+        #print(f"Post Math Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
         
                     
         # print("YCompensate:")
@@ -155,12 +159,12 @@ class LeashActions:
             vector[1] = 0.0
             vector[2] = self.clamp(vector[2])
             return vector
-
-        return vector
-    def clearOutQueue(self):
-        while not self.out_queue.qsize() == 0:
-            self.out_queue.get()
-            self.out_queue.task_done()
+        else:
+            vector[0] = 0.0
+            vector[1] = self.clamp(vector[1])
+            vector[2] = 0.0
+            return vector
+            
                 
     def scaleCurve(self, inputScale):
         if self.config['ScaleSlowdownEnabled']:
@@ -185,13 +189,14 @@ class LeashActions:
                 'active-leashes': self.activeLeashes,
                 'scale': self.scale}}
 
-    def outQueueSize(self) -> int:
-        return self.out_queue.qsize()
-
-    def sendUpdate(self):
-        if not self.outQueueSize() == 1:
-            self.clearOutQueue()
-        self.out_queue.put(self.__toDict__())
+    async def sendUpdate(self, blocking=False):
+        if blocking:
+            await self.leash_output.send(self.__toDict__())
+        else:
+            try:
+                self.leash_output.send_nowait(self.__toDict__())
+            except WouldBlock:
+                pass
     
     @staticmethod
     def clamp(num) -> float:

@@ -49,3 +49,5 @@ if __name__ == "__main__":
 
   for x in range(100):
     sendData()
+
+client.send_message(f"/avatar/parameters/{LeashNameString}_IsGrabbed", False)

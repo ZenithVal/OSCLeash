@@ -1,17 +1,21 @@
-from pythonosc.dispatcher import Dispatcher
-from pythonosc.osc_server import AsyncIOOSCUDPServer
+from Controllers.AsyncDispatcher import AsyncDispatcher
+#from pythonosc.dispatcher import Dispatcher
+from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
 from Controllers.Leash import LeashActions
 from Controllers.Movement import MovementController, ZERO_BUNDLE
 from Controllers.Bootstrap import bootstrap, printInfo
 import PySimpleGUI as sg
-from queue import LifoQueue as Queue
+from threading import Thread
 import asyncio
 import darkdetect
 import time
 import os
 from colorama import init, Fore
 import socket
+from Controllers.TrioOSCServer import TrioOSCServer
+import trio
+from timing_util import timing
 
 
 init() # Initialize colorama
@@ -19,7 +23,7 @@ config, vrActive = bootstrap()
 leashCollection = [x for x in config["PhysboneParameters"]]
 printInfo(config)
 
-def dispatcherMap(dispatcher: Dispatcher, actions: LeashActions):
+def dispatcherMap(dispatcher: AsyncDispatcher, actions: LeashActions):
     for leash in leashCollection:
             dispatcher.map(f'/avatar/parameters/{leash}_Stretch', actions.updateStretch)
             dispatcher.map(f'/avatar/parameters/{leash}_IsGrabbed', actions.updateGrabbed)
@@ -55,18 +59,20 @@ class App():
         # Create the Window
         self.window = sg.Window('OSCLeash - GUI', self.mainLayout, enable_close_attempted_event=True)
 
-        # Event Loop to process "events" and get the "values" of the inputs
-
-    async def run(self, in_q: Queue, out_q: Queue):
+    
+    # Event Loop to process "events" and get the "values" of the inputs
+    async def run(self, gui_input: trio.MemoryReceiveChannel, cancel_scope: trio.CancelScope):
         self.window.finalize()
         self.window.set_min_size((250, 100))
         while True:
             event, values = self.window.read(0)
             if event == sg.WIN_CLOSED or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT: # if user closes window
-                out_q.put("gui-exit")
-                raise SystemExit
-            if in_q != None and in_q.qsize() > 0:
-                values = in_q.get()
+                #out_q.put("gui-exit")
+                
+                cancel_scope.cancel()
+            try:
+                values = gui_input.receive_nowait()
+
                 # if config['Logging']:
                 #     print(f" Debug Print: {values}") # Debug print of gui values
                 if len(values['active-leashes']):
@@ -78,7 +84,10 @@ class App():
                 self.window['leash-z'].update(values['vector'][2])
                 self.window['leash-turn'].update(values['turn'])
                 self.window['current-scale'].update(str(round(values['scale']/config['ScaleDefault']*100))+"%")
-            await asyncio.sleep(0)
+            except trio.WouldBlock:
+                pass
+            await trio.sleep(0.001)
+
 
 # Thanks again, ChatGPT!
 def checkBindable(host, port, timeout=5.0):
@@ -92,50 +101,23 @@ def checkBindable(host, port, timeout=5.0):
         return False
 
 
-async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
-    # Start OSC System
-    dispatcher = Dispatcher()
+async def log_worker(log_input: trio.MemoryReceiveChannel):
+    while True:
+        async with log_input:
+            async for msg in log_input:
+                print(msg)
+        
 
-    #Make sure a threading application isnt running on the port already.
-    # checkServer(config, dispatcher)
-    # try:
-    #     portTestserver = ThreadingOSCUDPServer((config['IP'], config['ListeningPort']),dispatcher).shutdown()
-    #     time.sleep(1)
-    # except Exception as e:
-    #     print('\x1b[1;31;41m' + '                                                                    ' + '\x1b[0m')
-    #     print('\x1b[1;31;40m' + '   Warning: An application might already be running on this port!   ' + '\x1b[0m')
-    #     print('\x1b[1;31;41m' + '                                                                    \n' + '\x1b[0m')
-    #     print(e)
-    #     time.sleep(4)
-    #     raise SystemExit
-
-    server = AsyncIOOSCUDPServer((config['IP'], config['ListeningPort']), dispatcher, asyncio.get_event_loop())
-    if not checkBindable(config['IP'], config['ListeningPort']):
-        print(Fore.RED + "Failed to bind to port, is another instance of OSCLeash running?", Fore.RESET)
-        raise SystemExit
-
-    transport, protocol = await asyncio.wait_for(server.create_serve_endpoint(), 5)  # Create datagram endpoint and start serving
-    client = SimpleUDPClient(config['IP'], config['SendingPort'])
-
-    actions = LeashActions(config, in_q, out_q)
-    dispatcherMap(dispatcher, actions)
-    
-    if not config['VerticalMovement']: 
-        vr = None
-    
-    movement = MovementController(config, out_q, gui_q, vrActive)
+async def movement_worker(worker_input: trio.MemoryReceiveChannel, worker_output: trio.MemorySendChannel, vrActive, client: SimpleUDPClient):
+    movement = MovementController(config, worker_input, worker_output, vrActive)
     if config['XboxJoystickMovement']:
         movement.setup_xbox_movement()
 
     lastZeroFixerSent = time.time()
 
-    while True:
-        if config['Logging']:
-            if not out_q.empty():
-                print(f" New Debug Print: {out_q.get(block=False)}")
-        
-        await asyncio.sleep(config['ActiveDelay'])
-        bundle = movement.sendMovement()
+    while True:        
+        await trio.sleep(0)
+        bundle = await movement.sendMovement()
 
         if bundle is not None:
             # Arm lock Fix
@@ -148,35 +130,51 @@ async def init_main(in_q: Queue, out_q: Queue, gui_q: Queue):
                     bundle = ZERO_BUNDLE
                     for msg in bundle:
                         client.send_message(msg[0], msg[1])
-                    await asyncio.sleep(config['ArmLockFixDuration'])
+                    await trio.sleep(config['ArmLockFixDuration'])
 
             for msg in bundle:
                 client.send_message(msg[0], msg[1])
-        # time.sleep(self.config['ActiveDelay'])a
+        
 
-if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    in_q = Queue()
-    out_q = Queue()
-    gui_q = Queue()
+async def init_main():
     gui = App()
-    try:
-        mainLogic = asyncio.ensure_future(init_main(in_q, out_q, gui_q))
-        # Hide the GUI if the user doesn't want it
-        if config['GUIEnabled']:
-            guiLogic = asyncio.ensure_future(gui.run(gui_q, in_q))
-        asyncio.get_event_loop().run_forever()
 
-    except Exception as e:
-        if config['Logging']:
-            print(e)
-        try:
-            mainLogic.cancel()
-            if config['GUIEnabled']:
-                guiLogic.cancel()
+    # Start OSC System
+    dispatcher = AsyncDispatcher()
 
-        except asyncio.exceptions as e:
-            pass
-    finally:
-        loop.close()
+    server = TrioOSCServer((config['IP'], config['ListeningPort']), dispatcher)
+    if not checkBindable(config['IP'], config['ListeningPort']):
+        print(Fore.RED + "Failed to bind to port, is another instance of OSCLeash running?", Fore.RESET)
+        raise SystemExit
+
+    client = SimpleUDPClient(config['IP'], config['SendingPort'])
+    
+    if not config['VerticalMovement']: 
+        vrActive = False
+    else:
+        vrActive = True
+    
+    cancel_scope = trio.CancelScope()
+    with cancel_scope:
+        async with trio.open_nursery() as nursery:
+            leash_output, movement_input = trio.open_memory_channel(0)
+            movement_output, gui_input   = trio.open_memory_channel(0)
+            
+            async with leash_output, movement_input, movement_output, gui_input:
+                actions = LeashActions(config, leash_output.clone())
+                dispatcherMap(dispatcher, actions)
+                
+                nursery.start_soon(
+                    server.start
+                )
+                nursery.start_soon(
+                    movement_worker, movement_input.clone(), movement_output.clone(), vrActive, client
+                )
+                if config['GUIEnabled']:
+                    nursery.start_soon(
+                        gui.run, gui_input.clone(), cancel_scope
+                    )
+                
+            
+if __name__ == "__main__":
+    trio.run(init_main)

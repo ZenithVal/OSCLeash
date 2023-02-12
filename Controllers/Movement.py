@@ -5,7 +5,9 @@ from functools import wraps
 from Controllers.Throttle import ThrottleDecorator
 import openvr
 from timing_util import timing
-
+from trio import MemorySendChannel, MemoryReceiveChannel, WouldBlock
+from pprint import pprint
+#import heartrate; heartrate.trace(browser=True)
 DIRECTION_VECTORS = {'North': (0, 0, 1),
                      'South': (0, 0, -1),
                      'East': (1, 0, 0),
@@ -19,10 +21,10 @@ ZERO_BUNDLE = [
                ]
 
 class MovementController:
-    def __init__(self, config, in_queue, gui_queue, vrActive) -> None:
+    def __init__(self, config: dict, movement_input: MemoryReceiveChannel, movement_output: MemorySendChannel, vrActive: bool) -> None:
         self.config = config
-        self.in_queue = in_queue
-        self.gui_queue = gui_queue
+        self.movement_input = movement_input
+        self.movement_output = movement_output
         self.gamepad = None
         self.runButton = None
         self.vrActive = vrActive
@@ -38,11 +40,11 @@ class MovementController:
                 print(Fore.RED + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + Fore.RESET)
                 time.sleep(1)
                 self.config['XboxJoystickMovement'] = False
-                
+
     def makeMovement(self, leashData):
         if self.config['VerticalMovement'] and self.vrActive:
             self.verticalMovement(leashData)
-            
+
         if self.config['XboxJoystickMovement']: 
             #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
             offset = 0.65
@@ -81,32 +83,31 @@ class MovementController:
             leashCardinal = 'North'
         return self.proportionalTurn(leashData['vector'], self.config['TurningKp'], leashCardinal)
     
-    def throttle(func, delay):
-        def decorator(func):
-            decorator = ThrottleDecorator(func, delay)
-            return wraps(func)(decorator)
-        return decorator
-
-    def sendMovement(self):
-        @self.throttle(self.config['ActiveDelay'])
-        def _sendMovement(self):
-            if not self.in_queue.empty():
-                queueData = self.in_queue.get(block=False)
-                leashData = queueData['LeashActions']
-                if self.config['TurningEnabled']:
-                    turn = self.calculateTurn(leashData)
-                else:
-                    turn = 0.0
-                leashData['turn'] = turn
-                if leashData['stretch'] > self.config['WalkDeadzone']:
-                    pass
-                else:
-                    leashData['vector'] = [0.0,0.0,0.0]
-                
-                if self.config['GUIEnabled']:
-                    self.gui_queue.put(leashData, block=False)
-                return self.makeMovement(leashData)
-        return _sendMovement(self)
+    async def sendMovement(self):
+        try:
+            queueData = await self.movement_input.receive()
+            leashData = queueData['LeashActions']
+            if self.config['TurningEnabled']:
+                turn = self.calculateTurn(leashData)
+            else:
+                turn = 0.0
+            leashData['turn'] = turn
+            if leashData['stretch'] > self.config['WalkDeadzone']:
+                pass
+            else:
+                leashData['vector'] = [0.0,0.0,0.0]
+            
+            if self.config['GUIEnabled']:
+                try:
+                    await self.movement_output.send(leashData)
+                except Exception as e:
+                    print(e)
+            if self.config['Logging']:
+                pprint(leashData)
+            return self.makeMovement(leashData)
+        except WouldBlock:
+            # print ("WouldBlock")
+            return None
     
     def verticalMovement(self, leashData):
         if self.config['VerticalMovement'] and abs(leashData['vector'][1]) >= .05:
