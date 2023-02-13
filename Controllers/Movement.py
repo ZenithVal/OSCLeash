@@ -81,7 +81,7 @@ class MovementController:
             leashCardinal = leashData['active-leashes'][-1].split('_')[1]
         except:
             leashCardinal = 'North'
-        return self.proportionalTurn(leashData['vector'], self.config['TurningKp'], leashCardinal)
+        return self.proportionalTurn(leashData['vector-raw'], self.config['TurningKp'], leashCardinal)
     
     async def sendMovement(self):
         try:

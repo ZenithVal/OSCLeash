@@ -102,6 +102,7 @@ class LeashActions:
                 self.lastAvatar = variable
                 self.scale = self.config['ScaleDefault']
                 self.isDisabled = False
+                self.activeLeashes.clear()
         else:
             if variable <= self.config['ScaleDefault']:
                 self.scale = variable
@@ -118,7 +119,7 @@ class LeashActions:
             self.activeLeashes.clear()
             self.updateGrabbed(address, False)
      
-    def combinedVector(self):
+    def combinedVector(self, raw=False):
         if self.stretch >= self.config['WalkDeadzone']:
             modifier = self.stretch * self.config['StrengthMultiplier'] * self.scaleCurve(self.scale)
         else:
@@ -126,6 +127,8 @@ class LeashActions:
         
         vector = [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
         rawVector = [self.clamp(x)-self.clamp(y) for x,y in zip(self.posVector, self.negVector)]
+        if raw:
+            return rawVector
         # vector correction
         vectorMagnitude = math.sqrt(rawVector[0]**2 + rawVector[1]**2 + rawVector[2]**2)
         # print(f"Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
@@ -184,6 +187,7 @@ class LeashActions:
     def __toDict__(self) -> str:
         return {"LeashActions": {
                 'vector': self.combinedVector(),
+                'vector-raw': self.combinedVector(True),
                 'grabbed': self.isGrabbed, 
                 'stretch': self.stretch,
                 'active-leashes': self.activeLeashes,
