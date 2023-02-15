@@ -111,6 +111,8 @@ class MovementController:
     
     def verticalMovement(self, leashData):
         if self.config['VerticalMovement'] and abs(leashData['vector'][1]) >= .05:
+            # Try to get a bit more in line with OVRAS' stuff
+            # This is a workaround until we can get a proper OVRAS API
             openvr.VRChaperoneSetup().revertWorkingCopy()
             standing_zero_to_raw_tracking_pose = openvr.VRChaperoneSetup().getWorkingStandingZeroPoseToRawTrackingPose()
             # Convert the HmdMatrix34_t type to a 3x4 numpy array for easier manipulation

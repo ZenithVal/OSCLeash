@@ -120,16 +120,16 @@ class LeashActions:
             self.updateGrabbed(address, False)
      
     def combinedVector(self, raw=False):
-        if self.stretch >= self.config['WalkDeadzone']:
-            modifier = self.stretch * self.config['StrengthMultiplier'] * self.scaleCurve(self.scale)
-        else:
-            modifier = 0
-        
-        vector = [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
         rawVector = [self.clamp(x)-self.clamp(y) for x,y in zip(self.posVector, self.negVector)]
         if raw:
             return rawVector
+
+        if self.stretch >= self.config['WalkDeadzone']:
+            modifier = self.stretch * self.config['StrengthMultiplier'] * self.scaleCurve(self.scale)
+        else:
+            modifier = 0.0
         # vector correction
+        vector = [self.clamp(x*modifier)-self.clamp(y*modifier) for x,y in zip(self.posVector, self.negVector)]
         vectorMagnitude = math.sqrt(rawVector[0]**2 + rawVector[1]**2 + rawVector[2]**2)
         # print(f"Vector {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
         #print(f"Pre math Vector: {vector} RawVector: {rawVector} nStretch: {self.stretch} vectorMagnitude: {vectorMagnitude}")
