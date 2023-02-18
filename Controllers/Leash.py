@@ -17,7 +17,7 @@ class LeashActions:
         self.activeLeashes = []
         self.scale = self.config['ScaleDefault']
         self.lastAvatar = None
-        self.isDisabled = False
+        self.isDisabled = self.config['DisableInverted']
         self.maxQ = 20
         self.lastSentTime = 0
 
@@ -101,7 +101,7 @@ class LeashActions:
             if variable != self.lastAvatar:
                 self.lastAvatar = variable
                 self.scale = self.config['ScaleDefault']
-                self.isDisabled = False
+                self.isDisabled = self.config['DisableInverted']
                 self.activeLeashes.clear()
         else:
             if variable <= self.config['ScaleDefault']:
@@ -111,7 +111,11 @@ class LeashActions:
         await self.sendUpdate()
 
     async def updateDisable(self, address: str, disabled: bool):
+        if self.config['DisableInverted']:
+            disabled = not disabled
+
         self.isDisabled = disabled
+
         if disabled:
             self.activeLeashes.clear()
             self.updateGrabbed(address, True)

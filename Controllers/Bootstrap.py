@@ -49,6 +49,7 @@ DefaultConfig = {
         },
 
         "DisableParameter": "LeashDisable",
+        "DisableInverted": False,
 
         "ScaleSlowdownEnabled": True,
         "ScaleParameter": "Go/ScaleFloat",
@@ -237,6 +238,11 @@ def printInfo(config):
         print(f"Disable Parameter set to {config['DisableParameter']}")
     else:
         print("Disable Parameter not used")
+
+    if config['DisableInverted']:
+        print("Disable Inverted is being used.")
+    else:
+        print("Disabling is not inverted.")
 
     print("")
 
