@@ -106,7 +106,7 @@ class Program:
 
             leash.wasGrabbed = False
 
-            self.resetProgram()\
+            self.resetProgram()
             
             time.sleep(leash.settings.InactiveDelay)
         
