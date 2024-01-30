@@ -34,8 +34,14 @@ class Package:
     def listenParam(self, leash):
         self.__dispatcher.map(f'/avatar/parameters/{leash.Z_Positive_ParamName}',self.__updateZ_Positive) #Z Positive
         self.__dispatcher.map(f'/avatar/parameters/{leash.Z_Negative_ParamName}',self.__updateZ_Negative) #Z Negative
+
         self.__dispatcher.map(f'/avatar/parameters/{leash.X_Positive_ParamName}',self.__updateX_Positive) #X Positive
         self.__dispatcher.map(f'/avatar/parameters/{leash.X_Negative_ParamName}',self.__updateX_Negative) #X Negative
+
+        #Right now Y+ and - are only used for compensation, maybe in the future we'll actually move the player up down.
+        if leash.settings.UpDownCompensation != 0:
+            self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Positive_ParamName}',self.__updateY_Positive) #Y Positive
+            self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Negative_ParamName}',self.__updateY_Negative) #Y Negative
 
     def __updateZ_Positive(self, addr, value):
         try:
@@ -77,6 +83,25 @@ class Package:
             print(e)
             time.sleep(5)
 
+    def __updateY_Positive(self, addr, value):
+        try:
+            for leash in self.leashes:
+                self.__statelock.acquire()
+                leash.Y_Positive = value
+                self.__statelock.release()
+        except Exception as e:
+            print(e)
+            time.sleep(5)
+
+    def __updateY_Negative(self, addr, value):
+        try:
+            for leash in self.leashes:
+                self.__statelock.acquire()
+                leash.Y_Negative = value
+                self.__statelock.release()
+        except Exception as e:
+            print(e)
+            time.sleep(5)
 
     def __updateStretch(self, addr, extraArgs, value):
         try:

@@ -9,6 +9,9 @@ DefaultConfig = {
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.10,
         "StrengthMultiplier": 1.2,
+        "UpDownCompensation": 1.0,
+        "UpDownDeadZone": 0.70,
+        "FreezeIfPosed": False,
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": .15,
@@ -46,6 +49,9 @@ class ConfigSettings:
             self.RunDeadzone = configJson["RunDeadzone"]
             self.WalkDeadzone = configJson["WalkDeadzone"]
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
+            self.UpDownCompensation = configJson["UpDownCompensation"]
+            self.UpDownDeadZone = configJson["UpDownDeadZone"]
+            self.FreezeIfPosed = configJson["FreezeIfPosed"]
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
             self.TurningDeadzone = configJson["TurningDeadzone"]
@@ -63,6 +69,9 @@ class ConfigSettings:
             self.RunDeadzone = DefaultConfig["RunDeadzone"]
             self.WalkDeadzone = DefaultConfig["WalkDeadzone"]
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
+            self.UpDownCompensation = DefaultConfig["UpDownCompensation"]
+            self.UpDownDeadZone = DefaultConfig["UpDownDeadZone"]
+            self.FreezeIfPosed = DefaultConfig["FreezeIfPosed"]
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
             self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
@@ -83,10 +92,11 @@ class ConfigSettings:
         if self.IP == "127.0.0.1":
             print("IP: Localhost")
         else:  
-            print("IP: Not Localhost? Wack.")
+            print("IP: Not Localhost? Interesting.")
 
         print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
-        print("Run Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
+        print(f"Strength Multiplier of {self.StrengthMultiplier} & Up/Down Compensation of {self.UpDownCompensation}")
+        print("Running Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         if self.TurningEnabled: 
@@ -100,23 +110,29 @@ class Leash:
         self.settings = settings
 
         self.Stretch: float = 0
+
         self.Z_Positive: float = 0
         self.Z_Negative: float = 0
         self.X_Positive: float = 0
         self.X_Negative: float = 0
+        self.Y_Positive: float = 0
+        self.Y_Negative: float = 0
 
         # Booleans for thread logic
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
+        self.posed: bool = False
         self.Active: bool = False
 
         if settings.TurningEnabled:
             self.LeashDirection = paraName.split("_")[-1]
 
-        self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"]
-        self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"]
-        self.X_Positive_ParamName: str = contacts["X_Positive_Param"]
-        self.X_Negative_ParamName: str = contacts["X_Negative_Param"]
+        self.Z_Positive_ParamName: str = contacts["Z_Positive_Param"] #Forward
+        self.Z_Negative_ParamName: str = contacts["Z_Negative_Param"] #Backward
+        self.X_Positive_ParamName: str = contacts["X_Positive_Param"] #Right
+        self.X_Negative_ParamName: str = contacts["X_Negative_Param"] #Left
+        self.Y_Positive_ParamName: str = contacts["Y_Positive_Param"] #Up
+        self.Y_Negative_ParamName: str = contacts["Y_Negative_Param"] #Down
 
     def resetMovement(self):
         self.Z_Positive: float = 0

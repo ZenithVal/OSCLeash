@@ -35,8 +35,20 @@ class Program:
         print("\nCurrent Status:\n")
 
         #Movement Math
-        VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
-        HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * leash.Stretch * leash.settings.StrengthMultiplier)
+        outputMultiplier = leash.Stretch * leash.settings.StrengthMultiplier
+        VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * outputMultiplier)
+        HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * outputMultiplier)
+
+        #Up/Down Deadzone, stops movement if pulled too high or low.
+        if (leash.Y_Positive + leash.Y_Negative) < leash.settings.UpDownDeadZone:
+            VerticalOutput = 0
+            HorizontalOutput = 0
+        #Up/Down Compensation
+        elif leash.settings.UpDownCompensation != 0:
+            Y_Modifier = self.clamp(1.0 - ((leash.Y_Positive + leash.Y_Negative) * leash.settings.UpDownCompensation))
+            VerticalOutput /= Y_Modifier
+            HorizontalOutput /= Y_Modifier
+            # This is not linear... I don't know, I think I might've failed math.
 
         #Turning Math
         if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone and leash.Grabbed:
@@ -88,9 +100,9 @@ class Program:
             else:
                 print("{} is grabbed".format(leash.Name))
 
-            if leash.Stretch > leash.settings.RunDeadzone: #Running deadzone
+            if leash.Stretch > leash.settings.RunDeadzone: #Running
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
-            elif leash.Stretch > leash.settings.WalkDeadzone: #Walking deadzone
+            elif leash.Stretch > leash.settings.WalkDeadzone: #Walking
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 0, leash.settings)
             else: #Not stretched enough to move.
                 self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
@@ -125,7 +137,7 @@ class Program:
 
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
-        #Xbox Emulation: REMOVE LATER WHEN OSC IS FIXED
+        #TODO: Remove this.
         if settings.XboxJoystickMovement: 
             print("\nSending through Emulated controller input\n")
             settings.gamepad.left_joystick_float(x_value_float=float(hori), y_value_float=float(vert))
