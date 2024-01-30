@@ -1,5 +1,5 @@
 
-<div align="Center" style="float:left">
+<div align="Center">
     <h3 align="Center">
         <!-- <a>
           <div style="float:right">
@@ -21,10 +21,7 @@
     </div>
 </div>
 
-<!-- Is there a way to do this without 9000 breaks? meh. -->
-<!-- Why you looking at the raw readme anyway, this is unreadable. -->
-<br><br><br><br><br><br><br>
-
+<!-- Why you looking at the raw readme, this is horrid to read. -->
 
 # Download & Setup
 Download the latest OSCLeash executable [from releases](https://github.com/ZenithVal/OSCLeash/releases) <br>
