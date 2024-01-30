@@ -110,6 +110,11 @@ class Program:
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
         
+        elif leash.settings.FreezeIfPosed and leash.Posed(): #Leash is posed and freezing is enabled
+            print("{} is posed".format(leash.Name))
+            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
+            time.sleep(leash.settings.InactiveDelay)
+
         elif leash.Grabbed != leash.wasGrabbed:
             print("{} has been released".format(leash.Name))
             leash.Active = False

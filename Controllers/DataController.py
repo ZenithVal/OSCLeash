@@ -121,7 +121,7 @@ class Leash:
         # Booleans for thread logic
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
-        self.posed: bool = False
+        self.Posed: bool = False
         self.Active: bool = False
 
         if settings.TurningEnabled:
