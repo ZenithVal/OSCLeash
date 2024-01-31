@@ -39,7 +39,13 @@ if __name__ == "__main__":
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
 
-    # Add controller input if user installs vgampad
+    time.sleep(1)
+    # if logging, sleep a little longer.
+    if settings.Logging:
+        time.sleep(2)
+
+    # Add controller input if enabled and check if it's available.
+    # TODO: Remove this
     if settings.XboxJoystickMovement:
         try:
             import vgamepad as vg

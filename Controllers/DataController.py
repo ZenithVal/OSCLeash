@@ -42,6 +42,7 @@ class ConfigSettings:
 
     def __init__(self, configData):
             self.setSettings(configData) #Set config values
+            self.printInfo() #Print config values
         
     def setSettings(self, configJson):
         try:
@@ -97,7 +98,10 @@ class ConfigSettings:
             print("IP: Not Localhost? Interesting.")
 
         print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
-        print(f"Strength Multiplier of {self.StrengthMultiplier} & Up/Down Compensation of {self.UpDownCompensation}")
+        print(f"Strength Multiplier of {self.StrengthMultiplier}")
+        print(f"Up/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
+        if self.FreezeIfPosed: 
+            print("Movement will be disabled if posed.")
         print("Running Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")

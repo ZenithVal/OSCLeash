@@ -29,7 +29,7 @@ class Program:
         statelock.acquire()
         
         self.cls()
-        leash.settings.printInfo()
+        # leash.settings.printInfo() Lets not print this every time, it actually costs performance.
         if leash.settings.Logging:
             leash.printDirections()
         print("\nCurrent Status:\n")
@@ -110,7 +110,7 @@ class Program:
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
         
-        elif leash.settings.FreezeIfPosed and leash.Posed(): #Leash is posed and freezing is enabled
+        elif leash.wasGrabbed and leash.settings.FreezeIfPosed and leash.Posed(): #Leash is posed and freezing is enabled
             print("{} is posed".format(leash.Name))
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
             time.sleep(leash.settings.InactiveDelay)
