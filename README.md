@@ -233,6 +233,39 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 # FAQ
 
+<details><summary>Click to Expand</summary>
+<br>
+<!--
+**Q:** <br>
+**A:** 
+-->
+
+**Q:** OSCLeash says grabbed but I don't get moved. <br>
+**A1:** This can happen if your leash physbone does not have any stretch. <br>
+**A2:** Make sure self interaction is `enabled`, it's needed for the direction calculation.
+
+---
+
+**Q:** I did avatar setup correctly but the app isn't getting ANYTHING at all. <br>
+**A1:** Make sure to reset OSC, this can be done manually by deleting the OSC and OSC.bak folders at `C:\Users\(Your username)\AppData\LocalLow\VRChat\VRChat` <br>
+
+---
+
+**Q:** The direction it pulls is not accurate <br>
+**A1:** Make sure your physbone isn't too limited in angle or too short! If it can't move it can't get an accurate location. <br>
+**A2:** If your scaling up very large, scale down the `Compass` game object to compensate ~ contacts have a max size!
+
+---
+
+**Q:** How can I run OSCLeash with my other OSC apps? <br>
+**A:** Try out an OSC Router, like [OSC Switch](https://github.com/KaleidonKep99/OpenSoundControlSwitch). I'll add OSCquery support when they it can whitelist parameters (Or when I get around to a performant C# rewrite) <br>
+
+---
+
+**Q:** My Question/Issue isn't answered above <br>
+**A:** [Discord](https://discord.gg/7VAm3twDyy) or [Git Issue](https://github.com/ZenithVal/OSCLeash/issues)
+
+</details><br>
 
 # Credits & Liscenses
 
