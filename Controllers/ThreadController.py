@@ -40,7 +40,7 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * outputMultiplier)
 
         #Up/Down Deadzone, stops movement if pulled too high or low.
-        if (leash.Y_Positive + leash.Y_Negative) < leash.settings.UpDownDeadZone:
+        if (leash.Y_Positive + leash.Y_Negative) < leash.settings.UpDownDeadzone:
             VerticalOutput = 0
             HorizontalOutput = 0
         #Up/Down Compensation

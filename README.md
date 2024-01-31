@@ -64,7 +64,7 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 | WalkDeadzone          | Minimum Stretch % to start walking                             | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
 | UpDownCompensation    | % of compensation to apply for Up/Down angles                  | 1.0         |
-| UpDownDeadZone        | If Up/Down pulling is above this %, disable movement           | 0.75        |
+| UpDownDeadzone        | If Up/Down pulling is above this %, disable movement           | 0.75        |
 | FreezeIfPosed         | Freeze the user in place if the leash is posed                 | false       | 
 | TurningEnabled        | Enable turning functionality                                   | false       |
 | TurningMultiplier     | Adjust turning speed                                           | 0.75        |

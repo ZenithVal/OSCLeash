@@ -10,7 +10,7 @@ DefaultConfig = {
         "WalkDeadzone": 0.10,
         "StrengthMultiplier": 1.2,
         "UpDownCompensation": 1.0,
-        "UpDownDeadZone": 0.70,
+        "UpDownDeadzone": 0.70,
         "FreezeIfPosed": False,
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
@@ -52,7 +52,7 @@ class ConfigSettings:
             self.WalkDeadzone = configJson["WalkDeadzone"]
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
             self.UpDownCompensation = configJson["UpDownCompensation"]
-            self.UpDownDeadZone = configJson["UpDownDeadZone"]
+            self.UpDownDeadzone = configJson["UpDownDeadzone"]
             self.FreezeIfPosed = configJson["FreezeIfPosed"]
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
@@ -72,7 +72,7 @@ class ConfigSettings:
             self.WalkDeadzone = DefaultConfig["WalkDeadzone"]
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
             self.UpDownCompensation = DefaultConfig["UpDownCompensation"]
-            self.UpDownDeadZone = DefaultConfig["UpDownDeadZone"]
+            self.UpDownDeadzone = DefaultConfig["UpDownDeadzone"]
             self.FreezeIfPosed = DefaultConfig["FreezeIfPosed"]
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
