@@ -31,7 +31,9 @@ DefaultConfig = {
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         }
 }
 
@@ -139,6 +141,8 @@ class Leash:
         self.Z_Negative: float = 0
         self.X_Positive: float = 0
         self.X_Negative: float = 0
+        self.Y_Positive: float = 0
+        self.Y_Negative: float = 0
 
     def printDirections(self):
         print("\nContact Directions:\n")
