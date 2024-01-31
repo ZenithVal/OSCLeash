@@ -5,6 +5,9 @@
         "RunDeadzone": 0.70,
         "WalkDeadzone": 0.15,
         "StrengthMultiplier": 1.2,
+        "UpDownCompensation": 1.0,
+        "UpDownDeadzone": 0.70,
+        "FreezeIfPosed": true,
         "TurningEnabled": false,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.15,
@@ -23,6 +26,8 @@
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         }
 }

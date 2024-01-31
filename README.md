@@ -24,7 +24,7 @@
 <!-- Why you looking at the raw readme, this is horrid to read. -->
 
 # Download & Setup
-Download the latest OSCLeash executable [from releases](https://github.com/ZenithVal/OSCLeash/releases) <br>
+Download and extract the latest OSCLeash zip [from releases](https://github.com/ZenithVal/OSCLeash/releases). <br>
 __This app does not provide a model for a Leash at this time.__ <Br>
 
 <details><summary>Setup Steps (Click the Arrow!)</summary>
@@ -63,7 +63,7 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 | RunDeadzone           | Minimum Stretch % to cause running                             | 0.70        |
 | WalkDeadzone          | Minimum Stretch % to start walking                             | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
-| UpDownCompensation    | % of compensation to apply for Up/Down angles                  | 0.80        |
+| UpDownCompensation    | % of compensation to apply for Up/Down angles                  | 1.0         |
 | UpDownDeadZone        | If Up/Down pulling is above this %, disable movement           | 0.75        |
 | FreezeIfPosed         | Freeze the user in place if the leash is posed                 | false       | 
 | TurningEnabled        | Enable turning functionality                                   | false       |
@@ -74,7 +74,7 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 | InactiveDelay         | Delay between non-essential OSC messages                       | 0.5 seconds |
 | Logging               | Logging for Directional compass inputs                         | false       |
 | XboxJoystickMovement  | Deprecrated, Alternate movement input method                   | false       |
-| PhysboneParameters    | A list of Physbones to use as leashes                          | see         |
+| PhysboneParameters    | A list of Physbones to use as leashes                          | see below   |
 | DirectionalParameters | A list of contacts to use for direction calculation            | see below   |
 ---
 </details><br>
