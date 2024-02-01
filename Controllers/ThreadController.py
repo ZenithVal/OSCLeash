@@ -27,12 +27,16 @@ class Program:
         
         statelock = Lock()
         statelock.acquire()
-        
-        self.cls()
-        # leash.settings.printInfo() Lets not print this every time, it actually costs performance.
+
+        if not leash.settings.Logging:
+            self.cls()
+            print("Current Status:")
+
+        # leash.settings.printInfo() 
+        # Lets not print this every time, it actually costs performance.
+            
         if leash.settings.Logging:
             leash.printDirections()
-        print("\nCurrent Status:\n")
 
         #Movement Math
         outputMultiplier = leash.Stretch * leash.settings.StrengthMultiplier
@@ -40,9 +44,10 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * outputMultiplier)
 
         #Up/Down Deadzone, stops movement if pulled too high or low.
-        if (leash.Y_Positive + leash.Y_Negative) < leash.settings.UpDownDeadzone:
+        if (leash.Y_Positive + leash.Y_Negative) > leash.settings.UpDownDeadzone:
             VerticalOutput = 0
             HorizontalOutput = 0
+
         #Up/Down Compensation
         elif leash.settings.UpDownCompensation != 0:
             Y_Modifier = self.clamp(1.0 - ((leash.Y_Positive + leash.Y_Negative) * leash.settings.UpDownCompensation))
@@ -89,16 +94,13 @@ class Program:
         else:
             TurningSpeed = 0.0
 
-
         #Leash is grabbed
         if leash.Grabbed: 
             self.updateProgram(True, counter)
 
             if leash.wasGrabbed == False:
                 leash.wasGrabbed = True
-                print("{} Leash recently grabbed".format(leash.Name))
-            else:
-                print("{} is grabbed".format(leash.Name))
+                print("{} grabbed".format(leash.Name))
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
@@ -108,24 +110,19 @@ class Program:
                 self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
             
             time.sleep(leash.settings.ActiveDelay)
-            Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
-        
-        elif leash.wasGrabbed and leash.settings.FreezeIfPosed and leash.Posed(): #Leash is posed and freezing is enabled
-            print("{} is posed".format(leash.Name))
-            self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
-            time.sleep(leash.settings.InactiveDelay)
+            Thread(target=self.leashRun, args=(leash, counter+1)).start()
 
         elif leash.Grabbed != leash.wasGrabbed:
-            print("{} has been released".format(leash.Name))
+            print("{} dropped".format(leash.Name))
+
             leash.Active = False
             leash.resetMovement()
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
 
             leash.wasGrabbed = False
 
+            time.sleep(2)
             self.resetProgram()
-            
-            time.sleep(leash.settings.InactiveDelay)
         
         else: # Only used at the start
             print("Waiting...")
@@ -142,9 +139,8 @@ class Program:
 
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
-        #TODO: Remove this.
+        #TODO: Remove this one day.
         if settings.XboxJoystickMovement: 
-            print("\nSending through Emulated controller input\n")
             settings.gamepad.left_joystick_float(x_value_float=float(hori), y_value_float=float(vert))
             if settings.TurningEnabled: 
                 settings.gamepad.right_joystick_float(x_value_float=float(turn), y_value_float=0.0)
@@ -155,16 +151,14 @@ class Program:
             settings.gamepad.update()
 
         else:
-            #Normal OSC outputs  function
-            print("\nSending through oscClient\n")
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)
             if settings.TurningEnabled: 
                 oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType)
 
-
-        print(f"\tVertical: {vert}\n\tHorizontal: {hori}\n\tRun: {runType}")
+        
+        print(f"\tVert: {vert} | Hori: {hori} | Run: {runType}") 
         if settings.TurningEnabled: print(f"\tTurn: {turn}")
 
     def clamp (self, n):

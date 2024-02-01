@@ -11,7 +11,6 @@ DefaultConfig = {
         "StrengthMultiplier": 1.2,
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.70,
-        "FreezeIfPosed": False,
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": .15,
@@ -54,7 +53,6 @@ class ConfigSettings:
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
             self.UpDownCompensation = configJson["UpDownCompensation"]
             self.UpDownDeadzone = configJson["UpDownDeadzone"]
-            self.FreezeIfPosed = configJson["FreezeIfPosed"]
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
             self.TurningDeadzone = configJson["TurningDeadzone"]
@@ -74,7 +72,6 @@ class ConfigSettings:
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
             self.UpDownCompensation = DefaultConfig["UpDownCompensation"]
             self.UpDownDeadzone = DefaultConfig["UpDownDeadzone"]
-            self.FreezeIfPosed = DefaultConfig["FreezeIfPosed"]
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
             self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
@@ -100,8 +97,6 @@ class ConfigSettings:
         print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
         print(f"Strength Multiplier of {self.StrengthMultiplier}")
         print(f"Up/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
-        if self.FreezeIfPosed: 
-            print("Movement will be disabled if posed.")
         print("Running Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
@@ -127,7 +122,6 @@ class Leash:
         # Booleans for thread logic
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
-        self.Posed: bool = False
         self.Active: bool = False
 
         if settings.TurningEnabled:
@@ -149,9 +143,4 @@ class Leash:
         self.Y_Negative: float = 0
 
     def printDirections(self):
-        print("\nContact Directions:\n")
-
-        print("{}: {}".format(self.Z_Positive_ParamName, self.Z_Positive))
-        print("{}: {}".format(self.Z_Negative_ParamName, self.Z_Negative))
-        print("{}: {}".format(self.X_Positive_ParamName, self.X_Positive))
-        print("{}: {}".format(self.X_Negative_ParamName, self.X_Negative))
+        print(f"\tZ+: {self.Z_Positive_ParamName} | Z-: {self.Z_Negative_ParamName} \n\tX+: {self.X_Positive_ParamName} | X-: {self.X_Negative_ParamName} \n\tY+: {self.Y_Positive_ParamName} | Y-: {self.Y_Negative_ParamName}")

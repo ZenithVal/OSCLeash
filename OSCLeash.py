@@ -40,7 +40,7 @@ if __name__ == "__main__":
     settings = ConfigSettings(configData) # Get settings from config file
 
     time.sleep(1)
-    # if logging, sleep a little longer.
+    # if logging, sleep a little longer
     if settings.Logging:
         time.sleep(2)
 
