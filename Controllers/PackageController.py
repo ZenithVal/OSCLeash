@@ -39,9 +39,8 @@ class Package:
         self.__dispatcher.map(f'/avatar/parameters/{leash.X_Negative_ParamName}',self.__updateX_Negative) #X Negative
 
         #Right now Y+ and - are only used for compensation, maybe in the future we'll actually move the player up down.
-        if leash.settings.UpDownCompensation != 0:
-            self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Positive_ParamName}',self.__updateY_Positive) #Y Positive
-            self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Negative_ParamName}',self.__updateY_Negative) #Y Negative
+        self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Positive_ParamName}',self.__updateY_Positive) #Y Positive
+        self.__dispatcher.map(f'/avatar/parameters/{leash.Y_Negative_ParamName}',self.__updateY_Negative) #Y Negative
 
     def __updateZ_Positive(self, addr, value):
         try:

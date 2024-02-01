@@ -143,4 +143,4 @@ class Leash:
         self.Y_Negative: float = 0
 
     def printDirections(self):
-        print(f"\tZ+: {self.Z_Positive_ParamName} | Z-: {self.Z_Negative_ParamName} \n\tX+: {self.X_Positive_ParamName} | X-: {self.X_Negative_ParamName} \n\tY+: {self.Y_Positive_ParamName} | Y-: {self.Y_Negative_ParamName}")
+        print(f"\tZ: {round((self.Z_Positive), 2)},{round((self.Z_Negative), 2)} |  X: {round((self.X_Positive), 2)},{round((self.X_Negative), 2)} | Y: {round((self.Y_Positive), 2)},{round((self.Y_Negative), 2)}")

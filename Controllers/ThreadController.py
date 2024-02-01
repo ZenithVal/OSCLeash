@@ -30,10 +30,7 @@ class Program:
 
         if not leash.settings.Logging:
             self.cls()
-            print("Current Status:")
-
-        # leash.settings.printInfo() 
-        # Lets not print this every time, it actually costs performance.
+            print('\x1b[1;32;40m' + 'OSCLeash is Running' + '\x1b[0m')
             
         if leash.settings.Logging:
             leash.printDirections()
@@ -43,14 +40,16 @@ class Program:
         VerticalOutput = self.clamp((leash.Z_Positive - leash.Z_Negative) * outputMultiplier)
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * outputMultiplier)
 
+        Y_Combined = leash.Y_Positive + leash.Y_Negative
+
         #Up/Down Deadzone, stops movement if pulled too high or low.
-        if (leash.Y_Positive + leash.Y_Negative) > leash.settings.UpDownDeadzone:
-            VerticalOutput = 0
-            HorizontalOutput = 0
+        if (Y_Combined) >= leash.settings.UpDownDeadzone:
+            VerticalOutput = 0.0
+            HorizontalOutput = 0.0
 
         #Up/Down Compensation
         elif leash.settings.UpDownCompensation != 0:
-            Y_Modifier = self.clamp(1.0 - ((leash.Y_Positive + leash.Y_Negative) * leash.settings.UpDownCompensation))
+            Y_Modifier = self.clamp(1.0 - ((Y_Combined) * leash.settings.UpDownCompensation))
             VerticalOutput /= Y_Modifier
             HorizontalOutput /= Y_Modifier
             # This is not linear... I don't know, I think I might've failed math.
@@ -100,10 +99,12 @@ class Program:
 
             if leash.settings.Logging:
                 if leash.wasGrabbed == False:
+                    print('\x1b[1;32;40m' + f"{leash.Name} grabbed" + '\x1b[0m')
                     leash.wasGrabbed = True
-                    print("{} grabbed".format(leash.Name))
             else:
                 print(f"{leash.Name} is grabbed")
+
+            
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
@@ -116,19 +117,21 @@ class Program:
             Thread(target=self.leashRun, args=(leash, counter+1)).start()
 
         elif leash.Grabbed != leash.wasGrabbed:
-            print("{} dropped".format(leash.Name))
+
+            if leash.settings.Logging:
+                print('\x1b[1;33;40m' + f"{leash.Name} dropped" + '\x1b[0m')
+            else:
+                print(f"{leash.Name} dropped")
 
             leash.Active = False
             leash.resetMovement()
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
 
             leash.wasGrabbed = False
-
-            time.sleep(2)
             self.resetProgram()
         
         else: # Only used at the start
-            print("Waiting...")
+            print("Waiting for input.")
 
             leash.Active = False
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
