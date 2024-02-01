@@ -30,9 +30,8 @@ class Program:
 
         if not leash.settings.Logging:
             self.cls()
-            print('\x1b[1;32;40m' + 'OSCLeash is Running' + '\x1b[0m')
-            
-        if leash.settings.Logging:
+            print('\x1b[1;32;40m' + 'OSCLeash is Running' + '\x1b[0m')  
+        else:
             leash.printDirections()
 
         #Movement Math
@@ -41,55 +40,68 @@ class Program:
         HorizontalOutput = self.clamp((leash.X_Positive - leash.X_Negative) * outputMultiplier)
 
         Y_Combined = leash.Y_Positive + leash.Y_Negative
-
         #Up/Down Deadzone, stops movement if pulled too high or low.
         if (Y_Combined) >= leash.settings.UpDownDeadzone:
             VerticalOutput = 0.0
             HorizontalOutput = 0.0
-
         #Up/Down Compensation
-        elif leash.settings.UpDownCompensation != 0:
+        if leash.settings.UpDownCompensation != 0:
             Y_Modifier = self.clamp(1.0 - ((Y_Combined) * leash.settings.UpDownCompensation))
             VerticalOutput /= Y_Modifier
             HorizontalOutput /= Y_Modifier
             # This is not linear... I don't know, I think I might've failed math.
 
         #Turning Math
-        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone and leash.Grabbed:
-            TurnDirect = None
+        if leash.settings.TurningEnabled and leash.Stretch > leash.settings.TurningDeadzone:
+            TurningSpeed = leash.settings.TurningMultiplier
+
             match leash.LeashDirection:
                 case "North":
                     if leash.Z_Positive < leash.settings.TurningGoal:
+                        TurningSpeed *= HorizontalOutput
                         if leash.X_Positive > leash.X_Negative:
-                            TurnDirect = "R"
-                        else:
-                            TurnDirect = "L"                 
+                            # Right
+                            TurningSpeed += leash.Z_Negative
+                        else: 
+                            # Left
+                            TurningSpeed -= leash.Z_Negative
+                    else: 
+                        TurningSpeed = 0.0
                 case "South":
                     if leash.Z_Negative < leash.settings.TurningGoal:
+                        TurningSpeed *= -HorizontalOutput
                         if leash.X_Positive > leash.X_Negative:
-                            TurnDirect = "L"
+                            # Left
+                            TurningSpeed -= leash.Z_Positive
                         else:
-                            TurnDirect = "R"
+                            # Right
+                            TurningSpeed += leash.Z_Positive
+                    else:
+                        TurningSpeed = 0.0
                 case "East":
                     if leash.X_Positive < leash.settings.TurningGoal:
+                        TurningSpeed *= VerticalOutput
                         if leash.Z_Positive > leash.Z_Negative:
-                            TurnDirect = "L"
+                            # Right
+                            TurningSpeed += leash.X_Negative
                         else:
-                            TurnDirect = "R"                
+                            # Left
+                            TurningSpeed -= leash.X_Negative
+                    else:   
+                        TurningSpeed = 0.0
                 case "West":
                     if leash.X_Negative < leash.settings.TurningGoal:
+                        TurningSpeed *= -VerticalOutput
                         if leash.Z_Positive > leash.Z_Negative:
-                            TurnDirect = "R"
+                            # Left
+                            TurningSpeed -= leash.X_Positive
                         else:
-                            TurnDirect = "L"
+                            # Right
+                            TurningSpeed += leash.X_Positive
+                    else:
+                        TurningSpeed = 0.0
 
-            #Directional Output
-            if TurnDirect == "L":
-                TurningSpeed = self.clampNeg(-1.0 * ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier))
-            elif TurnDirect == "R":
-                TurningSpeed = self.clampPos(1.0 * ((leash.Stretch - leash.settings.TurningDeadzone) * leash.settings.TurningMultiplier))
-            else:
-                TurningSpeed = 0.0
+            TurningSpeed = self.clamp(TurningSpeed)
         else:
             TurningSpeed = 0.0
 
@@ -104,8 +116,6 @@ class Program:
             else:
                 print(f"{leash.Name} is grabbed")
 
-            
-
             if leash.Stretch > leash.settings.RunDeadzone: #Running
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
             elif leash.Stretch > leash.settings.WalkDeadzone: #Walking
@@ -114,10 +124,9 @@ class Program:
                 self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
             
             time.sleep(leash.settings.ActiveDelay)
-            Thread(target=self.leashRun, args=(leash, counter+1)).start()
+            Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
 
         elif leash.Grabbed != leash.wasGrabbed:
-
             if leash.settings.Logging:
                 print('\x1b[1;33;40m' + f"{leash.Name} dropped" + '\x1b[0m')
             else:
@@ -127,11 +136,21 @@ class Program:
             leash.resetMovement()
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
 
+            if leash.settings.FreezeIfPosed and leash.Posed: 
+                if leash.settings.Logging: 
+                    print('\x1b[1;33;40m' + f"{leash.Name} is posed" + '\x1b[0m')
+                else:
+                    print("{} is posed".format(leash.Name))
+
+                while leash.Posed:
+                    self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
+                    time.sleep(leash.settings.ActiveDelay)
+
             leash.wasGrabbed = False
             self.resetProgram()
         
         else: # Only used at the start
-            print("Waiting for input.")
+            print("Waiting for Initial Input")
 
             leash.Active = False
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
@@ -145,7 +164,7 @@ class Program:
 
         oscClient = SimpleUDPClient(settings.IP, settings.SendingPort)
 
-        #TODO: Remove this one day.
+        #TODO: Remove this.
         if settings.XboxJoystickMovement: 
             settings.gamepad.left_joystick_float(x_value_float=float(hori), y_value_float=float(vert))
             if settings.TurningEnabled: 
@@ -157,13 +176,14 @@ class Program:
             settings.gamepad.update()
 
         else:
+            #Normal OSC outputs  function
             oscClient.send_message("/input/Vertical", vert)
             oscClient.send_message("/input/Horizontal", hori)
             if settings.TurningEnabled: 
                 oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType)
 
-        
+
         print(f"\tVert: {vert} | Hori: {hori} | Run: {runType}") 
         if settings.TurningEnabled: print(f"\tTurn: {turn}")
 

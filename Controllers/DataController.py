@@ -11,6 +11,7 @@ DefaultConfig = {
         "StrengthMultiplier": 1.2,
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.70,
+        "FreezeIfPosed": False,
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": .15,
@@ -53,6 +54,7 @@ class ConfigSettings:
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
             self.UpDownCompensation = configJson["UpDownCompensation"]
             self.UpDownDeadzone = configJson["UpDownDeadzone"]
+            self.FreezeIfPosed = configJson["FreezeIfPosed"]
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
             self.TurningDeadzone = configJson["TurningDeadzone"]
@@ -72,6 +74,7 @@ class ConfigSettings:
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
             self.UpDownCompensation = DefaultConfig["UpDownCompensation"]
             self.UpDownDeadzone = DefaultConfig["UpDownDeadzone"]
+            self.FreezeIfPosed = DefaultConfig["FreezeIfPosed"]
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
             self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
@@ -97,6 +100,8 @@ class ConfigSettings:
         print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
         print(f"Strength Multiplier of {self.StrengthMultiplier}")
         print(f"Up/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
+        if self.FreezeIfPosed: 
+            print("Movement will be disabled if posed.")
         print("Running Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
@@ -119,9 +124,12 @@ class Leash:
         self.Y_Positive: float = 0
         self.Y_Negative: float = 0
 
+        self.turningSpeed: float = 0
+
         # Booleans for thread logic
         self.Grabbed: bool = False
         self.wasGrabbed: bool = False
+        self.Posed: bool = False
         self.Active: bool = False
 
         if settings.TurningEnabled:
