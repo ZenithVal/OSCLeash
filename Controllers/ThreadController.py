@@ -98,9 +98,12 @@ class Program:
         if leash.Grabbed: 
             self.updateProgram(True, counter)
 
-            if leash.wasGrabbed == False:
-                leash.wasGrabbed = True
-                print("{} grabbed".format(leash.Name))
+            if leash.settings.Logging:
+                if leash.wasGrabbed == False:
+                    leash.wasGrabbed = True
+                    print("{} grabbed".format(leash.Name))
+            else:
+                print(f"{leash.Name} is grabbed")
 
             if leash.Stretch > leash.settings.RunDeadzone: #Running
                 self.leashOutput(VerticalOutput, HorizontalOutput, TurningSpeed, 1, leash.settings)
