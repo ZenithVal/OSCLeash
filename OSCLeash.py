@@ -39,13 +39,12 @@ if __name__ == "__main__":
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
 
-    time.sleep(1)
-    # if logging, sleep a little longer.
+    time.sleep(1.5)
+    # if logging, sleep a little longer for user to debug
     if settings.Logging:
         time.sleep(2)
 
-    # Add controller input if enabled and check if it's available.
-    # TODO: Remove this
+    # TODO: Remove Xbox support if not needed
     if settings.XboxJoystickMovement:
         try:
             import vgamepad as vg
@@ -55,9 +54,7 @@ if __name__ == "__main__":
             settings.XboxJoystickMovement = False
             time.sleep(7)
 
-    
     # Collect Data for leash
-
     leashes = []
     for leashName in configData["PhysboneParameters"]:
         leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
