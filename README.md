@@ -197,7 +197,7 @@ We'll use these values in this example:
 
 ## Step 2: Gather Directional Contact values
 
-<img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> 
+<img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> <br>
 4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
 
 Based on where the constraint is aimed, it will give us 4 values. <br/>
