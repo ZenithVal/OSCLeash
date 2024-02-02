@@ -243,7 +243,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 **A:** 
 -->
 
-**Q:** OSCLeash always says `Started, awaiting input` `<br>
+**Q:** OSCLeash always says `Started, awaiting input` <br>
 **A1:** Manually Reset OSC by deleting the OSC and OSC.bak folders at `C:\Users\(Your username)\AppData\LocalLow\VRChat\VRChat` <br>
 **A2:** Did you do avatar setup correctly? Make sure your leash physbone matches your config. <br>
 **A3:** This could potentially be a firewall issue, but before that, double check your avatar, pleaaaase. <br>
