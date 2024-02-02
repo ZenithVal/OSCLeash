@@ -126,6 +126,17 @@ class Program:
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
 
+        elif leash.settings.FreezeIfPosed and leash.Posed: 
+            if leash.settings.Logging:
+                if leash.wasGrabbed == True:
+                    print('\x1b[1;33;40m' + f"{leash.Name} posed" + '\x1b[0m')
+                    leash.wasGrabbed = False
+            else:
+                print(f"{leash.Name} is posed")
+
+            time.sleep(leash.settings.ActiveDelay)
+            Thread(target=self.leashRun, args=(leash, counter+1)).start()# run thread again if still posed
+
         elif leash.Grabbed != leash.wasGrabbed:
             if leash.settings.Logging:
                 print('\x1b[1;33;40m' + f"{leash.Name} dropped" + '\x1b[0m')
@@ -135,16 +146,6 @@ class Program:
             leash.Active = False
             leash.resetMovement()
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
-
-            if leash.settings.FreezeIfPosed and leash.Posed: 
-                if leash.settings.Logging: 
-                    print('\x1b[1;33;40m' + f"{leash.Name} is posed" + '\x1b[0m')
-                else:
-                    print("{} is posed".format(leash.Name))
-
-                while leash.Posed:
-                    self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
-                    time.sleep(leash.settings.ActiveDelay)
 
             leash.wasGrabbed = False
             self.resetProgram()
