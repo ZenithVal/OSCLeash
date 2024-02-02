@@ -134,6 +134,11 @@ class Program:
             else:
                 print(f"{leash.Name} is posed")
 
+            # .1 seems to be the VRC deadzone for input movement unfortunately
+            self.leashOutput(0.101, 0.101, 0.0, 0, leash.settings) 
+            time.sleep(leash.settings.ActiveDelay)
+            self.leashOutput(-0.101, -0.101, 0.0, 0, leash.settings)
+
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# run thread again if still posed
 
@@ -152,7 +157,7 @@ class Program:
         
         else: # Only used at the start
             if not leash.settings.Logging:
-                print("Started, awaiting input...")
+                print("Waiting for Initial Input")
 
             leash.Active = False
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)

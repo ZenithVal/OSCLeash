@@ -151,4 +151,3 @@ class Package:
             print('\x1b[1;31;40m' + '   Warning: An application might already be running on this port!   ' + '\x1b[0m')
             print('\x1b[1;31;41m' + '                                                                    \n' + '\x1b[0m')
             print(e)
-            # No delay here as error message is displayed somewhere else when this fails
