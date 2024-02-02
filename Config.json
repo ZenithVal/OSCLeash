@@ -7,7 +7,6 @@
         "StrengthMultiplier": 1.2,
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.5,
-        "FreezeIfPosed": false,
         "TurningEnabled": false,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.2,

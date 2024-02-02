@@ -10,7 +10,6 @@ DefaultConfig = {
         "StrengthMultiplier": 1.2,
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.5,
-        "FreezeIfPosed": False,
         "TurningEnabled": False,
         "TurningMultiplier": 0.75,
         "TurningDeadzone": 0.2,
@@ -53,7 +52,6 @@ class ConfigSettings:
             self.StrengthMultiplier = configJson["StrengthMultiplier"]
             self.UpDownCompensation = configJson["UpDownCompensation"]
             self.UpDownDeadzone = configJson["UpDownDeadzone"]
-            self.FreezeIfPosed = configJson["FreezeIfPosed"]
             self.TurningEnabled = configJson["TurningEnabled"]
             self.TurningMultiplier = configJson["TurningMultiplier"]
             self.TurningDeadzone = configJson["TurningDeadzone"]
@@ -74,7 +72,6 @@ class ConfigSettings:
             self.StrengthMultiplier = DefaultConfig["StrengthMultiplier"]
             self.UpDownCompensation = DefaultConfig["UpDownCompensation"]
             self.UpDownDeadzone = DefaultConfig["UpDownDeadzone"]
-            self.FreezeIfPosed = DefaultConfig["FreezeIfPosed"]
             self.TurningEnabled = DefaultConfig["TurningEnabled"]
             self.TurningMultiplier = DefaultConfig["TurningMultiplier"]
             self.TurningDeadzone = DefaultConfig["TurningDeadzone"]
@@ -116,8 +113,6 @@ class ConfigSettings:
         print("\tRunning Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("\tWalking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
         
-        if self.FreezeIfPosed: 
-            print("\tMovement will be disabled if a leahs is posed.")
         print(f"\tUp/Down Compensation of {self.UpDownCompensation} & {self.UpDownDeadzone*100}% Max Angle")
 
         if self.TurningEnabled: 

@@ -126,22 +126,6 @@ class Program:
             time.sleep(leash.settings.ActiveDelay)
             Thread(target=self.leashRun, args=(leash, counter+1)).start()# Run thread if still grabbed
 
-        elif leash.settings.FreezeIfPosed and leash.Posed: 
-            if leash.settings.Logging:
-                if leash.wasGrabbed == True:
-                    print('\x1b[1;33;40m' + f"{leash.Name} posed" + '\x1b[0m')
-                    leash.wasGrabbed = False
-            else:
-                print(f"{leash.Name} is posed")
-
-            # .1 seems to be the VRC deadzone for input movement unfortunately
-            self.leashOutput(0.101, 0.101, 0.0, 0, leash.settings) 
-            time.sleep(leash.settings.ActiveDelay)
-            self.leashOutput(-0.101, -0.101, 0.0, 0, leash.settings)
-
-            time.sleep(leash.settings.ActiveDelay)
-            Thread(target=self.leashRun, args=(leash, counter+1)).start()# run thread again if still posed
-
         elif leash.Grabbed != leash.wasGrabbed:
             if leash.settings.Logging:
                 print('\x1b[1;33;40m' + f"{leash.Name} dropped" + '\x1b[0m')

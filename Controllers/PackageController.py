@@ -28,7 +28,7 @@ class Package:
         for leash in leashCollection:
             self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_Stretch',self.__updateStretch, leash) #Physbone Stretch Value
             self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_IsGrabbed',self.__updateGrabbed, leash) #Physbone Grab Status
-            self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_IsPosed',self.__UpdatePosed, leash) #Physbone Grab Status
+            # self.__dispatcher.map(f'/avatar/parameters/{leash.Name}_IsPosed',self.__UpdatePosed, leash) #Physbone Grab Status
 
     def listenParam(self, leash):
         self.__dispatcher.map(f'/avatar/parameters/{leash.Z_Positive_ParamName}',self.__updateZ_Positive) #Z Positive
@@ -133,15 +133,15 @@ class Package:
             print(e)
             time.sleep(5)
     
-    def __UpdatePosed(self, addr, extraArgs, value):
-        try:
-            currLeash: Leash = extraArgs[0]
-            self.__statelock.acquire()
-            currLeash.Posed = value
-            self.__statelock.release()
-        except Exception as e:
-            print(e)
-            time.sleep(5)
+    # def __UpdatePosed(self, addr, extraArgs, value):
+    #     try:
+    #         currLeash: Leash = extraArgs[0]
+    #         self.__statelock.acquire()
+    #         currLeash.Posed = value
+    #         self.__statelock.release()
+    #     except Exception as e:
+    #         print(e)
+    #         time.sleep(5)
 
     def runServer(self, IP, Port):
         try:
