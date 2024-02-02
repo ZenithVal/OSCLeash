@@ -24,7 +24,7 @@
 <!-- Why you looking at the raw readme, this is horrid to read. -->
 
 # Download & Setup
-Download and extract the latest OSCLeash zip [from releases](https://github.com/ZenithVal/OSCLeash/releases). <br>
+Download the latest version of OSCLeash [from releases](https://github.com/ZenithVal/OSCLeash/releases). <br>
 __This app does not provide a model for a Leash at this time.__ <Br>
 
 <details><summary>Setup Steps (Click the Arrow!)</summary>
@@ -64,17 +64,17 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 | WalkDeadzone          | Minimum Stretch % to start walking                             | 0.15        |
 | StrengthMultiplier    | Multiplies speed values but they can't go above (1.0)          | 1.2         |
 | UpDownCompensation    | % of compensation to apply for Up/Down angles                  | 1.0         |
-| UpDownDeadzone        | If Up/Down pulling is above this %, disable movement           | 0.75        |
+| UpDownDeadzone        | Stops movement if pull angle is above/below this. 1.0 Disables | 0.5         |
 | FreezeIfPosed         | Freeze the user in place if the leash is posed                 | false       | 
 | TurningEnabled        | Enable turning functionality                                   | false       |
 | TurningMultiplier     | Adjust turning speed                                           | 0.75        |
-| TurningDeadzone       | Minimum Stretch % to start turning                             | .15         |
+| TurningDeadzone       | Minimum Stretch % to start turning                             | 0.2         |
 | TurningGoal           | Goal degree range for turning. (degrees, 0-144) (0° to 144°)   | 90          |
-| ActiveDelay           | Delay between OSC messages while the leash is being grabbed    | 0.1 seconds |
-| InactiveDelay         | Delay between non-essential OSC messages                       | 0.5 seconds |
+| ActiveDelay           | Delay in seconds between OSC messages while active             | 0.02        |
+| InactiveDelay         | Delay in seconds for OSCLeash while not in use                 | 0.5         |
 | Logging               | Logging for Directional compass inputs                         | false       |
-| XboxJoystickMovement  | Deprecrated, Alternate movement input method                   | false       |
-| PhysboneParameters    | A list of Physbones to use as leashes                          | see below   |
+| XboxJoystickMovement  | Alt movement method for an old bug. Removing eventually        | false       |
+| PhysboneParameters    | A list of Physbones that are leashes                           | see below   |
 | DirectionalParameters | A list of contacts to use for direction calculation            | see below   |
 ---
 </details><br>
@@ -88,13 +88,16 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
         "ListeningPort": 9001,
         "SendingPort": 9000,
         "RunDeadzone": 0.70,
-        "WalkDeadzone": 0.15,
+        "WalkDeadzone": 0.20,
         "StrengthMultiplier": 1.2,
+        "UpDownCompensation": 1.0,
+        "UpDownDeadzone": 0.5,
+        "FreezeIfPosed": false,
         "TurningEnabled": false,
         "TurningMultiplier": 0.75,
-        "TurningDeadzone": 0.15,
+        "TurningDeadzone": 0.2,
         "TurningGoal": 90,
-        "ActiveDelay": 0.01,
+        "ActiveDelay": 0.02,
         "InactiveDelay": 0.5,
         "Logging": false,
         "XboxJoystickMovement": false,
@@ -108,7 +111,9 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         }
 }
 ```

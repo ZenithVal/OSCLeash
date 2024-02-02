@@ -10,10 +10,10 @@ from Controllers.ThreadController import Program
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
         with open(configPath, "w") as cf:
-            json.dump(DefaultConfig, cf)
+            json.dump(DefaultConfig, cf, indent=4)
 
-        print("Default config file created")
-        time.sleep(3)
+        print("Default config file created\n")
+        time.sleep(2)
 
     except Exception as e:
         print(e)
@@ -29,9 +29,10 @@ if __name__ == "__main__":
     program.cls()
 
     # Test if Config file exists. Create the default if it does not.
-    configRelativePath = "./config.json"
+    configRelativePath = "./Config.json"
     if not os.path.exists(configRelativePath):
-        print("Config file was not found...", "\nCreating default config file...")
+        # print error message in red
+        print('\x1b[1;31;40m' + "Config file was not found...", "\nCreating default config file..." + '\x1b[0m')
         createDefaultConfigFile(configRelativePath)
     else:
         print("Config file found\n")
