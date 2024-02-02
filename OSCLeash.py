@@ -1,5 +1,6 @@
 from threading import Thread
 import json
+import sys
 import os
 import time
 
@@ -10,14 +11,14 @@ from Controllers.ThreadController import Program
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
         with open(configPath, "w") as cf:
-            json.dump(DefaultConfig, cf)
+            json.dump(DefaultConfig, cf, indent=4)
 
-        print("Default config file created")
-        time.sleep(3)
+        print("Default config file created\n")
+        time.sleep(2)
 
     except Exception as e:
         print(e)
-        time.sleep(5)
+        os.system("pause")
         exit()
 
 
@@ -29,9 +30,10 @@ if __name__ == "__main__":
     program.cls()
 
     # Test if Config file exists. Create the default if it does not.
-    configRelativePath = "./config.json"
+    configRelativePath = "./Config.json"
     if not os.path.exists(configRelativePath):
-        print("Config file was not found...", "\nCreating default config file...")
+        # print error message in red
+        print('\x1b[1;31;40m' + "Config file was not found...", "\nCreating default config file..." + '\x1b[0m')
         createDefaultConfigFile(configRelativePath)
     else:
         print("Config file found\n")
@@ -39,7 +41,9 @@ if __name__ == "__main__":
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
 
-    # Add controller input if user installs vgampad
+    time.sleep(1)
+
+    # TODO: Remove Xbox support if not needed
     if settings.XboxJoystickMovement:
         try:
             import vgamepad as vg
@@ -47,11 +51,9 @@ if __name__ == "__main__":
         except Exception as e:
             print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
             settings.XboxJoystickMovement = False
-            time.sleep(7)
+            os.system("pause")
 
-    
     # Collect Data for leash
-
     leashes = []
     for leashName in configData["PhysboneParameters"]:
         leashes.append(Leash(leashName, configData["DirectionalParameters"], settings))
@@ -70,9 +72,11 @@ if __name__ == "__main__":
         #initialize input
         if serverThread.is_alive():
             leashes[0].Active = True
+            print("Started, awaiting input...")
             Thread(target=program.leashRun, args=(leashes[0],)).start()
         else: raise Exception()
             
     except Exception as e:
         print(e)
-        time.sleep(10)
+        os.system("pause")
+        os.execl(sys.executable, sys.executable, *sys.argv)

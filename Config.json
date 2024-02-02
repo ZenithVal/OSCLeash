@@ -3,13 +3,15 @@
         "ListeningPort": 9001,
         "SendingPort": 9000,
         "RunDeadzone": 0.70,
-        "WalkDeadzone": 0.15,
+        "WalkDeadzone": 0.20,
         "StrengthMultiplier": 1.2,
+        "UpDownCompensation": 1.0,
+        "UpDownDeadzone": 0.5,
         "TurningEnabled": false,
         "TurningMultiplier": 0.75,
-        "TurningDeadzone": 0.15,
+        "TurningDeadzone": 0.2,
         "TurningGoal": 90,
-        "ActiveDelay": 0.01,
+        "ActiveDelay": 0.02,
         "InactiveDelay": 0.5,
         "Logging": false,
         "XboxJoystickMovement": false,
@@ -23,6 +25,8 @@
                 "Z_Positive_Param": "Leash_Z+",
                 "Z_Negative_Param": "Leash_Z-",
                 "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-"
+                "X_Negative_Param": "Leash_X-",
+                "Y_Positive_Param": "Leash_Y+",
+                "Y_Negative_Param": "Leash_Y-"
         }
 }
