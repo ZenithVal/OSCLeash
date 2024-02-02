@@ -274,6 +274,17 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 </details><br>
 
+# Future Plans/Goals
+
+- Simple [dOSC](https://github.com/Duinrahaic/dOSC) app version 
+- Performant C# Rewrite
+  - Turns out python isn't great for really fast stuff?
+  - Maybe even C++ if masochistic enough.
+- OSCQuery Support (When whitelisting is fixed)
+- Anchoring leash to a point in world space when posed.
+- Using a player [Contact Tracker](https://github.com/hfcRed/Player-Tracker/tree/main) to follow automatically.
+- Y axis movement via an OVRAS API
+
 # Credits & Liscenses
 
 - App Rope Icon | [Game-icons.net](https://game-icons.net/1x1/delapouite/locked-heart.html) under [CC by 3.0](https://creativecommons.org/licenses/by/3.0/)
