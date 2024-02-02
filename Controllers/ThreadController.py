@@ -183,9 +183,10 @@ class Program:
                 oscClient.send_message("/input/LookHorizontal", turn)
             oscClient.send_message("/input/Run", runType)
 
-
-        print(f"\tVert: {vert} | Hori: {hori} | Run: {runType}") 
-        if settings.TurningEnabled: print(f"\tTurn: {turn}")
+        if not settings.TurningEnabled: 
+            print(f"\tVert: {vert} | Hori: {hori} | Run: {runType}") 
+        else:
+            print(f"\tVert: {vert} | Hori: {hori} | Run: {runType} | Turn: {turn}")
 
     def clamp (self, n):
         return max(-1.0, min(n, 1.0))

@@ -90,23 +90,32 @@ class ConfigSettings:
         self.runButton = runButton
 
     def printInfo(self):        
-        print('\x1b[1;32;40m' + 'OSCLeash is Running!' + '\x1b[0m')
+        print('\x1b[1;32;40m' + 'Settings:' + '\x1b[0m')
+
+        if self.Logging:
+            print('\x1b\t[1;33;40m' + 'Logging is enabled' + '\x1b[0m')
 
         if self.IP == "127.0.0.1":
-            print("IP: Localhost")
+            print("\tIP: Localhost")
         else:  
-            print("IP: Not Localhost? Interesting.")
+            print("\tIP: Not Localhost? Interesting.")
 
-        print(f"Listening on port {self.ListeningPort}\n Sending on port {self.SendingPort}")
-        print(f"Strength Multiplier of {self.StrengthMultiplier}")
-        print(f"Up/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
+        print(f"\tListening on port {self.ListeningPort}\n\tSending on port {self.SendingPort}")
+        print(f"\tStrength Multiplier of {self.StrengthMultiplier}")
+        print(f"\tUp/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
         if self.FreezeIfPosed: 
-            print("Movement will be disabled if posed.")
-        print("Running Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
-        print("Walking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
-        print("Delays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
+            print("\tMovement will be disabled if posed.")
+        print("\tRunning Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
+        print("\tWalking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
+        print("\tDelays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         if self.TurningEnabled: 
-            print(f"Turning is enabled:\n\tMultiplier of {self.TurningMultiplier}\n\tDeadzone of {self.TurningDeadzone}\n\tGoal of {self.TurningGoal*180}°")
+            print(f"\tTurning is enabled:")
+            print(f"\t\tMultiplier of {self.TurningMultiplier}")
+            print(f"\t\tDeadzone of {self.TurningDeadzone}")
+            print(f"\t\tGoal of {self.TurningGoal*180}°")
+
+        print("")
+
             
 class Leash:
 

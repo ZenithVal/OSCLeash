@@ -40,9 +40,6 @@ if __name__ == "__main__":
     settings = ConfigSettings(configData) # Get settings from config file
 
     time.sleep(1.5)
-    # if logging, sleep a little longer for user to debug
-    if settings.Logging:
-        time.sleep(2)
 
     # TODO: Remove Xbox support if not needed
     if settings.XboxJoystickMovement:
