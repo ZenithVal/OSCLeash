@@ -1,6 +1,4 @@
-from array import array
 import time
-import sys
 import ctypes #Required for colored error messages.
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import osc_server

@@ -1,5 +1,6 @@
 from threading import Thread
 import json
+import sys
 import os
 import time
 
@@ -17,7 +18,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
 
     except Exception as e:
         print(e)
-        time.sleep(5)
+        os.system("pause")
         exit()
 
 
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
     settings = ConfigSettings(configData) # Get settings from config file
 
-    time.sleep(1.5)
+    time.sleep(1)
 
     # TODO: Remove Xbox support if not needed
     if settings.XboxJoystickMovement:
@@ -50,7 +51,7 @@ if __name__ == "__main__":
         except Exception as e:
             print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
             settings.XboxJoystickMovement = False
-            time.sleep(7)
+            os.system("pause")
 
     # Collect Data for leash
     leashes = []
@@ -71,9 +72,11 @@ if __name__ == "__main__":
         #initialize input
         if serverThread.is_alive():
             leashes[0].Active = True
+            print("Started, awaiting input...")
             Thread(target=program.leashRun, args=(leashes[0],)).start()
         else: raise Exception()
             
     except Exception as e:
         print(e)
-        time.sleep(10)
+        os.system("pause")
+        os.execl(sys.executable, sys.executable, *sys.argv)

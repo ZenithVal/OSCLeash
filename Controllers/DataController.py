@@ -1,4 +1,3 @@
-import sys
 import time
 import ctypes #Required for colored error messages.
 
@@ -63,6 +62,7 @@ class ConfigSettings:
             self.InactiveDelay = configJson["InactiveDelay"]
             self.Logging = configJson["Logging"]
             self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
+            self.Leashes = configJson["PhysboneParameters"]
         except Exception as e: 
             print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
             print(e,"was the exception\n")
@@ -83,6 +83,7 @@ class ConfigSettings:
             self.InactiveDelay = DefaultConfig["InactiveDelay"]
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
+            self.Leashes = DefaultConfig["PhysboneParameters"]
             time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
@@ -101,18 +102,29 @@ class ConfigSettings:
             print("\tIP: Not Localhost? Interesting.")
 
         print(f"\tListening on port {self.ListeningPort}\n\tSending on port {self.SendingPort}")
+
+        print("")
+
+        AllLeashes = ""
+        for leash in self.Leashes:
+            AllLeashes += leash + ", "
+        AllLeashes = AllLeashes[:-2]
+        print(f"\tLeash name(s): {AllLeashes}")
+
         print(f"\tStrength Multiplier of {self.StrengthMultiplier}")
-        print(f"\tUp/Down Compensation of {self.UpDownCompensation} & W/ {self.UpDownDeadzone*100}% Max Angle")
-        if self.FreezeIfPosed: 
-            print("\tMovement will be disabled if posed.")
+        print("\tDelays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
         print("\tRunning Deadzone of {:.0f}".format(self.RunDeadzone*100)+"% stretch")
         print("\tWalking Deadzone of {:.0f}".format(self.WalkDeadzone*100)+"% stretch")
-        print("\tDelays of {:.0f}".format(self.ActiveDelay*1000),"& {:.0f}".format(self.InactiveDelay*1000),"ms")
+        
+        if self.FreezeIfPosed: 
+            print("\tMovement will be disabled if a leahs is posed.")
+        print(f"\tUp/Down Compensation of {self.UpDownCompensation} & {self.UpDownDeadzone*100}% Max Angle")
+
         if self.TurningEnabled: 
             print(f"\tTurning is enabled:")
-            print(f"\t\tMultiplier of {self.TurningMultiplier}")
-            print(f"\t\tDeadzone of {self.TurningDeadzone}")
-            print(f"\t\tGoal of {self.TurningGoal*180}°")
+            print(f"\t - Multiplier of {self.TurningMultiplier}")
+            print(f"\t - Deadzone of {self.TurningDeadzone}")
+            print(f"\t - Goal of {self.TurningGoal*180}°")
 
         print("")
 

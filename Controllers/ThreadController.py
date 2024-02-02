@@ -151,7 +151,8 @@ class Program:
             self.resetProgram()
         
         else: # Only used at the start
-            print("Waiting for Initial Input")
+            if not leash.settings.Logging:
+                print("Started, awaiting input...")
 
             leash.Active = False
             self.leashOutput(0.0, 0.0, 0.0, 0, leash.settings)
