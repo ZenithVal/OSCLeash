@@ -66,8 +66,8 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 | UpDownCompensation    | % of compensation to apply for Up/Down angles                  | 1.0         |
 | UpDownDeadzone        | Stops movement if pull angle is above/below this. 1.0 Disables | 0.5         |
 | TurningEnabled        | Enable turning functionality                                   | false       |
-| TurningMultiplier     | Adjust turning speed                                           | 0.75        |
-| TurningDeadzone       | Minimum Stretch % to start turning                             | 0.2         |
+| TurningMultiplier     | Adjust turning speed                                           | 0.80        |
+| TurningDeadzone       | Minimum Stretch % to start turning                             | 0.15        |
 | TurningGoal           | Goal degree range for turning. (degrees, 0-144) (0° to 144°)   | 90          |
 | ActiveDelay           | Delay in seconds between OSC messages while active             | 0.02        |
 | InactiveDelay         | Delay in seconds for OSCLeash while not in use                 | 0.5         |
@@ -82,7 +82,7 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 
 ---
 ```json
-DefaultConfig = {
+{
         "IP": "127.0.0.1",
         "ListeningPort": 9001,
         "SendingPort": 9000,
@@ -92,8 +92,8 @@ DefaultConfig = {
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.5,
         "TurningEnabled": false,
-        "TurningMultiplier": 0.75,
-        "TurningDeadzone": 0.2,
+        "TurningMultiplier": 0.80,
+        "TurningDeadzone": 0.15,
         "TurningGoal": 90,
         "ActiveDelay": 0.02,
         "InactiveDelay": 0.5,
@@ -104,7 +104,6 @@ DefaultConfig = {
         [
                 "Leash"
         ],
-
         "DirectionalParameters":
         {
                 "Z_Positive_Param": "Leash_Z+",

@@ -11,8 +11,8 @@ DefaultConfig = {
         "UpDownCompensation": 1.0,
         "UpDownDeadzone": 0.5,
         "TurningEnabled": False,
-        "TurningMultiplier": 0.75,
-        "TurningDeadzone": 0.2,
+        "TurningMultiplier": 0.80,
+        "TurningDeadzone": 0.15,
         "TurningGoal": 90,
         "ActiveDelay": 0.02,
         "InactiveDelay": 0.5,
@@ -23,7 +23,6 @@ DefaultConfig = {
         [
                 "Leash"
         ],
-
         "DirectionalParameters":
         {
                 "Z_Positive_Param": "Leash_Z+",
