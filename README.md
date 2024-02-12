@@ -242,6 +242,13 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 **Q:** <br>
 **A:** 
 -->
+    
+**Q:** OSCLeash.exe is removed by my antivirus. <br>
+**A1:** This is a false positive I can't really fix. You'll need to add an exclusion. <br>
+**A2:** The source code is here so feel free to build it yourself. <br>
+
+
+---
 
 **Q:** OSCLeash always says `Started, awaiting input` <br>
 **A1:** Manually Reset OSC by deleting the OSC and OSC.bak folders at `C:\Users\(Your username)\AppData\LocalLow\VRChat\VRChat` <br>
@@ -271,6 +278,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 
 **Q:** My Question/Issue isn't answered above <br>
 **A:** [Discord](https://discord.gg/7VAm3twDyy) or [Git Issue](https://github.com/ZenithVal/OSCLeash/issues)
+
 
 </details><br>
 
