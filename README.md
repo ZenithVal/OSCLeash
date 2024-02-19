@@ -31,12 +31,13 @@ __This app does not provide a model for a Leash at this time.__ <Br>
 
 1. Grab the prefab `(OSCLeash.prefab)` [from releases](https://github.com/ZenithVal/OSCLeash/releases) and drop it into your Unity project.
 2. Place the prefab on the root of your model. (**NOT a child of armature**) Don't break prefab!
-3. Select the `Compass` object and assign the source of the `Position constraint` to the **first** bone of your leash.
-4. You can find `Aim Needle` as a child of compass. Assign the source of the `Aim Constraint` to the **last** bone of your leash.
-5. (**Optional**) You can animate the compass object off for remote users using IsLocal. Saves some performance!
-6. Enable OSC in VRChat settings. (Or reset OSC if you updated an avatar!) ~ [Tutorial](https://raw.githubusercontent.com/ZenithVal/OSCLeash/main/Resources/HowResetOSC.png)
-7. Run the OSCLeash app and get pulled about!
-8. Visit [Config](#config) and fine tune settings for your taste
+3. Select the `Leash Physbone` object and assign the Root Transform of the Physbone to the first bone of your leash.
+4. Select the `Compass` object and assign the source of the `Position constraint` to the **first** bone of your leash.
+5. You can find `Aim Needle` as a child of compass. Assign the source of the `Aim Constraint` to the **last** bone of your leash.
+6. (**Optional**) You can animate the compass object off for remote users using IsLocal. Saves some performance!
+7. Enable OSC in VRChat settings. (Or reset OSC if you updated an avatar!) ~ [Tutorial](https://raw.githubusercontent.com/ZenithVal/OSCLeash/main/Resources/HowResetOSC.png)
+8. Run the OSCLeash app and get pulled about!
+9. Visit [Config](#config) and fine tune settings for your taste
 
 ---
 </details><br>
