@@ -29,6 +29,9 @@ if __name__ == "__main__":
     program.setWindowTitle()
     program.cls()
 
+    # Make sure to change this to the correct version number on releases.
+    print('\x1b[1;32;40m' + "OSCLeash v2.1.1" + '\x1b[0m')
+
     # Test if Config file exists. Create the default if it does not.
     configRelativePath = "./Config.json"
     if not os.path.exists(configRelativePath):
