@@ -2,7 +2,7 @@
 from cx_Freeze import setup, Executable
 #change any area that says change me
 #update items in "Summary_Data"
-#update version numbers on new releases, i took the liberty of doing 2.1.1 for a new exe/installer
+#update version numbers on new releases.
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
@@ -38,7 +38,7 @@ directory_table = [
 msi_data = {
     "Directory": directory_table,
     "ProgId": [
-        ("Prog.Id", "2.1.1", None, "A program to control an avatar with a leash over OSC", "IconId", None),
+        ("Prog.Id", "2.1.1", None, "VRChat OSC tool to move the player in the direction of a stretched Physbone", "IconId", None),
     ],
     "Icon": [
         ("IconId", "Resources\VRChatOSCLeash.ico"),
@@ -56,16 +56,16 @@ bdist_msi_options = {
     "install_icon":  "Resources\VRChatOSCLeash.ico",
     #update the details tab in the MSI properties, these are the only values alloted
     "summary_data": {
-        "author": "Change Me",
-        "comments": "Change Me",
-        "keywords": "VRCat, OSC, Leash, UwU",
+        "author": "Various Authors",
+        "comments": "https://github.com/ZenithVal/OSCLeash/releases",
+        "keywords": "VRChat, OSC, Leash, OSCLeash",
     },
 }
 
 #setting for the EXE, and options for python setup.py <options>
 setup(name='OSCLeash',
       version = '2.1.1',
-      description = 'A program to control an avatar with a leash over OSC',
+      description = 'VRChat OSC tool to move the player in the direction of a stretched Physbone',
       license = "MIT License",
       options = {
       'build_exe': build_options,
