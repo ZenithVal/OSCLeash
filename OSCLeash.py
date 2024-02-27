@@ -30,7 +30,7 @@ if __name__ == "__main__":
     program.cls()
 
     # Make sure to change this to the correct version number on releases.
-    print('\x1b[1;32;40m' + "OSCLeash v2.1.1" + '\x1b[0m')
+    print('\x1b[1;32;40m' + "OSCLeash v2.1.2" + '\x1b[0m')
 
     # Test if Config file exists. Create the default if it does not.
     configRelativePath = "./Config.json"
@@ -41,8 +41,17 @@ if __name__ == "__main__":
     else:
         print("Config file found\n")
 
-    configData = json.load(open(configRelativePath)) # Config file should be prepared at this point.
-    settings = ConfigSettings(configData) # Get settings from config file
+    # load settings
+    try:
+        configData = json.load(open(configRelativePath))
+    except Exception as e:
+        print('\x1b[1;31;40m' + 'Malformed Config.json file. Fix or delete it to generate a new one.' + '\x1b[0m')
+        print(f"{e}\nDefault Config will be loaded.\n")
+
+        configData = DefaultConfig
+        os.system("pause")
+        
+    settings = ConfigSettings(configData)
 
     time.sleep(1)
 

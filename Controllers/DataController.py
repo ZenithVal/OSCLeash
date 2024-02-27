@@ -1,4 +1,5 @@
 import time
+import os
 import ctypes #Required for colored error messages.
 
 DefaultConfig = {
@@ -61,8 +62,11 @@ class ConfigSettings:
             self.XboxJoystickMovement = configJson["XboxJoystickMovement"]
             self.Leashes = configJson["PhysboneParameters"]
         except Exception as e: 
-            print('\x1b[1;31;40m' + 'Malformed config file. Loading default values.' + '\x1b[0m')
-            print(e,"was the exception\n")
+            print('\x1b[1;31;40m' + 'Malformed Config.json contents. Was something missing?' + '\x1b[0m')
+            print(f"Exception: {e}\nDefault Config will be loaded.\n")
+            os.system("pause")
+            print("")
+
             self.IP = DefaultConfig["IP"]
             self.ListeningPort = DefaultConfig["ListeningPort"]
             self.SendingPort = DefaultConfig["SendingPort"]
@@ -80,7 +84,6 @@ class ConfigSettings:
             self.Logging = DefaultConfig["Logging"]
             self.XboxJoystickMovement = DefaultConfig["XboxJoystickMovement"]
             self.Leashes = DefaultConfig["PhysboneParameters"]
-            time.sleep(3)
 
     def addGamepadControls(self, gamepad, runButton):
         self.gamepad = gamepad
