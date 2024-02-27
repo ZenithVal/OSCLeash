@@ -247,7 +247,7 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
     
 **Q:** OSCLeash.exe is removed by my antivirus. <br>
 **A1:** This is a false positive I can't really fix. You'll need to add an exclusion. <br>
-**A2:** The source code is here so feel free to build it yourself. <br>
+**A2:** Try out the MSI version if you're having trouble with the EXE or build it yourself. <br>
 
 
 ---
