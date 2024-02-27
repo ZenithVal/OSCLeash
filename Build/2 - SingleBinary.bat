@@ -1,7 +1,5 @@
 @REM This uses pyinstaller to create a single binary executable. Adjust as needed for your system.
 
-@REM get the repo path from current bat file location and go up one folder
-
 @echo off
 set REPO_PATH=%~dp0..
 set ICON_PATH=%REPO_PATH%\Resources\VRChatOSCLeash.ico
