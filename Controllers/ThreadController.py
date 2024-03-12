@@ -44,11 +44,13 @@ class Program:
         if (Y_Combined) >= leash.settings.UpDownDeadzone:
             VerticalOutput = 0.0
             HorizontalOutput = 0.0
+            
         #Up/Down Compensation
         if leash.settings.UpDownCompensation != 0:
             Y_Modifier = self.clamp(1.0 - ((Y_Combined) * leash.settings.UpDownCompensation))
-            VerticalOutput /= Y_Modifier
-            HorizontalOutput /= Y_Modifier
+            if Y_Modifier != 0.0: # prevents division by zero.
+                VerticalOutput /= Y_Modifier
+                HorizontalOutput /= Y_Modifier 
             # This is not linear... I don't know, I think I might've failed math.
 
         #Turning Math
