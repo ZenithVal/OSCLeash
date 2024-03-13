@@ -9,6 +9,7 @@ set BUILD_PATH=%REPO_PATH%\Build\dist
 pyinstaller --noconfirm --onefile --console --icon "%ICON_PATH%"  "%SCRIPT_PATH%"
 
 @REM Don't need to keep this.
-del "%REPO_PATH%\Build\OSCLeash.spec"
+del "%REPO_PATH%\Build"
+del "%REPO_PATH%\Scripts\build"
 
 pause
