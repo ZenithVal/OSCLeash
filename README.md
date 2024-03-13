@@ -295,6 +295,14 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 - Using a player [Contact Tracker](https://github.com/hfcRed/Player-Tracker/tree/main) to follow automatically.
 - Y axis movement via an OVRAS API
 
+# Running from Source
+
+For those that want to, you can run OSCLeash without an installer or exe.
+- Clone the repo
+- `CD` into the directory
+- Run `pip install -r requirements.txt` 
+- Run `OSCLeash.py`
+
 # Credits & Liscenses
 
 - App Rope Icon | [Game-icons.net](https://game-icons.net/1x1/delapouite/locked-heart.html) under [CC by 3.0](https://creativecommons.org/licenses/by/3.0/)
