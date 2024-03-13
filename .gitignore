@@ -1,5 +1,7 @@
 *build/build
 *build/dist
+*Scripts/build
+*Scripts/dist
 Build/OSCLeash.spec
 
 Controllers/__pycache__/DataController.cpython-310.pyc
