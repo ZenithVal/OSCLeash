@@ -35,7 +35,7 @@ directory_table = [
 msi_data = {
     "Directory": directory_table,
     "ProgId": [
-        ("Prog.Id", "2.1.2", None, "VRChat OSC tool to move the player in the direction of a stretched Physbone", "IconId", None),
+        ("Prog.Id", "2.1.3", None, "VRChat OSC tool to move the player in the direction of a stretched Physbone", "IconId", None),
     ],
     "Icon": [
         ("IconId", "Resources\VRChatOSCLeash.ico"),
@@ -61,7 +61,7 @@ bdist_msi_options = {
 
 # Setting for the EXE, and options for python setup.py <options>
 setup(name='OSCLeash',
-      version = '2.1.2',
+      version = '2.1.3',
       description = 'VRChat OSC tool to move the player in the direction of a stretched Physbone',
       license = "MIT License",
       options = {
