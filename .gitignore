@@ -4,6 +4,5 @@
 *Scripts/dist
 Build/OSCLeash.spec
 
-Controllers/__pycache__/DataController.cpython-310.pyc
-Controllers/__pycache__/PackageController.cpython-310.pyc
-Controllers/__pycache__/ThreadController.cpython-310.pyc
+#Python Stuff
+__pycache__/
