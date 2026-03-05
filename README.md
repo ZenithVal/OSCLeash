@@ -15,7 +15,7 @@
         <a><img alt="Latest Version" src="https://img.shields.io/github/v/tag/ZenithVal/OSCLeash?color=informational&label=Version&sort=semver"></a>
         <a><img alt="Downloads" src="https://img.shields.io/github/downloads/ZenithVal/OSCLeash/total.svg?label=Downloads"></a>
         <br>
-        <a href="https://discord.gg/7VAm3twDyy"><img alt="Discord Badge" src="https://img.shields.io/discord/955364088156921867?color=5865f2&label=Discord&logo=discord&logoColor=https%3A%2F%2Fshields.io%2Fcategory%2Fother"/></a>
+        <a href="https://discord.gg/Wc52U5sXMb"><img alt="Discord Badge" src="https://img.shields.io/discord/955364088156921867?color=5865f2&label=Discord&logo=discord&logoColor=https%3A%2F%2Fshields.io%2Fcategory%2Fother"/></a>
         <a href="https://github.com/ZenithVal/OSCLeash/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ZenithVal/OSCLeash?label=Liscense"></a>
       </p>
     </div>
