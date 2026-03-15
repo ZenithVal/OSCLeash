@@ -13,6 +13,12 @@ __version__ = "v"+"2.2.0"
 
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
+        directory: str = os.path.dirname(configPath)
+
+        # Create parent directories of `configPath` if they don't exist.
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
+
         with open(configPath, "w") as cf:
             json.dump(DefaultConfig, cf, indent=4)
 
