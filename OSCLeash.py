@@ -36,17 +36,17 @@ if __name__ == "__main__":
     print('\x1b[1;32;40m' + f"OSCLeash {__version__}" + '\x1b[0m')
 
     # Test if Config file exists. Create the default if it does not.
-    configRelativePath = "./Config.json"
-    if not os.path.exists(configRelativePath):
+    configPath: str = os.environ.get("OSCLEASH_CONFIG_PATH", f"{os.getcwd()}/Config.json")
+    if not os.path.exists(configPath):
         # print error message in red
         print('\x1b[1;31;40m' + "Config file was not found...", "\nCreating default config file..." + '\x1b[0m')
-        createDefaultConfigFile(configRelativePath)
+        createDefaultConfigFile(configPath)
     else:
         print("Config file found\n")
 
     # load settings
     try:
-        configData = json.load(open(configRelativePath))
+        configData = json.load(open(configPath))
     except Exception as e:
         print('\x1b[1;31;40m' + 'Malformed Config.json file. Fix or delete it to generate a new one.' + '\x1b[0m')
         print(f"{e}\nDefault Config will be loaded.\n")
