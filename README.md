@@ -50,9 +50,11 @@ If all else fails, feel free to reach out in the #OSC-Talkin channel in [my Disc
 
 
 # Config
-After running OSCleash at least once, an OSCLeash.json file will be generated. <br>
-The default install location of OSCLeash is `%LocalAppData%\Programs\OSCLeash` <br>
-You can open the json file in your favorite text editor and fine tune your OSCLeash.
+After running OSCleash at least once, a `Config.json` file will be generated.  
+  
+This configuration file will be located at `%LocalAppData%\Programs\OSCLeash\Config.json` (Windows), `$XDG_CONFIG_HOME/OSCLeash/Config.json` (Linux), or `$HOME/.config/OSCLeash/Config.json` (Linux, fallback). The `OSCLEASH_CONFIG_PATH` environment variable can be used to override the default config location. 
+   
+You can open the `Config.json` file in your favorite text editor to fine tune your OSCLeash. 
 
 <details><summary>Table of Configation settings</summary>
 

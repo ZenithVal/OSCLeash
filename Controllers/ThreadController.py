@@ -199,6 +199,9 @@ class Program:
         """Clears Console"""
         os.system('cls' if os.name == 'nt' else 'clear')
 
+    def pause(self): #
+        os.system('pause' if os.name == 'nt' else 'read -n1 -r -p "Press any key to continue..."')
+
     def setWindowTitle(self): # Set window title
         if os.name == 'nt':
             ctypes.windll.kernel32.SetConsoleTitleW("OSCLeash")
