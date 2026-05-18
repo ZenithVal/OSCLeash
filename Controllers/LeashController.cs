@@ -32,8 +32,6 @@ public class LeashController
 		{
 			Console.WriteLine($"{leash.Name} grabbed");
 			leash.WasGrabbed = true;
-			if (_config.PickupEnabled)
-				_ovr.UpdateReferenceHeight();
 		}
 		else if (!leash.Grabbed && leash.WasGrabbed)
 		{

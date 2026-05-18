@@ -31,8 +31,8 @@ public class ConfigSettings
 	public float GravityStrength { get; set; } = 9.81f;
 	public float TerminalVelocity { get; set; } = 15.0f;
 
-	public int ActiveDelayMs { get; set; } = 20;
-	public int InactiveDelayMs { get; set; } = 500;
+	public int ActiveDelayMs { get; set; } = 8;
+	public int InactiveDelayMs { get; set; } = 400;
 	public bool Logging { get; set; } = false;
 
 	public string[] PhysboneParameters { get; set; } = { "Leash" };

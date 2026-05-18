@@ -6,8 +6,8 @@
 
     "RunDeadzone": 0.70,
     "WalkDeadzone": 0.1,
-    "StrengthMultiplier": 1.2,
-    "UpDownCompensation": 2.0,
+    "StrengthMultiplier": 0.8,
+    "UpDownCompensation": 1.2,
     "UpDownDeadzone": 0.5,
 
     "TurningEnabled": false,
@@ -16,14 +16,14 @@
     "TurningGoal": 90,
 
     "PickupEnabled": true,
-    "PickupMultiplier": 7,
-    "PickupDeadzone": 0.20,
-    "PickupSmoothing": 0.8,
+    "PickupStrength": 7,
+    "PickupDeadzone": 0.40,
+    "PickupSmoothing": 0.98,
     "PickupCompensation": 45,
 
     "GravityEnabled": true,
-    "GravityStrength": 9.81,
-    "TerminalVelocity": 15.0,
+    "GravityStrength": 6,
+    "TerminalVelocity": 12.0,
 
     "ActiveDelayMs": 8,
     "InactiveDelayMs": 400,
