@@ -1,33 +1,44 @@
 {
-        "IP": "127.0.0.1",
-        "ListeningPort": 9001,
-        "SendingPort": 9000,
-        "RunDeadzone": 0.70,
-        "WalkDeadzone": 0.15,
-        "StrengthMultiplier": 1.2,
-        "UpDownCompensation": 1.0,
-        "UpDownDeadzone": 0.5,
-        "TurningEnabled": false,
-        "TurningMultiplier": 0.80,
-        "TurningDeadzone": 0.15,
-        "TurningGoal": 90,
-        "ActiveDelay": 0.02,
-        "InactiveDelay": 0.5,
-        "Logging": false,
-        "XboxJoystickMovement": false,
-        "UseOSCQuery": false,
-        
-        "PhysboneParameters":
-        [
-                "Leash"
-        ],
-        "DirectionalParameters":
-        {
-                "Z_Positive_Param": "Leash_Z+",
-                "Z_Negative_Param": "Leash_Z-",
-                "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-",
-                "Y_Positive_Param": "Leash_Y+",
-                "Y_Negative_Param": "Leash_Y-"
-        }
+    "IP": "127.0.0.1",
+    "ListeningPort": 9001,
+    "SendingPort": 9000,
+    "UseOSCQuery": true,
+
+    "RunDeadzone": 0.70,
+    "WalkDeadzone": 0.1,
+    "StrengthMultiplier": 1.2,
+    "UpDownCompensation": 2.0,
+    "UpDownDeadzone": 0.5,
+
+    "TurningEnabled": false,
+    "TurningMultiplier": 0.80,
+    "TurningDeadzone": 0.15,
+    "TurningGoal": 90,
+
+    "PickupEnabled": true,
+    "PickupMultiplier": 7,
+    "PickupDeadzone": 0.20,
+    "PickupSmoothing": 0.8,
+    "PickupCompensation": 45,
+
+    "GravityEnabled": true,
+    "GravityStrength": 9.81,
+    "TerminalVelocity": 15.0,
+
+    "ActiveDelayMs": 8,
+    "InactiveDelayMs": 400,
+    "Logging": false,
+
+    "PhysboneParameters": [
+        "Leash_North"
+    ],
+
+    "DirectionalParameters": {
+        "Z_Positive_Param": "Leash_Z+",
+        "Z_Negative_Param": "Leash_Z-",
+        "X_Positive_Param": "Leash_X+",
+        "X_Negative_Param": "Leash_X-",
+        "Y_Positive_Param": "Leash_Y+",
+        "Y_Negative_Param": "Leash_Y-"
+    }
 }

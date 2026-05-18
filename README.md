@@ -39,19 +39,15 @@ __This app does not provide a model for a Leash at this time.__ <Br>
 8. Enable OSC in VRChat settings. (Or reset OSC if you updated an avatar!) ~ [Tutorial](https://raw.githubusercontent.com/ZenithVal/OSCLeash/main/Resources/HowResetOSC.png)
 9. Run the OSCLeash app and get pulled about!
 10. Visit [Config](#config) and fine tune settings for your taste
-
 ---
 </details><br>
 
 If you're having issues, make sure to see the [FAQ](#faq) section. <br>
-If all else fails, feel free to reach out in the #OSC-Talkin channel in [my Discord](https://discord.gg/7VAm3twDyy) 
 
 <br>
 
-
 # Config
 After running OSCleash at least once, an OSCLeash.json file will be generated. <br>
-The default install location of OSCLeash is `%LocalAppData%\Programs\OSCLeash` <br>
 You can open the json file in your favorite text editor and fine tune your OSCLeash.
 
 <details><summary>Table of Configation settings</summary>
@@ -87,39 +83,51 @@ You can open the json file in your favorite text editor and fine tune your OSCLe
 ---
 ```json
 {
-        "IP": "127.0.0.1",
-        "ListeningPort": 9001,
-        "SendingPort": 9000,
-        "RunDeadzone": 0.70,
-        "WalkDeadzone": 0.15,
-        "StrengthMultiplier": 1.2,
-        "UpDownCompensation": 1.0,
-        "UpDownDeadzone": 0.5,
-        "TurningEnabled": false,
-        "TurningMultiplier": 0.80,
-        "TurningDeadzone": 0.15,
-        "TurningGoal": 90,
-        "ActiveDelay": 0.02,
-        "InactiveDelay": 0.5,
-        "Logging": false,
-        "XboxJoystickMovement": false,
-        "UseOSCQuery": false,
-        
-        "PhysboneParameters":
-        [
-                "Leash"
-        ],
-        "DirectionalParameters":
-        {
-                "Z_Positive_Param": "Leash_Z+",
-                "Z_Negative_Param": "Leash_Z-",
-                "X_Positive_Param": "Leash_X+",
-                "X_Negative_Param": "Leash_X-",
-                "Y_Positive_Param": "Leash_Y+",
-                "Y_Negative_Param": "Leash_Y-"
-        }
+    "IP": "127.0.0.1",
+    "ListeningPort": 9001,
+    "SendingPort": 9000,
+    "UseOSCQuery": true,
+
+    "RunDeadzone": 0.70,
+    "WalkDeadzone": 0.15,
+    "StrengthMultiplier": 1.2,
+    "UpDownCompensation": 1.0,
+    "UpDownDeadzone": 0.5,
+
+    "TurningEnabled": false,
+    "TurningMultiplier": 0.80,
+    "TurningDeadzone": 0.15,
+    "TurningGoal": 90,
+
+    "VerticalMovementEnabled": true,
+    "VerticalMovementMultiplier": 1.0,
+    "VerticalMovementDeadzone": 0.15,
+    "VerticalMovementSmoothing": 0.8,
+    "VerticalHorizontalCompensation": 45,
+
+    "GravityEnabled": true,
+    "GravityStrength": 9.81,
+    "TerminalVelocity": 15.0,
+
+    "ActiveDelayMs": 20,
+    "InactiveDelayMs": 500,
+    "Logging": false,
+
+    "PhysboneParameters": [
+        "Leash"
+    ],
+
+    "DirectionalParameters": {
+        "Z_Positive_Param": "Leash_Z+",
+        "Z_Negative_Param": "Leash_Z-",
+        "X_Positive_Param": "Leash_X+",
+        "X_Negative_Param": "Leash_X-",
+        "Y_Positive_Param": "Leash_Y+",
+        "Y_Negative_Param": "Leash_Y-"
+    }
 }
 ```
+
 ---
 </details><br>
 
@@ -143,17 +151,25 @@ OSCLeash listens for the _IsGrabbed and _Stretch parameters for every listed lea
 </details><br>
 
 <details><summary>Multiple Leashes</summary>
-
 ---
 This requires an understanding of Physbones Parameters, Animations, and Constraints. <br/>
  - Add a new source to `Compass` and `Aim Needle` for each extra leash. 0 Weight by default
  - Depending on which leash `_IsGrabbed`, animate the weights to match the Grabbed leash.
-
- ---
+---
 </details><br>
 
-<details><summary>Turning Functionality</summary>
+<details><summary>Vertical Movement</summary>
+---
+**⚠️ Motion sickness warning ⚠️** 
+---
+If you want to enable this feature, set `VerticalMovementEnabled` to **True**.<br/>
 
+Lorum ipsum right this later zeni
+---
+</details><br/>
+
+
+<details><summary>Turning Functionality</summary>
 ---
 **⚠️ Motion sickness warning ⚠️** 
 
@@ -161,9 +177,11 @@ If you want to enable this feature, set `TurningEnabled` to **True**.<br/>
 `Currently Supports North, East, South, & West`<br/>
 
 If you had a leash up front and you want to turn to match the direction it's pulled from (EG: a Collar with the leash on the front) Set set the parameter on your Leash Physbone and config to `Leash_North`.
+---
+<details><br/>
 
-<details><summary>Config File</summary>
 
+<summary>Config File</summary>
 ```json
         "PhysboneParameters":
         [
@@ -172,13 +190,13 @@ If you had a leash up front and you want to turn to match the direction it's pul
 ```
 </details><br>
 
+
 We parse the direction to control turning so `"Tail_South"` would work. <br>
 Whenever this leash is grabbed and pulled past the deadzone it will begin to turn. <br/>It will continue to turn until it is greater than the TurningDeadzone value. <br/>
 
 ---
 
 <details><summary>Nerd Stuff</summary>
-
 Here's the simplified logic of the system.
 
 ```python
@@ -191,8 +209,8 @@ if LeashDirection == "North" and Z_Positive < TurningGoal:
 
 <details><summary>Extra stuff for nerds!</summary>
 
-# How OSCLeash works
 
+# How OSCLeash works
 ## Step 1: Get Leash Physbone parameters
 
 We receive the Leash_Stretch and Leash_Grabbed parameters.  
@@ -202,9 +220,7 @@ We'll use these values in this example:
 
 > Leash_IsGrabbed = True<br/>Leash_Stretch = $0.95$
 
-
 ## Step 2: Gather Directional Contact values
-
 <img src="https://cdn.discordapp.com/attachments/606734710328000532/1011420984303165500/Example_Gif.gif" title="" alt="Function Example" width="502"> <br>
 4 Contacts (Blue) surround a object with an aim constraint and a contact at the tip. (Yellow) <br/>
 
@@ -214,9 +230,7 @@ If it was pointing South-South-West, we would get:
 
 > Leash_Z+ = $0.0$<br/>Leash_Z- = $0.75$<br/>Leash_X+ = $0.0$<br/>Leash_X- = $0.25$ 
 
-
 ## Step 3: Math
-
 Math is fun. Add the negative and positive contacts & multiply by the stretch value.
 
 > (Z_Positive - Z_Negative) * Leash_Stretch = Vertical<br/>(X_Positive - X_Negative) * Leash_Stretch = Horizontal 
@@ -225,22 +239,18 @@ So our calculation for speed output would look like:
 
 > $(0.0 - 0.75) * 0.95 = -0.7125$ = Veritcal<br/>$(0.0 - 0.25) * 0.95 = -0.2375$ = Horizontal
 
-
 ## Step 4: Outputs
-
 If either value is above the walking deadzone (default 0.15) we start outputting them instead of 0. <br/>If either value is above the running deadzone (0.7) we tell the player to run (x2 speed)
 
 All movement values are relative to the VRC world's movement speed limits. <br/>So we'd be moving at $142.5$% speed south and $47.5$% speed to the West. 
 
 If the values are below the deadzones or _IsGrabbed is false, send 0s for the OSC values once to stop movement. 
 
-</details>
+</details><br>
 
-<br>
 
 
 # FAQ
-
 <details><summary>Click to Expand</summary>
 <br>
 <!--
@@ -251,79 +261,66 @@ If the values are below the deadzones or _IsGrabbed is false, send 0s for the OS
 **Q:** OSCLeash.exe is removed by my antivirus. <br>
 **A1:** This is a false positive I can't really fix. You'll need to add an exclusion. <br>
 **A2:** Try out the MSI version if you're having trouble with the EXE or build it yourself. <br>
-
-
 ---
 
 **Q:** OSCLeash always says `Started, awaiting input` <br>
 **A1:** Manually Reset OSC by deleting the OSC and OSC.bak folders at `C:\Users\(Your username)\AppData\LocalLow\VRChat\VRChat` <br>
 **A2:** Did you do avatar setup correctly? Make sure your leash physbone matches your config. <br>
 **A3:** This could potentially be a firewall issue, but before that, double check your avatar, please. <br>
-
 ---
 
 **Q:** Missing scripts on prefab <br>
 **[A1:](https://github.com/ZenithVal/OSCLeash/issues/32)** Your VRC SDK is likely out of date or your project has errors. Please update or fix. <br>
 **A2:** If using the [Modular Avatar](https://modular-avatar.nadena.dev/) prefab, you'll need to have that installed too.
-
-
 ---
 
 **Q:** OSCLeash says grabbed but I don't get moved <br>
 **A1:** This can happen if your leash physbone does not have any stretch. <br>
 **A2:** Make sure self interaction is `enabled`, it's needed for the direction calculation.
-
 ---
 
 
 **Q:** The direction OSCLeash pulls is not accurate <br>
 **A1:** Is your physbone too angle limited or short? If it can't move it can't get an accurate location. <br>
 **A2:** If your scaling up very large, scale down the `Compass` object ~ contacts have a max size. <br>
-
 ---
 
 **Q:** Quest Support <br>
 **A1:** You'll need to sync the network IDs of your Leash physbone between Quest & PC. <br>
 You can use [VRC's Network ID Utility](https://creators.vrchat.com/worlds/udon/networking/network-id-utility/#:~:text=Network%20IDs%20are%20the%20link,number%20assigned%20to%20a%20GameObject) or the [ID Assigner tool](https://kurotu.github.io/VRCQuestTools/docs/references/components/network-id-assigner/) made by the community. <br>
 **A2:** The OSCLeash app needs to be run on a PC. *(OSC is over the network though)*
-
 ---
 
 **Q:** How can I run OSCLeash with my other OSC apps <br>
 **A1:** Enable OSCQuery by setting useOSCQuery to `true` in the config.<br>
 **A2:** Try out a OSC Router, like [OSC Switch](https://github.com/KaleidonKep99/OpenSoundControlSwitch).<br> 
-
 ---
 
 **Q:** My Question/Issue isn't answered above <br>
-**A:** [Discord](https://discord.gg/7VAm3twDyy) or [Git Issue](https://github.com/ZenithVal/OSCLeash/issues)
-
+**A:** [Git Issue](https://github.com/ZenithVal/OSCLeash/issues)
 
 </details><br>
 
-# Future Plans/Goals
 
-- Simple [dOSC](https://github.com/Duinrahaic/dOSC) app version 
-- Performant C# Rewrite
-  - Turns out python isn't great for really fast stuff?
-  - Maybe even C++ if masochistic enough.
+# Future Plans/Goals
+- ~~Performant C# Rewrite~~ 
 - ~~OSCQuery Support (When whitelisting is fixed)~~ 
-  - *Whilelisting still isn't fixed but meh*
 - Anchoring leash to a point in world space when posed.
 - Using a player [Contact Tracker](https://github.com/hfcRed/Player-Tracker/tree/main) to follow automatically.
-- Y axis movement via an OVRAS API
+- ~~Y axis movement via an OVRAS API~~ 
+- Leaning based on grab location. (EG: if handle on back, tilt forward)
+
 
 # Running from Source
-
 For those that want to, you can run OSCLeash without an installer or exe.
 - Clone the repo
 - `CD` into the directory
 - Run `pip install -r requirements.txt` 
 - Run `OSCLeash.py`
 
-# Credits & Liscenses
 
+# Credits & Liscenses
 - App Rope Icon | [Game-icons.net](https://game-icons.net/1x1/delapouite/locked-heart.html) under [CC by 3.0](https://creativecommons.org/licenses/by/3.0/)
 - @ALeonic is responsible for a majority of v2 (Threading is scary!)
 - @FrostbyteVR walked me through the proccess of making v1
-- Someone else did this but it was a closed source executable
+- @CrookedToe for OpenVR height manipulation implementation

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>Resources\VRChatOSCLeash.ico</ApplicationIcon>
+    <Authors>$(ZenithVal)</Authors>
+    <Company>$(Authors)</Company>
+    <SignAssembly>False</SignAssembly>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\VRChatOSCLeash.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rug.Osc" Version="1.2.5" />
+    <PackageReference Include="System.Text.Json" Version="10.0.8" />
+    <PackageReference Include="VRChat.OSCQuery" Version="0.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\openvr_api.dll">
+      <Link>openvr_api.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
