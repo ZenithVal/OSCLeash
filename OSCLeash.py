@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
 from threading import Thread
 import json
-import sys
+from sys import platform
 import os
 import time
 
@@ -27,7 +28,7 @@ def createDefaultConfigFile(configPath): # Creates a default config
 
     except Exception as e:
         print(e)
-        os.system("pause")
+        program.pause()
         exit()
 
 
@@ -41,14 +42,22 @@ if __name__ == "__main__":
     
     print('\x1b[1;32;40m' + f"OSCLeash {__version__}" + '\x1b[0m')
 
+    # Choose configuration path based on operating system if no override is set
+    configPathOverride = os.environ.get('OSCLEASH_CONFIG_PATH')
+    if configPathOverride is not None:
+        configPath = configPathOverride
+    elif platform == 'win32':
+        configPath = f"{os.environ.get('LocalAppData')}\Programs\OSCLeash\Config.json"
+    elif platform == 'linux': 
+        configPath = f"{os.environ.get('XDG_CONFIG_HOME', f"{os.environ.get('HOME')}/.config/")}/OSCLeash/Config.json"
+
     # Test if Config file exists. Create the default if it does not.
-    configPath: str = os.environ.get("OSCLEASH_CONFIG_PATH", f"{os.getcwd()}/Config.json")
-    if not os.path.exists(configPath):
+    if not os.path.isfile(configPath):
         # print error message in red
         print('\x1b[1;31;40m' + "Config file was not found...", "\nCreating default config file..." + '\x1b[0m')
         createDefaultConfigFile(configPath)
     else:
-        print("Config file found\n")
+        print(f"Config file found at {configPath}\n")
 
     # load settings
     try:
@@ -58,7 +67,7 @@ if __name__ == "__main__":
         print(f"{e}\nDefault Config will be loaded.\n")
 
         configData = DefaultConfig
-        os.system("pause")
+        program.pause()
         
     settings = ConfigSettings(configData)
 
@@ -72,7 +81,7 @@ if __name__ == "__main__":
         except Exception as e:
             print('\x1b[1;31;40m' + f'Error: {e}\nWarning: Switching to default OSC settings. Please wait...\n Check documentation for controller emulator tool.' + '\x1b[0m')
             settings.XboxJoystickMovement = False
-            os.system("pause")
+            program.pause()
 
     # Collect Data for leash
     leashes = []
@@ -99,5 +108,5 @@ if __name__ == "__main__":
             
     except Exception as e:
         print(e)
-        os.system("pause")
+        program.pause()
         os.execl(sys.executable, sys.executable, *sys.argv)

@@ -66,7 +66,7 @@ class ConfigSettings:
         except Exception as e: 
             print('\x1b[1;31;40m' + 'Malformed Config.json contents. Was something missing?' + '\x1b[0m')
             print(f"Exception: {e}\nDefault Config will be loaded.\n")
-            os.system("pause")
+            program.pause()
             print("")
 
             self.IP = DefaultConfig["IP"]
