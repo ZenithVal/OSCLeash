@@ -23,8 +23,7 @@ public static class ConfigManager
 		try
 		{
 			string json = File.ReadAllText(ConfigPath);
-			var options = new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip };
-			return JsonSerializer.Deserialize<ConfigSettings>(json, options) ?? new ConfigSettings();
+			return JsonSerializer.Deserialize(json, ConfigContext.Default.ConfigSettings) ?? new ConfigSettings();
 		}
 		catch (Exception ex)
 		{
@@ -63,8 +62,9 @@ public static class ConfigManager
 
 		Console.WriteLine($"\tLeash Name(s): {string.Join(", ", AllLeashes)}");
 
-		Console.WriteLine($"\tInactive Delay: {_config.InactiveDelayMs}ms");
 		Console.WriteLine($"\tActive Delay: {_config.ActiveDelayMs}ms");
+		Console.WriteLine($"\tInactive Delay: {_config.InactiveDelayMs}ms");
+
 		Console.WriteLine($"\tStrength Multiplier: {_config.StrengthMultiplier}");
 		Console.WriteLine($"\tRunning Deadzone: {_config.RunDeadzone * 100}% stretch");
 		Console.WriteLine($"\tWalking Deadzone: {_config.WalkDeadzone * 100}% stretch");
@@ -74,16 +74,16 @@ public static class ConfigManager
 		Console.WriteLine();
 		if (_config.PickupEnabled)
 		{
-			Console.WriteLine($"\tVertical Movement is Enabled:");
-			Console.WriteLine($"\t - Multiplier of {_config.PickupMultiplier}");
+			Console.WriteLine($"\tPickup Movement is Enabled:");
+			Console.WriteLine($"\t - Acceleration of {_config.PickupMultiplier}");
 			Console.WriteLine($"\t - Deadzone of {_config.PickupDeadzone * 100}% Max Angle");
 			Console.WriteLine($"\t - Smoothing of {_config.PickupSmoothing}");
-			Console.WriteLine($"\t - Vertical/Horizontal Compensation of {_config.PickupCompensation}");
+			Console.WriteLine($"\t - Compensation of {_config.PickupCompensation}°");
 
 			if (_config.GravityEnabled)
 			{
 				Console.WriteLine($"\t - Gravity is Enabled:");
-				Console.WriteLine($"\t - Strength of {_config.GravityStrength}");
+				Console.WriteLine($"\t - Acceleration of {_config.GravityStrength}");
 				Console.WriteLine($"\t - Terminal Velocity of {_config.TerminalVelocity}");
 			}
 			else
@@ -115,8 +115,7 @@ public static class ConfigManager
 
 	private static void Save(ConfigSettings settings)
 	{
-		var options = new JsonSerializerOptions { WriteIndented = true };
-		string json = JsonSerializer.Serialize(settings, options);
+		string json = JsonSerializer.Serialize(settings, ConfigContext.Default.ConfigSettings);
 		File.WriteAllText(ConfigPath, json);
 	}
 }

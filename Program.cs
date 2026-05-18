@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using Rug.Osc;
 using VRC.OSCQuery;
 using OSCLeash.Controllers;
 using OSCLeash.Models;
-using System.Threading.Tasks;
+using FastOSC;
 
 namespace OSCLeash;
 
@@ -12,10 +11,11 @@ class Program
 {
 	private static ConfigSettings _config = null!;
 	private static List<LeashData> _leashes = new();
-	private static OscSender _oscSender = null!;
-	private static OscReceiver _oscReceiver = null!;
+	private static OSCSender _oscSender = null!;
+	private static OSCReceiver _oscReceiver = null!;
 	private static OSCQueryService? _oscQuery;
 	private static string _applicationVersion = "OSCLeash " + "VERSION_PLACEHOLDER";
+
 	static async Task Main(string[] args)
 	{
 		if (_applicationVersion.Contains("VERSION_PLACEHOLDER"))
@@ -36,12 +36,11 @@ class Program
 
 		if (_leashes.Count == 0) throw new Exception("No leashes found in config.");
 
+		var _listeningport = _config.ListeningPort;
 		if (_config.UseOSCQuery)
 		{
-			//Console.WriteLine("Using OSCQuery");
-
-			int tcpPort = Extensions.GetAvailableTcpPort();
 			int udpPort = Extensions.GetAvailableUdpPort();
+			int tcpPort = Extensions.GetAvailableTcpPort();
 
 			_oscQuery = new OSCQueryServiceBuilder()
 				.WithServiceName(_applicationVersion)
@@ -52,48 +51,30 @@ class Program
 
 			AdvertiseEndpoints();
 
-			_oscReceiver = new OscReceiver(IPAddress.Parse(_config.IP), udpPort);
-			_oscReceiver.Connect();
-
-			InitializeSender(_config.SendingPort);
-
-			// Send port never changes so this doesn't really matter.
-			// This will bite me in the butt later - Zeni
-			//_oscQuery.OnOscServiceAdded += (profile) =>
-			//{
-			//	if (profile.name.Contains("VRChat"))
-			//	{
-			//		InitializeSender(profile.port);
-			//	}
-			//};
+			_listeningport = udpPort;
 		}
-		else
-		{
-			_oscReceiver = new OscReceiver(IPAddress.Parse(_config.IP), _config.ListeningPort);
-			_oscReceiver.Connect();
-			//Console.WriteLine($"Listening on {_config.ListeningPort}");
 
-			InitializeSender(_config.SendingPort);
-		}
+		_oscReceiver = new OSCReceiver();
+		_oscReceiver.OnPacketReceived += OnPacketReceived;
+		_oscReceiver.Connect(new IPEndPoint(IPAddress.Parse(_config.IP), _listeningport));
+
+		await InitializeSender(_config.SendingPort);
 
 		var leashController = new LeashController(_config, SendOscOutput);
 
-		Thread listenerThread = new Thread(ListenLoop);
-		listenerThread.Start();
-
-		Console.WriteLine("\nStarted, awaiting input...\n");
+		Console.WriteLine("\nStarted, awaiting input.\n");
 
 		Stopwatch sw = Stopwatch.StartNew();
 		while (true)
 		{
 			float dt = (float)sw.Elapsed.TotalSeconds;
-			//Console.WriteLine($"Delta Time: {dt:F4}s");
 			sw.Restart();
 
 			foreach (var leash in _leashes)
 			{
 				leashController.Process(leash, dt);
-				while (leash.Grabbed || leashController.IsMidair){
+				while (leash.Grabbed || leashController.IsMidair)
+				{
 					await Task.Delay(_config.ActiveDelayMs);
 					dt = (float)sw.Elapsed.TotalSeconds;
 					sw.Restart();
@@ -104,36 +85,23 @@ class Program
 			}
 			await Task.Delay(_config.InactiveDelayMs);
 		}
-
-		//TODO: spread out the inactive processing of leashes so it's not all at once.
-		//Will reduce spikes if user has a LOT of leashes but like... who does this lol.
-		//int splitDelayMs = (int)Math.Round((double)_config.InactiveDelayMs / _leashes.Count);
 	}
 
-	private static void InitializeSender(int port)
+	private static async Task InitializeSender(int port)
 	{
-		if (_oscSender != null)
-		{
-			_oscSender.Dispose();
-		}
-		_oscSender = new OscSender(IPAddress.Parse(_config.IP), 0, port);
-		_oscSender.Connect();
-		//Console.WriteLine($"Sending to port {port}");
+		_oscSender = new OSCSender();
+		await _oscSender.ConnectAsync(new IPEndPoint(IPAddress.Parse(_config.IP), port));
 	}
 
-	private static void ListenLoop()
+	private static Task OnPacketReceived(IOSCPacket packet)
 	{
-		while (_oscReceiver.State != OscSocketState.Closed)
+		if (packet is OSCMessage msg)
 		{
-			if (_oscReceiver.State == OscSocketState.Connected)
-			{
-				OscPacket packet = _oscReceiver.Receive();
-				if (packet is OscMessage msg)
-				{
-					HandleMessage(msg.Address, msg.Count > 0 ? msg[0] : null);
-				}
-			}
+			object? value = msg.Arguments.FirstOrDefault();
+			HandleMessage(msg.Address, value);
 		}
+
+		return Task.CompletedTask;
 	}
 
 	private static void HandleMessage(string address, object? value)
@@ -148,8 +116,6 @@ class Program
 			{
 				leash.Grabbed = val > 0;
 				if (leash.Grabbed) leash.Active = true;
-				//Active is used to determine if it exists on the model.
-				//if it's never been grabbed we can skip processing on it.
 			}
 			else if (address.EndsWith(_config.DirectionalParameters.Z_Positive)) leash.Z_Pos = val;
 			else if (address.EndsWith(_config.DirectionalParameters.Z_Negative)) leash.Z_Neg = val;
@@ -162,10 +128,10 @@ class Program
 
 	public static void SendOscOutput(float vert, float hori, float turn, bool run)
 	{
-		_oscSender.Send(new OscMessage("/input/Vertical", vert));
-		_oscSender.Send(new OscMessage("/input/Horizontal", hori));
-		_oscSender.Send(new OscMessage("/input/Run", run));
-		if (_config.TurningEnabled) _oscSender.Send(new OscMessage("/input/LookHorizontal", turn));
+		_oscSender.Send(new OSCMessage("/input/Vertical", vert));
+		_oscSender.Send(new OSCMessage("/input/Horizontal", hori));
+		_oscSender.Send(new OSCMessage("/input/Run", run));
+		if (_config.TurningEnabled) _oscSender.Send(new OSCMessage("/input/LookHorizontal", turn));
 
 		if (_config.Logging)
 		{

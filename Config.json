@@ -1,7 +1,7 @@
 {
     "IP": "127.0.0.1",
-    "ListeningPort": 9001,
     "SendingPort": 9000,
+    "ListeningPort": 9001,
     "UseOSCQuery": true,
 
     "RunDeadzone": 0.70,

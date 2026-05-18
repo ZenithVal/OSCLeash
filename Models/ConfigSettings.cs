@@ -6,8 +6,8 @@ namespace OSCLeash.Models;
 public class ConfigSettings
 {
 	public string IP { get; set; } = "127.0.0.1";
-	public int ListeningPort { get; set; } = 9001;
 	public int SendingPort { get; set; } = 9000;
+	public int ListeningPort { get; set; } = 9001;
 	public bool UseOSCQuery { get; set; } = false;
 
 	public float RunDeadzone { get; set; } = 0.70f;

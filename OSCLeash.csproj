@@ -10,6 +10,7 @@
     <Company>$(Authors)</Company>
     <SignAssembly>False</SignAssembly>
     <PlatformTarget>x64</PlatformTarget>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>  
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rug.Osc" Version="1.2.5" />
     <PackageReference Include="System.Text.Json" Version="10.0.8" />
+    <PackageReference Include="VolcanicArts.FastOSC" Version="2.0.0" />
     <PackageReference Include="VRChat.OSCQuery" Version="0.0.7" />
   </ItemGroup>
 
