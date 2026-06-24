@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="oscleash/oscleash.vcxproj" Id="18179cff-abfd-4abb-af3b-9b1102b5b993" />
+</Solution>

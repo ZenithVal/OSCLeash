@@ -1,0 +1,8 @@
+{
+    "IP": "127.0.0.1",
+    "ListeningPort": 9001,
+    "SendingPort": 9000,
+    "RunDeadzone": 0.699999988079071,
+    "WalkDeadzone": 0.15000000596046448,
+    "StrengthMultiplier": 1.2000000476837158
+}
