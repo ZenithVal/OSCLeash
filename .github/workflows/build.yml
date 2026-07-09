@@ -10,7 +10,7 @@ on:
         default: 'v1.0.0'
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ← opt into Node 24 now
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: write
@@ -68,6 +68,11 @@ jobs:
           pip install cx_Freeze freeze-core nuitka pyinstaller
 
       # --- Build ---
+      - name: Build with CX_Freeze (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          python setup.py bdist_appimage
+        
       - name: Build with CX_Freeze (Windows)
         if: runner.os == 'Windows'
         shell: cmd
@@ -81,12 +86,7 @@ jobs:
         run: |
           python -m nuitka --assume-yes-for-downloads --output-dir=dist --output-filename=OSCLeash-nuitka.exe --mode=onefile --windows-icon-from-ico=Resources\VRChatOSCLeash.ico --no-prefer-source-code OSCLeash.py
 
-     # --- Build PyInstaller ---
-      - name: Build with pyinstaller (linux)
-        if: runner.os == 'Linux'
-        run : |
-          pyinstaller --workpath=pyinstallbuild --distpath=dist -n OSCLeash-pyinstaller -F OSCLeash.py
-
+     # --- Build PyInstaller (Windows Only) ---
       - name: Build with pyinstaller (windows)
         if: runner.os == 'Windows'
         shell: cmd
@@ -99,12 +99,10 @@ jobs:
         with:
           name: binaries-${{ matrix.os }}
           path: |
-            dist/*.AppImage
             dist/*.msi
             dist/*.exe
-            dist/OSCLeash-nuitka
-            dist/OSCLeash-pyinstaller
-          retention-days: 30
+            dist/*.AppImage
+          retention-days: 10
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -113,8 +111,6 @@ jobs:
           name: OSCLeash ${{ steps.norm_version.outputs.tag }}
           generate_release_notes: true
           files: |
-            dist/*.AppImage
             dist/*.msi
             dist/*.exe
-            dist/OSCLeash-nuitka
-            dist/OSCLeash-pyinstaller
+            dist/*.AppImage
