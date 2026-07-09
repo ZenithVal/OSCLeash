@@ -98,10 +98,10 @@ jobs:
         with:
           name: binaries-${{ matrix.os }}
           path: |
-            dist/OSCLeash.exe
-            dist/OSCLeash-Py.exe
-            dist/OSCLeash-Installer.msi
             dist/OSCLeash-Linux.AppImage
+            dist/OSCLeash-Installer.msi
+            dist/OSCLeash-Py.exe
+            dist/OSCLeash.exe
           retention-days: 10
 
       - name: Create GitHub Release
@@ -111,7 +111,7 @@ jobs:
           name: ${{ steps.norm_version.outputs.tag }}
           generate_release_notes: true
           files: |
-            dist/OSCLeash.exe
-            dist/OSCLeash-Py.exe
-            dist/OSCLeash-Installer.msi
             dist/OSCLeash-Linux.AppImage
+            dist/OSCLeash-Installer.msi
+            dist/OSCLeash-Py.exe
+            dist/OSCLeash.exe
