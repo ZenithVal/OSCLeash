@@ -25,6 +25,29 @@
 
 # Download & Setup
 Download the latest version of OSCLeash [from releases](https://github.com/ZenithVal/OSCLeash/releases). <br>
+## Versions avalible
+
+### Windows
+
+
+| Type                  | File Name               | Features                                                            |
+|:---------------------:|-------------------------|:-------------------------------------------------------------------:|
+| Installer             | OSCLeash.msi            | Installs locally, adds desktop and startmenu icon                   |
+| Standalone Pyinstaller| OSCLeash-pyinstaller.exe| Runs from where ever you place the exe                              |
+| Standalone Nuitka     | OSCLeash-Nuitka.exe     | Runs from where ever you place the exe, soposed performance increase|
+
+
+### Linux
+
+
+| Type                  | File Name                          | GUI/CLI launch?          |Features                                                                |
+|:---------------------:|------------------------------------|--------------------------|:----------------------------------------------------------------------:|
+| Standalone AppImage   | OSCLeash.appimage                  | CLI Launcher only        | Standalone Appimage runs in place                                      |
+| Standalone Pyinstaller| OSCLeash-pyinstaller               | CLI Launcher only        | Runs from where ever you place the binary                              |
+| Standalone Nuitka     | OSCLeash-Nuitka                    | CLI Launcher only        | Runs from where ever you place the binary, soposed performance increase|
+| AUR                   | OSCLeash and OSCLeash-nuitka @ AUR | GUI and CLI Launchers    | Installs to an arch system, makes a XDG compatible launch file         |
+
+### Unity Setup
 __This app does not provide a model for a Leash at this time.__ <Br>
 
 <details><summary>Setup Steps (Click the Arrow!)</summary>
