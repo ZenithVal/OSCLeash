@@ -10,7 +10,7 @@ from Controllers.PackageController import Package
 from Controllers.ThreadController import Program
 
 # Make sure to change this to the correct version number on releases.
-__version__ = "v"+"2.2.0"
+__version__ = "v"+"VERSION_PLACEHOLDER"
 
 def createDefaultConfigFile(configPath): # Creates a default config
     try:
@@ -39,7 +39,9 @@ if __name__ == "__main__":
     program.setWindowTitle()
     program.cls()
 
-    
+    if __version__ == "vVERSION_PLACEHOLDER":
+        __version__ = "(Local Build)"
+
     print('\x1b[1;32;40m' + f"OSCLeash {__version__}" + '\x1b[0m')
 
     # Choose configuration path based on operating system if no override is set

@@ -20,7 +20,7 @@ directory_table = [
 msi_data = {
     "Directory": directory_table,
     "ProgId": [
-        ("Prog.Id", "2.1.1", None, "Scale your avatar over OSC", "IconId", None),
+        ("Prog.Id", "VERSION_PLACEHOLDER", None, "OSC tool to move a player in the direction of a stretched Physbone", "IconId", None),
     ],
     "Icon": [
         ("IconId", "Resources/VRChatOSCLeash.ico"),
@@ -65,8 +65,8 @@ executables = [
 ]
 
 setup(name='OSCLeash',
-      version = '2.1.1',
-      description = "Change your avatar's scale over osc",
+      version = 'VERSION_PLACEHOLDER',
+      description = "OSC tool to move a player in the direction of a stretched Physbone",
       license = "MIT License",
       options = {
       'build_exe': build_options,

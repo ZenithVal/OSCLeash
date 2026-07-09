@@ -23,6 +23,25 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v4
 
+steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+
+      # --- Inject Version ---
+      - name: Replace VERSION_PLACEHOLDER
+        shell: bash
+        run: |
+          # Strip the 'v' prefix from the GitHub tag (e.g., v1.2.3 becomes 1.2.3)
+          VERSION="${GITHUB_REF_NAME#v}"
+          
+          # Fallback for manual workflow_dispatch runs on branches instead of tags
+          if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
+            VERSION="0.0.0"
+          fi
+          
+          echo "Applying version: $VERSION"
+          sed -i "s/VERSION_PLACEHOLDER/$VERSION/g" OSCLeash.py setup.py
+
       # --- Python +  CX_Freeze ---
       - name: Set up Python
         uses: actions/setup-python@v5
