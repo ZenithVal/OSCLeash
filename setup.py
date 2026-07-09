@@ -39,7 +39,7 @@ bdist_msi_options = {
     "add_to_path": True,
     "data": msi_data,
     "upgrade_code": "{111834E6-DD67-4BD9-A402-A38A8424C39E}",
-    "output_name": "OSCLeash.msi",
+    "output_name": "OSCLeash-Installer.msi",
     "summary_data": {
         "author": "Various Authors",
         "comments": "https://github.com/ZenithVal/OSCLeash/releases",
@@ -47,7 +47,7 @@ bdist_msi_options = {
     }
 }
 bdist_appimage_options = {
-    "target_name": "OSCLeash.AppImage",
+    "target_name": "OSCLeash-Linux.AppImage",
 }
 
 # Pick the right icon per platform
