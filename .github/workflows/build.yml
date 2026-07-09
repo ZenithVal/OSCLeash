@@ -108,7 +108,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.norm_version.outputs.tag }}
-          name: OSCLeash ${{ steps.norm_version.outputs.tag }}
+          name: ${{ steps.norm_version.outputs.tag }}
           generate_release_notes: true
           files: |
             dist/OSCLeash.exe
