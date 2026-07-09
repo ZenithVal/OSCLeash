@@ -39,7 +39,7 @@ if __name__ == "__main__":
     program.setWindowTitle()
     program.cls()
 
-    if __version__ == "vVERSION_PLACEHOLDER":
+    if "PLACEHOLDER" in __version__:
         __version__ = "(Local Build)"
 
     print('\x1b[1;32;40m' + f"OSCLeash {__version__}" + '\x1b[0m')
