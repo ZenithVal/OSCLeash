@@ -2,9 +2,13 @@
 name: Build Binaries
 
 on:
-  release:
-    types: [created]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ← opt into Node 24 now
 
@@ -23,26 +27,24 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v4
 
-steps:
-      - name: Checkout main repo
-        uses: actions/checkout@v4
-
-      # --- Inject Version ---
-      - name: Replace VERSION_PLACEHOLDER
+      - name: Normalize Version String
+        id: norm_version
         shell: bash
         run: |
-          # Strip the 'v' prefix from the GitHub tag (e.g., v1.2.3 becomes 1.2.3)
-          VERSION="${GITHUB_REF_NAME#v}"
-          
-          # Fallback for manual workflow_dispatch runs on branches instead of tags
-          if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
-            VERSION="0.0.0"
-          fi
-          
+          RAW_VERSION="${{ github.event.inputs.version }}"
+          CLEAN_VERSION="${RAW_VERSION#v}"
+          echo "clean=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Inject Version into Python Files
+        shell: bash
+        run: |
+          # Use the clean numeric version for setup.py compatibility
+          VERSION="${{ steps.norm_version.outputs.clean }}"
           echo "Applying version: $VERSION"
           sed -i "s/VERSION_PLACEHOLDER/$VERSION/g" OSCLeash.py setup.py
 
-      # --- Python +  CX_Freeze ---
+      # --- Python Setup ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -66,11 +68,6 @@ steps:
           pip install cx_Freeze freeze-core nuitka pyinstaller
 
       # --- Build ---
-      - name: Build with CX_Freeze (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          python setup.py bdist_appimage
-        
       - name: Build with CX_Freeze (Windows)
         if: runner.os == 'Windows'
         shell: cmd
@@ -78,18 +75,13 @@ steps:
           python setup.py bdist_msi
 
      # --- Build Nuitka ---
-      - name: Build with nuitka (linux)
-        if: runner.os == 'Linux'
-        run : |
-          python -m nuitka --assume-yes-for-downloads --output-dir=dist --output-filename=OSCLeash-nuitka --mode=onefile --linux-icon=Resources/VRChatOSCLeash.png --no-prefer-source-code OSCLeash.py
-
       - name: Build with nuitka (windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
           python -m nuitka --assume-yes-for-downloads --output-dir=dist --output-filename=OSCLeash-nuitka.exe --mode=onefile --windows-icon-from-ico=Resources\VRChatOSCLeash.ico --no-prefer-source-code OSCLeash.py
 
-     # --- Build Nuitka ---
+     # --- Build PyInstaller ---
       - name: Build with pyinstaller (linux)
         if: runner.os == 'Linux'
         run : |
@@ -114,13 +106,15 @@ steps:
             dist/OSCLeash-pyinstaller
           retention-days: 30
 
-      - name: Upload to Release (CX_Freeze)
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.norm_version.outputs.tag }}
+          name: OSCLeash ${{ steps.norm_version.outputs.tag }}
+          generate_release_notes: true
           files: |
             dist/*.AppImage
             dist/*.msi
             dist/*.exe
             dist/OSCLeash-nuitka
             dist/OSCLeash-pyinstaller
-
